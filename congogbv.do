@@ -156,6 +156,11 @@ orth_out age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3
 kict deff numballs, nnonkey(4) condition(ball5)
 
 
+*do some histograms 
+hist numballs if ball5, d frac
+hist numballs if !ball5, d frac
+
+
 *run kict
 eststo basic_1: kict ls numballs, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
 eststo basic_2: kict ls numballs age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
