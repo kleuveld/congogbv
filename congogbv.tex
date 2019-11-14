@@ -1,0 +1,149 @@
+\documentclass[11pt,a4paper]{scrartcl} %scrartcl from KOMA-script uses sans headers and looks less latexy than article
+%\usepackage[doublespacing]{setspace}
+%\usepackage[capposition=top]{floatrow} %for notes under pics
+%\usepackage[nomarkers]{endfloat}
+\usepackage{natbib}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=3cm]{geometry}
+\usepackage[pdftex, hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage[blocks]{authblk}
+\usepackage{url}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\setlist{noitemsep} % \setlist{nosep} to reove separation around lists as well
+
+
+%citation guide:
+	% \citet{key}	Jones et al. (1990)
+	% \citet*{key}	Jones, Baker, and Smith (1990)
+	% \citep{key}	(Jones et al. 1990)
+	% \citep*{key}	(Jones, Baker, and Smith 1990)
+	% \citep[p.~99]{key}	(Jones et al., 1990, p. 99)
+	% \citep[e.g.][]{key}	(e.g. Jones et al., 1990)
+	% \citep[e.g.][p.~99]{key}	(e.g. Jones et al., 1990, p. 99)
+	% \citeauthor{key}	Jones et al.
+	% \citeauthor*{key}	Jones, Baker, and Smith
+	% \citeyear{key}	1990
+	% \citealt{key} Jones et al. 1990
+
+\begin{document}
+\author{Koen Leuveld}
+
+\affil{Development Economics Group, Wageningen University \\
+\href{mailto:koen.leuveld@wur.nl}{koen.leuveld@wur.nl}}
+
+
+
+\title{Sexual Violence in Eastern DRC}
+\subtitle{Evidence from a list experiment} %needs scrartcl
+
+\maketitle
+
+%\begin{abstract}
+%Abstract to come
+%\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{}
+%Hook
+Eastern DR Congo has been called the "rape capital of the world". Much of this has been linked to the decades of violence that the region has seen over the past decades. Various armed groups have used Gender Based Violence (GBV) as a weapon against the population. This has put the issue on the radar of the international community. Today, most of the NGOs operating in the region focus on GBV, either exclusively, or as part of broader programmes. The 2018 Nobel Peace prize was awarded to Dr. Denis Mukwege, for his work on victims of GBV at Bukavu's Panzi Hospital.
+
+\paragraph{}
+%Research question
+The issue of GBV is complicated. While the armed conflict is universally seen as a large driver of GBV, customs and tradition leave Congolese women in a powerless position. This paper aims to provide quantitative evidence on the correlates of sexual violence.
+
+\paragraph{}
+%Antecedents
+Antecedents of this paper include (perhaps weave this in with contribution):
+\begin{itemize}
+	\item Conflict literature on Congo
+	\item GBV literature
+	\item List experiment literature
+\end{itemize}
+
+\paragraph{}
+%Contribution
+While from the literature it is obvious that GBV is endemic in Eastern Congo, it is difficult to get quantitative evidence on the problem. The area is poorly accessible to research teams, and women may be unwilling to divulge information on victimization due to the stigma involved. We collected data in the region in 2012, as part of the evaluation of Dutch development efforts. The questionnaires included a section on gender. As part of this section, a list experiment was administered.
+
+\paragraph{}
+%Road Map
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Background}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{}
+Congo and data collected
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Empirical Strategy and Methods}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{}
+To collect data on the sensitive topic of GBV, respondents were asked to participate in a list experiment. For this, the respondents were randomly divided into two groups. Each group was presented with a number of problems that women can realistically face in Eastern Congo. They then indicated how many of the problems applied to them. The first group was presented with the following issues:
+\begin{itemize}
+	\item Lack of food;
+	\item Lack of money;
+	\item Theft; and,
+	\item Sterility.
+\end{itemize}
+
+\paragraph{}
+The women then indicated how many of these issues were applicable to them. Women in the second group were presented with the same four items, but a fifth item was added: Sexual Violence. This means we cannot know who among our respondents was the victim of GBV. All we know for the individual respondents is the number of problems. However, we can easily compute the group average if three assumptions are met \cite{Tsai2019}:
+\begin{itemize}
+	\item Assignment in groups is random
+	\item Respondents were honest about the number of issues; and,
+	\item There were no design effects.
+\end{itemize}
+
+\paragraph{}
+If these are met (and we will argue that they are in our case), the incidence of GBV is simply the difference in group means. After all, this difference can only be caused by the inclusion of one extra question. We can thus simply regress the number of issues on the group assignment to get an estimate of the average. To include correlates, we would need to include interactions between each of these correlates and the treatment. \cite{Imai2011} argues that this method is inefficient, and yields difficult to interpret predicted values. He proposes a new estimator...
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Results}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{}
+See the results in Table \ref{tab1}. Columns 1 and 2 present the results from a simple linear model. For brevity, the table only reports the delta coefficients of interest, not the sigma and psi ones. The constant in column 1 means that 26 percent of the women in our sample indicate ever having been victim of sexual violence. 
+I then include the following correlates:
+\begin{itemize}
+	\item age: the age of the respondent in years.
+	\item victim\_any: 1 if the household was victimized by the conflict (in terms of property damage, loss of assest, or loss of life.)
+	\item dot\_husband: the amount of money the husband and his family contributed to the marriage. This includes the bride price, as well as contributions to the festivities.
+	\item dot\_wife: the amount of money  the wife and here family contributed to the marriage. This will typically consist of contributions to the festivities.
+	\item mar\_rap: indicates a forced marriage.
+	\item mar\_agediff: the age the husband minus the age of the wife.
+	\item terrfe2 and terrfe3: territoire fixed effects.
+\end{itemize}
+
+Note that including these marriage indicators, significantly alters our sample size, as any unmarried women drop out.
+
+\paragraph{}
+We find that women from victimized households are less likely to be victimized by GBV. On the contrary, forced marriages and age differences between husband and wife are positively and significantly correlated to marriage indicators. I then also run the model using Imai's estimate, but completely fail to make sense of the coefficients. (it's based on logit.)
+
+\begin{table}
+	\caption{Results}\label{tab1}
+	\begin{center}
+	\input{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/table1.tex"}
+	\end{center}
+\end{table}
+
+
+
+%bibliography, this is needed for bibtex
+\clearpage 
+\bibliographystyle{chicago}
+
+%path to .bib file (e.g. automatically exported by mendeley) exclude the file extension!
+%\bibliography{C:/Users/leuve002/Dropbox/TexStuff/Mendeley/ChiefAid}
+\bibliography{C:/Users/Koen/Dropbox (Personal)/Literatuur/Mendeley/Bibtex/Congo GBV}
+\end{document}
