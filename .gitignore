@@ -1,0 +1,9 @@
+# Specify filepatterns you want git to ignore.
+*.bib
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.pdf
+*.gz
