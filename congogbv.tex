@@ -18,18 +18,19 @@
 \setlist{noitemsep} % \setlist{nosep} to reove separation around lists as well
 
 
-%citation guide:
-	% \citet{key}	Jones et al. (1990)
-	% \citet*{key}	Jones, Baker, and Smith (1990)
-	% \citep{key}	(Jones et al. 1990)
-	% \citep*{key}	(Jones, Baker, and Smith 1990)
-	% \citep[p.~99]{key}	(Jones et al., 1990, p. 99)
-	% \citep[e.g.][]{key}	(e.g. Jones et al., 1990)
+%citation cheat sheet:
+	%\cite{key}					Jones et al. (1990)
+	% \citet{key}				Jones et al. (1990)
+	% \citet*{key}				Jones, Baker, and Smith (1990)
+	% \citep{key}				(Jones et al. 1990)
+	% \citep*{key}				(Jones, Baker, and Smith 1990)
+	% \citep[p.~99]{key}		(Jones et al., 1990, p. 99)
+	% \citep[e.g.][]{key}		(e.g. Jones et al., 1990)
 	% \citep[e.g.][p.~99]{key}	(e.g. Jones et al., 1990, p. 99)
-	% \citeauthor{key}	Jones et al.
-	% \citeauthor*{key}	Jones, Baker, and Smith
-	% \citeyear{key}	1990
-	% \citealt{key} Jones et al. 1990
+	% \citeauthor{key}			Jones et al.
+	% \citeauthor*{key}			Jones, Baker, and Smith
+	% \citeyear{key}			1990
+	% \citealt{key} 			Jones et al. 1990
 
 \begin{document}
 \author{Koen Leuveld}
@@ -65,9 +66,14 @@ The issue of GBV is complicated. While the armed conflict is universally seen as
 %Antecedents
 Antecedents of this paper include (perhaps weave this in with contribution):
 \begin{itemize}
-	\item Conflict literature on Congo
-	\item GBV literature
-	\item List experiment literature
+	\item Conflict literature on Congo:
+	\item GBV literature:
+%\cite{Hilhorst2018}:  question whether the reponse of the international community should be labelled a hype.
+%\cite{Quattrochi2019}: "Empowerment programs often target women who have survived sexual and gender-basedviolence (SGBV), with the justification that these women may develop disempowered beliefs as a copingmechanism, or face greater barriers to, or derive greater benefits from, the adoption of empowered beliefs andpreferences."
+%\cite{Porter2019}: argues that rape as a weapon of war is not helpful. It is embedded in existing mores and customs. 
+%close to my paper: \cite{Stark2017} assess disclosement bias.
+	\item List experiment literature: 
+%Classic example: The 1991 National Race and Politics Survey (\cite{Sniderman1991}). Used to measure racial prejudice. Recently, more of of them have been done. \cite{Imai2011}: introduction of new estimator. \cite{Blair2012}: overview of literature. \cite{Tsai2019}: implement methods in Stata.
 \end{itemize}
 
 \paragraph{}
@@ -97,7 +103,7 @@ To collect data on the sensitive topic of GBV, respondents were asked to partici
 \end{itemize}
 
 \paragraph{}
-The women then indicated how many of these issues were applicable to them. Women in the second group were presented with the same four items, but a fifth item was added: Sexual Violence. This means we cannot know who among our respondents was the victim of GBV. All we know for the individual respondents is the number of problems. However, we can easily compute the group average if three assumptions are met \cite{Tsai2019}:
+The women then indicated how many of these issues were applicable to them. Women in the second group were presented with the same four items, but a fifth item was added: Sexual Violence. This means we cannot know who among our respondents was the victim of GBV. All we know for the individual respondents is the number of problems. However, we can easily compute the group average if three assumptions are met \citep{Tsai2019}:
 \begin{itemize}
 	\item Assignment in groups is random
 	\item Respondents were honest about the number of issues; and,
@@ -108,6 +114,11 @@ The women then indicated how many of these issues were applicable to them. Women
 If these are met (and we will argue that they are in our case), the incidence of GBV is simply the difference in group means. After all, this difference can only be caused by the inclusion of one extra question. We can thus simply regress the number of issues on the group assignment to get an estimate of the average. To include correlates, we would need to include interactions between each of these correlates and the treatment. \cite{Imai2011} argues that this method is inefficient, and yields difficult to interpret predicted values. He proposes a new estimator...
 
 
+%some examples on how to interpret list experiments:
+%\cite{Meng2017} run various types of models. Consistently refer to mean difference models, and Maximum Likelihood models
+
+%\cite{Blair2014}: extremely detailed stuff. Thread carefully!
+%\cite{Frye2017} simple difference in means model.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
@@ -144,6 +155,5 @@ We find that women from victimized households are less likely to be victimized b
 \bibliographystyle{chicago}
 
 %path to .bib file (e.g. automatically exported by mendeley) exclude the file extension!
-%\bibliography{C:/Users/leuve002/Dropbox/TexStuff/Mendeley/ChiefAid}
 \bibliography{C:/Users/Koen/Dropbox (Personal)/Literatuur/Mendeley/Bibtex/Congo GBV}
 \end{document}
