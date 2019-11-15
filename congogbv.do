@@ -13,6 +13,8 @@ Date: 14/11/2019
 global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data
 global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables
 use "$dataloc\HH_Base_sorted.dta" , clear
+tempfile nosave
+save `nosave'
 
 /*
 m8_4 -->
@@ -36,14 +38,25 @@ replace numballs = . if numballs == 5 & ball5 == 0
 *territory fe
 bys vill_id: egen terr_id2 = mode(terr_id), maxmode
 tab terr_id2, gen(terrfe)
+la var terrfe1 "Territore 1"
+la var terrfe2 "Territore 2"
+la var terrfe3 "Territore 3"
+
+
+
 
 *victimization
 gen victim_proplost = m7_1_1 == 1
+la var victim_proplost "Conflict: property lost"
 gen victim_hurt = m7_1_3 == 1
+la var victim_hurt "Conflict: household member hurt"
 gen victim_kidnap = m7_1_5 == 1
+la var victim_kidnap "Conflict: household member kidnapped"
 gen victim_famlost = m7_1_7 == 1
-gen victim_any = m7_1_1 ==1 | m7_1_3 == 1 | m7_1_5 == 1 | m7_1_7 == 1
+la var victim_famlost "Conflict: household member killed"
 
+gen victim_any = m7_1_1 ==1 | m7_1_3 == 1 | m7_1_5 == 1 | m7_1_7 == 1
+la var victim_any "Conflict: any type of victimization"
 *family connections
 ren m1_6_a fam_chief
 
@@ -82,6 +95,11 @@ drop n N
 *rename variables
 ren m1_3_j_e mar_rap
 gen mar_agediff = m1_3_c - m1_3_f
+la var mar_agediff "Age husband - Age wife"
+
+replace m1_3_k_aa = . if m1_3_k_aa == 9999
+ren m1_3_k_aa mar_year
+gen mar_years = 2012 - mar_year
 
 tempfile marriage
 save `marriage'
@@ -113,6 +131,7 @@ merge 1:1 vill_id group_id hh_id line_id using `dot', keep(master match) gen(dot
 ***********************
 *full sample
 global vars victim_proplost fam_chief terrfe2 terrfe3
+
 
 
 *generate interaction terms
@@ -150,7 +169,8 @@ drop $ints
 ***********************
 
 *check orthogonality
-orth_out age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3, by(ball5)
+local using using "$tableloc\balance.tex"
+orth_out age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3 `using', by(ball5) pcompare test se count latex full overall vce(cluster vill_id)
 
 *check for design effect
 kict deff numballs, nnonkey(4) condition(ball5)
@@ -162,13 +182,13 @@ hist numballs if !ball5, d frac
 
 
 *run kict
-eststo basic_1: kict ls numballs, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
-eststo basic_2: kict ls numballs age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
+eststo linear_1: kict ls numballs, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
+eststo linear_2: kict ls numballs age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
 
-eststo adv_1: kict ml numballs, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id)
-eststo adv_2: kict ml numballs age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id)
+eststo imai_1: kict ml numballs, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id)
+eststo imai_2: kict ml numballs age victim_any dot_husband dot_wife mar_rap mar_agediff terrfe2 terrfe3, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id)
 
 
-esttab basic_? adv_? using "$tableloc\table1.tex", replace ///
-	mgroups("Linear" "Imai", pattern(1 0 1 0)) nomtitles keep(Delta:*)
+esttab linear_? imai_? using "$tableloc\results.tex", replace ///
+	mgroups("Linear" "ML", pattern(1 0 1 0)) nomtitles keep(Delta:*)
 eststo clear
