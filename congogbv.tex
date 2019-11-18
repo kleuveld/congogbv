@@ -4,18 +4,19 @@
 %\usepackage[nomarkers]{endfloat}
 \usepackage{natbib}
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
+%\usepackage{amsmath}
+%\usepackage{amsfonts}
+%\usepackage{amssymb}
 \usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=3cm]{geometry}
 \usepackage[pdftex, hidelinks]{hyperref}
 \usepackage{graphicx}
+\usepackage{grffile}
 \usepackage{booktabs}
-\usepackage[blocks]{authblk}
+\usepackage[blocks]{authblk} %for affil
 \usepackage{url}
 \usepackage{tabularx}
-\usepackage{enumitem}
-\setlist{noitemsep} % \setlist{nosep} to reove separation around lists as well
+%\usepackage{enumitem}
+%\setlist{noitemsep} % \setlist{nosep} to reove separation around lists as well
 
 
 %citation cheat sheet:
@@ -103,14 +104,14 @@ The women then indicated how many of these issues were applicable to them. Women
 \cite{Imai2011} identifies two issues with this linear estimation technique. First, the predicted values it generates for the probability of answering affirmitavily to being a victim of GBV can lie outside the 0-1 range. Second, the method is inefficient. He proposes a more efficient Maximum likelihood estimator. However, given the inherent difficulties in interpreting the coefficients obtained through his method, here I prefer to present the results of the linear model first. I present results from the ML model as robustness checks. 
 
 
-Table \ref{table:balance} presents descriptive statistics of the sample. Our sample consists of 508 married women. Their a
+%Table \ref{table:balance} presents descriptive statistics of the sample. Our sample consists of 508 married women. Their a
 
-\begin{table}
-	\label{table:balance}
-	\begin{center}
-	\input{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/balance.tex"}
-	\end{center}
-\end{table}
+% \begin{table}
+% 	\label{table:balance}
+% 	\begin{center}
+% 	\input{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/balance.tex"}
+% 	\end{center}
+% \end{table}
 
 
 
@@ -125,6 +126,56 @@ Table \ref{table:balance} presents descriptive statistics of the sample. Our sam
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%build up the story a bit more:
+%	* Average incidence; include graphs of mean differences?
+%	* Present some sample splits in this figure as well: conflict; marriage types.
+%	* Present full models
+
+%	* Present sample splits: married before conflict vs. married after conflict. 
+%	* Sexual Violence can come from a number of sources. Salient in the DRC is conflict-related GBV.
+%	
+%
+%	* use village FEs to compare to individuals who've been through the same
+
+
+
+\paragraph{}
+First, I compare the number of issues faced by the two groups of women. The difference between the group who were presented with only four issues (the control group) and the group who were presented four issues plus GBV is my estimate of the incidence of GBV. The average number of issues reported by the control group is 2.35, while the number if issues reported by the treatment group is 2.62 (see Figure \ref{fig:meancompare1}). The difference of 0.27 implies that the incidence of GBV is 26\% in this sample. This number of slightly higher than some estimates \citep{Quattrochi2019}.
+
+\begin{figure}
+  \includegraphics[width=0.8\linewidth]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures/meancompare1.png}
+  \caption{Comparison of means of issues faced: treatment vs. control.}
+  \label{fig:meancompare1}
+\end{figure}
+
+\paragraph{}
+I then compare the number of issues faced in several sub-groups. First, I compare women who are members of households that have reported being victimized by conflict, with those who are not in \ref{fig:meancompare2}. Victimized during the conflict includes having lost property, and having household members being injured, killed or kidnapped. In the non-vitimized group, the average number of issues was 1.85 for the control group, and 2.33 for the treatment group. This implies a rate of GBV of 48\%. Note that the confidence intervals are fairly large for this group, since only 64 respondents in the sample responded not being victimized at all during the conflict. In the victimized group, the average number of issues was 2.43 for the control group, and 2.66 for the treatment group. This implies a rate of GBV of 23\%. 
+
+\begin{figure}
+  \includegraphics[width=0.8\linewidth]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures/meancompare2.png}
+  \caption{Comparison of means of issues faced: victimized vs non-victimized.}
+  \label{fig:meancompare2}
+\end{figure}
+
+\paragraph{}
+Second, I compare women in forced marriages to women in other marriage types in \ref{fig:meancompare3}. In the forced marriage group, the average number of issues was 2.18 for the control group, and 2.75 for the treatment group. This implies a rate of GBV of 60\%. Note that the confidence intervals are fairly large for this group, since only 72 respondents in the sample reported being in a forced marriage. In the victimized group, the average number of issues was 2.37 for the control group, and 2.59 for the treatment group. This implies a rate of GBV of 22\%. 
+
+\begin{figure}
+  \includegraphics[width=0.8\linewidth]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures/meancompare3.png}
+  \caption{Comparison of means of issues faced: forced marriage vs. other marriage types.}
+  \label{fig:meancompare3}
+\end{figure}
+
+
+\paragraph{}
+The mean comparisons above can be done using a regression model. This allows for hypothesis testing on the differences in means found. To find the overall victimization rate, I regress the number of issues on the treatment indicator. To find the differences in subgroups, I also include an indicator for the subgroup, and an interaction term of this indicator with the treatment indicator. The interaction term then is an estimate of the difference between the two groups. Results are displayed graphically in \ref{fig:meancompare4}. I find that the overall incidence is statistically significant at the 5\% level, but that the differences between the subgroups tested are not. This is due to the low efficiency of this test \cite{Imai2011}. In addition to this low efficiency, this simple analysis does not take into account confounding factors, such as age and location.
+
+\begin{figure}
+  \includegraphics[width=0.8\linewidth]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures/meancompare4.png}
+  \caption{Overall incidence GBV, difference between victimized and non-victimized women, and difference between forced and other marriages. Whiskers indicate 95\% confidence interval.}
+  \label{fig:meancompare4}
+\end{figure}
+
 \paragraph{}
 See the results in Table \ref{table:results}. Columns 1 and 2 present the results from a simple linear model. For brevity, the table only reports the delta coefficients of interest, not the sigma and psi ones. The constant in column 1 means that 26 percent of the women in our sample indicate ever having been victim of sexual violence. 
 I then include the following correlates:
@@ -153,10 +204,11 @@ We find that women from victimized households are less likely to be victimized b
 \begin{table}
 	\caption{Results}\label{table:results}
 	\begin{center}
-	\input{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/results.tex"}
+	\input{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/results.tex"}
 	\end{center}
 \end{table}
 
+%\cite{Bulte2019}: how they do interpret.
 
 
 %bibliography, this is needed for bibtex
@@ -164,5 +216,5 @@ We find that women from victimized households are less likely to be victimized b
 \bibliographystyle{chicago}
 
 %path to .bib file (e.g. automatically exported by mendeley) exclude the file extension!
-\bibliography{"C:/Users/Koen/Dropbox (Personal)/Literatuur/Mendeley/Bibtex/Congo GBV"}
+\bibliography{C:/Users/Koen/Dropbox/Literatuur/Mendeley/Bibtex/CongoGBV}
 \end{document}
