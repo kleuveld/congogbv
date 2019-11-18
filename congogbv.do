@@ -14,6 +14,102 @@ global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data
 global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables
 global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures
 
+capture program drop balance_table
+program define balance_table
+	version  13
+	syntax varlist [if] using/, Treatment(varlist) Cluster(varlist) Sheet(string) [Title(string) Weight(varlist)]
+	preserve
+	if "`if'"!="" {
+		keep `if'
+	}
+
+	**Manipulate input
+	if "`weight'"=="" {
+		tempvar equal_weight
+		gen `equal_weight' = 1
+		local weight `equal_weight'
+	}
+	**Create table
+	tempname memhold
+	tempfile balance
+	qui postfile `memhold' str80 Variable N2 str12 MeanSD2 N1 str12 MeanSD1 N0 str12 MeanSD0 str12 diff using "`balance'", replace
+	**Calculate statistics
+	foreach var of varlist `varlist' {
+		n di "test: start var loop `var'"
+		scalar Variable = `"`: var label `var''"'
+
+		 *calculate statistics for full sample
+		su `var' [aweight=`weight']
+		scalar N2 = `r(N)'
+		scalar Mean2 = `r(mean)'
+		scalar SD2 = round(`r(sd)',2)
+
+		***Calculate statistics for upgraded
+		su `var' if `treatment'== 1 [aweight=`weight']
+
+		scalar N1 = `r(N)'
+		scalar Mean1 = `r(mean)'
+		scalar SD1 = round(`r(sd)',2)
+		
+		***Calculate statistics for non-upgraded
+		qui su `var' if `treatment'==0  [aweight=`weight']
+		scalar N0 = `r(N)'
+		scalar Mean0 = `r(mean)'
+		scalar SD0 = round(`r(sd)',2)
+
+		scalar diff = Mean1 - Mean0 
+
+		forvalues i = 0/2{
+			local Mean`i' = string(Mean`i',"%9.2f")
+			local SD`i' = "("+ string(SD`i',"%9.2f") + ")"
+
+			n di "`Mean`i''"
+			n di "`SD`i''"
+		}
+
+		n di "test2"
+
+		**Calculate p-values with correction for clusters
+		local aweight "[aweight=`weight']"
+		local reg_weight "[aweight=`weight']"
+		
+	
+		qui regress `var' `treatment' `reg_weight', vce(cluster `cluster')
+		matrix table = r(table)
+		scalar pvalue = coeff[3,1]
+
+		*calculate difference
+		local diff = string(diff,"%9.2f") + cond(pvalue < 0.1,"*","") + cond(pvalue < 0.05,"*","") + cond(pvalue < 0.01,"*","")
+		n di "`diff'"
+		
+		post `memhold' (Variable) (N2) ("`Mean2'") (N1) ("`Mean1'") (N0) ("`Mean0'") ("`diff'")
+		post `memhold' ("")       (.)  ("`SD2'")   (.)  ("`SD1'")   (.)  ("`SD0'")   ("")
+		scalar drop _all
+		n di "test: end var loop `var'"
+		}
+	postclose `memhold'
+	**Export table
+	
+	use "`balance'", clear
+
+	if regexm("`using'",".xlsx?$")==1 {
+		n di "exporting excel"
+		export excel "`using'", sheet("`sheet'") firstrow(variables) sheetreplace
+	}
+	if regexm("`using'",".tex$")==1 {
+		n di "exporting tex"
+		n di "a"
+		tempfile temp
+		texsave using "`temp'", replace frag  size(small) marker(tab:balance)  title(covariate balance) footnote("Standard Deviations in parantheses; *p $<$ 0.1,**p $<$ 0.05,***p $<$ 0.0")
+		n di "b"
+		filefilter "`temp'" "`using'", from("{Variable}&{N2}&{MeanSD2}&{N1}&{MeanSD1}&{N0}&{MeanSD0}&{diff} \BStabularnewline") to("&\BSmulticolumn{2}{c}{All}&\BSmulticolumn{2}{c}{Treatment}&\BSmulticolumn{2}{c}{Control}& \BStabularnewline\n{Variable}&{N}&{Mean}&{N}&{Mean}&{N}&{Mean}&{diff} \BStabularnewline") replace
+		n di "c"
+		
+	}
+	
+	restore
+end
+
 
 
 use "$dataloc\HH_Base_sorted.dta" , clear
@@ -46,6 +142,7 @@ replace terr_nm = "Fizi" if regexm(terr_nm,"^Fiz")
 replace terr_nm = "Fizi" if regexm(terr_nm,"Secteur Mu")
 encode terr_nm, gen(terr_id)
 gen terr_fizi = terr_id == 1
+la var terr_fizi "Territory Fizi"
 
 *secteur FE
 tab sect_nm, m
@@ -190,7 +287,15 @@ drop $ints
 
 *check orthogonality
 local using using "$tableloc\balance.tex"
-orth_out age victim_any dot_husband dot_wife mar_rap mar_agediff terr_fizi `using', by(ball5) pcompare test se count latex full overall vce(cluster vill_id)
+orth_out age victim_any dot_husband dot_wife mar_rap mar_agediff terr_fizi using "$tableloc\balance1.tex", by(ball5) pcompare test se count latex full overall vce(cluster vill_id)
+
+orth_out dot_husband dot_wife mar_rap mar_agediff using "$tableloc\balance2.tex", by(ball5) pcompare test se count latex overall vce(cluster vill_id)
+
+
+balance_table age victim_any dot_husband dot_wife mar_rap mar_agediff terr_fizi dot_husband dot_wife mar_rap mar_agediff if !missing(ball5) using "$tableloc\test.tex", ///
+sheet(sheet1) treatment(ball5) cluster(vill_id)
+
+brok
 
 *check for design effect
 kict deff numballs, nnonkey(4) condition(ball5)
@@ -324,18 +429,11 @@ bys ball5: su numballs
 ttest numballs, by(ball5) unequal
 
 
-gen ball5_victim = ball5 * victim_any
-la var ball5_victim "Victimized"
-gen ball5_marrap = ball5 * mar_rap
+*****************************
+**Comparison of differences**
+*****************************
 
-
-clonevar base = ball5
-la var base "Full sample"
-eststo base: reg numballs ball5
-eststo victim: reg numballs ball5 victim_any ball5_victim
-eststo marriage: reg numballs ball5 mar_rap ball5_marrap
-coefplot base  victim  marriage, keep(base) xline(0)
-
+*base
 preserve 
 reg numballs ball5, vce(cluster vill_id)
 regsave, ci
@@ -344,7 +442,9 @@ tempfile base
 save `base'
 restore
 
+*victimized
 preserve
+gen ball5_victim = ball5 * victim_any
 reg numballs ball5 victim_any ball5_victim, vce(cluster vill_id)
 regsave, ci
 keep if var == "ball5_victim"
@@ -352,6 +452,7 @@ tempfile victim
 save `victim'
 restore
 
+*marriage
 preserve
 reg numballs ball5 mar_rap ball5_marrap, vce(cluster vill_id)
 regsave, ci
@@ -359,15 +460,16 @@ keep if var == "ball5_marrap"
 tempfile marriage
 save `marriage'
 
+
+*merge and plot
 use `base'
 append using `victim'
 append using `marriage'
 gen n = _n
 
-
 graph twoway ///
 	(scatter coef n) (rcap ci_upper ci_lower n), ///
-	xtitle( )  xlabel( 1 "Overall" 2 "Victimization" 3 "Marriage", noticks) xscale(range(0.5/3.5))  ///
+	xtitle( )  xlabel( 1 "Overall" 2 "Victimization" 3 "Marriage", noticks) xscale(range(0.6/3.4))  ///
 	legend(off)
 
 graph export "$figloc/meancompare4.png", as(png) replace
