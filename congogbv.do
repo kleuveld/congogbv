@@ -15,6 +15,7 @@ global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables
 global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures
 
 capture program drop balance_table
+pause off
 program define balance_table
 	version  13
 	syntax varlist [if] using/, Treatment(varlist) Cluster(varlist) Sheet(string) [Title(string) Weight(varlist)]
@@ -74,14 +75,14 @@ program define balance_table
 		local reg_weight "[aweight=`weight']"
 		
 	
-		qui regress `var' `treatment' `reg_weight', vce(cluster `cluster')
+		regress `var' `treatment' `reg_weight', vce(cluster `cluster')
 		matrix table = r(table)
-		scalar pvalue = coeff[3,1]
+		scalar pvalue = table[4,1]
 
 		*calculate difference
 		local diff = string(diff,"%9.2f") + cond(pvalue < 0.1,"*","") + cond(pvalue < 0.05,"*","") + cond(pvalue < 0.01,"*","")
 		n di "`diff'"
-		
+		pause
 		post `memhold' (Variable) (N2) ("`Mean2'") (N1) ("`Mean1'") (N0) ("`Mean0'") ("`diff'")
 		post `memhold' ("")       (.)  ("`SD2'")   (.)  ("`SD1'")   (.)  ("`SD0'")   ("")
 		scalar drop _all
@@ -91,6 +92,11 @@ program define balance_table
 	**Export table
 	
 	use "`balance'", clear
+	forvalues i = 0/2{
+		la var N`i' "N"
+		la var MeanSD`i' "Mean"		
+	}
+	la var diff " "
 
 	if regexm("`using'",".xlsx?$")==1 {
 		n di "exporting excel"
@@ -100,9 +106,9 @@ program define balance_table
 		n di "exporting tex"
 		n di "a"
 		tempfile temp
-		texsave using "`temp'", replace frag  size(small) marker(tab:balance)  title(covariate balance) footnote("Standard Deviations in parantheses; *p $<$ 0.1,**p $<$ 0.05,***p $<$ 0.0")
+		texsave using "`temp'", autonumber varlabels replace frag  size(3) marker(tab:balance)  title(covariate balance) footnote("Standard Deviations in parantheses; *p $<$ 0.1,**p $<$ 0.05,***p $<$ 0.01")
 		n di "b"
-		filefilter "`temp'" "`using'", from("{Variable}&{N2}&{MeanSD2}&{N1}&{MeanSD1}&{N0}&{MeanSD0}&{diff} \BStabularnewline") to("&\BSmulticolumn{2}{c}{All}&\BSmulticolumn{2}{c}{Treatment}&\BSmulticolumn{2}{c}{Control}& \BStabularnewline\n{Variable}&{N}&{Mean}&{N}&{Mean}&{N}&{Mean}&{diff} \BStabularnewline") replace
+		filefilter "`temp'" "`using'", from("&{(1)}&{(2)}&{(3)}&{(4)}&{(5)}&{(6)}&{(7)} \BStabularnewline") to("&{(1)}&{(2)}&{(3)}&{(4)}&{(5)}&{(6)}&{(7)} \BStabularnewline\n&\BSmulticolumn{2}{c}{All}&\BSmulticolumn{2}{c}{Treatment}&\BSmulticolumn{2}{c}{Control}&{(4)-(6)}\BStabularnewline") replace
 		n di "c"
 		
 	}
@@ -112,6 +118,18 @@ end
 
 
 
+***************
+***Data prep***
+***************
+/*Load the following data:
+	-Main
+	_Roster
+	-Marriage*/
+
+
+********
+**MAIN**
+********
 use "$dataloc\HH_Base_sorted.dta" , clear
 tempfile nosave
 save `nosave'
@@ -166,57 +184,74 @@ drop villfe_11
 gen victim_proplost = m7_1_1 == 1
 la var victim_proplost "Conflict: property lost"
 gen victim_hurt = m7_1_3 == 1
-la var victim_hurt "Conflict: household member hurt"
+la var victim_hurt "Conflict: HH member hurt"
 gen victim_kidnap = m7_1_5 == 1
-la var victim_kidnap "Conflict: household member kidnapped"
+la var victim_kidnap "Conflict: HH member kidnapped"
 gen victim_famlost = m7_1_7 == 1
-la var victim_famlost "Conflict: household member killed"
+la var victim_famlost "Conflict: HH member killed"
 
 gen victim_any = m7_1_1 ==1 | m7_1_3 == 1 | m7_1_5 == 1 | m7_1_7 == 1
-la var victim_any "Conflict: any type of victimization"
+la var victim_any "Conflict: any"
+
 *family connections
 ren m1_6_a fam_chief
 
+**********
+**Roster**
+**********
 
 *merge in personal data from roster
 ren m8_2_1 m1_1_a
-merge 1:1 vill_id group_id hh_id m1_1_a using "$dataloc\HH_Roster_sorted.dta", keep(master match) gen(roster_merge)
+merge 1:1 vill_id group_id hh_id m1_1_a using "$dataloc\HH_Roster_sorted.dta", keep(match) gen(roster_merge)
 
-*rename and clean up variables
+*rename and clean up variables (Nb: 98 = don't know; 99 is not entered) and keep only adult women
 ren m1_1_d age
+replace age = . if age >= 98
+drop if age < 16
+
 ren m1_1_e sex
-ren m1_1_f relchef
-replace relchef = 0 if relchef > 1 & relchef < .
+keep if sex == 2
+
+ren m1_1_f head
+replace head = 0 if head > 1
+la val head
+
 ren m1_1_g resstat
 ren m1_1_h edu
 ren m1_1_h_temp eduyrs
 
-*only keep adult women
-drop if sex == 1
-drop if age < 16
-
 *rename wife ID to match id in marriage module
 ren m1_1_a m1_3_e
 
+
+************
+**Marriage**
+************
+
 *merge in marriage
 preserve
-use "$dataloc\Mariage_sorted.dta", clear ///
+use "$dataloc\Mariage_sorted.dta", clear 
 
-*dedup by dropping spuses outside household, and keeping most recent marriage
+*dedup by dropping spouses outside household, and keeping most recent marriage
 drop if m1_3_e > 20
+replace m1_3_k_aa = 0 if m1_3_k_aa > 2012 //make sure unknown marriages are not prioritized
 bys vill_id group_id hh_id m1_3_e ( m1_3_k_aa m1_3_h): gen n = _n
 bys vill_id group_id hh_id m1_3_e ( m1_3_k_aa m1_3_h): gen N = _N
+replace m1_3_k_aa = . if m1_3_k_aa == 0
 drop if n < N
-drop n N
+drop n 
+ren N nummarriage
+la var nummarriage "Number of times married"
 
 *rename variables
 ren m1_3_j_e mar_rap
 gen mar_agediff = m1_3_c - m1_3_f
 la var mar_agediff "Age husband - Age wife"
 
-replace m1_3_k_aa = . if m1_3_k_aa == 9999
 ren m1_3_k_aa mar_year
+la var mar_year "Year of marriage"
 gen mar_years = 2012 - mar_year
+la var mar_years "Years married"
 
 tempfile marriage
 save `marriage'
@@ -229,11 +264,15 @@ preserve
 use "$dataloc\Dottes_sorted.dta" ,clear
 bys vill_id group_id hh_id: replace line_id = _n if line_id == .
 
-replace m1_4_e = . if m1_4_e >= 9998
+replace m1_4_e = . if m1_4_e >= 9000
 ren m1_4_e dot_wife
+replace dot_wife = dot_wife / 900 if dot_wife > 1500
+la var dot_wife "Contr. Wife to marriage ($)"
 
-replace m1_4_c = . if m1_4_c >= 9998
+replace m1_4_c = . if m1_4_c >= 9000
 ren m1_4_c dot_husband
+replace dot_husband = dot_husband / 900 if dot_husband > 1500
+la var dot_husband "Contr. husband to marriage ($)"
 
 tempfile dot 
 save `dot' 
@@ -241,13 +280,171 @@ save `dot'
 restore
 merge 1:1 vill_id group_id hh_id line_id using `dot', keep(master match) gen(dotmerge)
 
+drop if ball5 == .
+
+
+********************
+**Table 1: Balance**
+********************
+balance_table age victim_* dot_husband dot_wife mar_rap mar_agediff mar_year mar_years terr_fizi if !missing(ball5) using "$tableloc\balance.tex", ///
+	sheet(sheet1) treatment(ball5) cluster(vill_id)
+
+
+*****************************
+**Figure 1: Mean Comparison**
+*****************************
+//https://stats.idre.ucla.edu/stata/faq/how-can-i-make-a-bar-graph-with-error-bars/
+
+
+
+preserve
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5)
+
+generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
+generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
+
+
+graph twoway (scatter meanballs ball5) (rcap hiballs loballs ball5), ///
+	ytitle(Number of reported issues) xtitle(Treatment) ///
+	ylabel(0(0.5)3) xscale(range(-0.5 1.5)) xlabel(0/1) ///
+	legend(order(1 "Average number of issues" 2 "95% CI"))
+
+graph export "$figloc/meancompare1.png", as(png) replace
+
+tempfile all
+save `all'
+restore
+
+**********************************************************
+**Figure 2: Mean Comparison 2: Victimization**
+**********************************************************
+
+*victimization
+preserve
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 victim_any)
+generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
+generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
+
+generate victim_ball5 = .
+replace victim_ball5 = ball5 if victim_any == 0
+replace victim_ball5 = ball5 + 3 if victim_any == 1
+
+graph twoway ///
+	(scatter meanballs victim_ball5 if ball5 == 0, msymbol(circle)) ///
+	(scatter meanballs victim_ball5 if ball5 == 1, msymbol(triangle)) ///
+ 	(rcap hiballs loballs victim_ball5), ///
+	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
+	xtitle(Victimization)  xlabel( 0.5 "Not victimized" 3.5 "Victimized", noticks) xscale(range(-0.5 4.5))  ///
+	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
+graph export "$figloc/meancompare2.png", as(png) replace
+
+restore
+
+**********************************************************
+**Figure 2: Mean Comparison 3: Marriage**
+**********************************************************
+*marriage
+preserve
+drop if mar_rap == .
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 mar_rap)
+generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
+generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
+
+generate subgroup = .
+replace subgroup = ball5 if mar_rap == 1
+replace subgroup = ball5 + 3 if mar_rap == 0
+
+graph twoway ///
+	(scatter meanballs subgroup if ball5 == 0, msymbol(circle)) ///
+	(scatter meanballs subgroup if ball5 == 1, msymbol(triangle)) ///
+ 	(rcap hiballs loballs subgroup), ///
+	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
+	xtitle(Victimization)  xlabel( 0.5 "Forced marriage" 3.5 "Other Marriages", noticks) xscale(range(-0.5 4.5))  ///
+	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
+graph export "$figloc/meancompare3.png", as(png) replace
+
+restore
+
+bys ball5: su numballs
+ttest numballs, by(ball5) unequal
+
+
+***************************************
+**Figure 3: Comparison of differences**
+***************************************
+tempfile coef
+*base
+reg numballs ball5, vce(cluster vill_id)
+regsave using `coef' , ci  addlabel(regno, 1)
+
+
+gen ball5_victim_any = ball5 * victim_any
+reg numballs ball5 victim_any ball5_victim_any, vce(cluster vill_id)
+regsave using `coef' , addlabel(regno, 2) ci append
+
+*marriage
+gen ball5_mar_rap = ball5 * mar_rap
+
+reg numballs ball5 mar_rap ball5_mar_rap, vce(cluster vill_id)
+regsave using `coef' ,addlabel(regno, 3)  ci append
+
+*merge and plot
+preserve
+use `coef', clear
+
+drop if var == "_cons"
+drop if !regexm(var,"^ball5_") & regno > 1
+sort regno
+
+
+graph twoway ///
+	(scatter coef regno) (rcap ci_upper ci_lower regno), ///
+	xtitle(Mean Difference)  xlabel( 1 "Overall" 2 "Victimization" 3 "Marriage", noticks) xscale(range(0.6/3.4))  ///
+	legend(off)
+
+graph export "$figloc/meancompare4.png", as(png) replace
+restore
+
+
+********************************
+**Figure 4: Pre-war vs Postwar**
+********************************
+
+gen ball5_age = ball5 * age
+
+tempfile coef
+
+reg numballs ball5 victim_any ball5_victim_any age ball5_age, vce(cluster vill_id)
+regsave using `coef' , addlabel(regno, 1) ci replace
+
+reg numballs ball5 victim_any ball5_victim_any age ball5_age if mar_year < 1997, vce(cluster vill_id)
+regsave using `coef' , addlabel(regno, 2) ci append
+
+reg numballs ball5 victim_any ball5_victim_any age ball5_age if mar_year > 2006, vce(cluster vill_id)
+regsave using `coef' , addlabel(regno, 3) ci append
+
+preserve
+use `coef', clear
+
+drop if var == "_cons"
+drop if var == "ball5_age"
+drop if !regexm(var,"^ball5_") //& regno > 1
+sort regno
+
+
+graph twoway ///
+	(scatter coef regno) (rcap ci_upper ci_lower regno), ///
+	xtitle(Mean Difference Victimized vs Non-victimized)  xlabel( 1 "Overall" 2 "Married pre-war" 3 "Married post-war", noticks) xscale(range(0.6/3.8))  ///
+	legend(off)
+
+brok
+restore
 
 
 ***********************
 **Regression Analyses**
 ***********************
 *full sample
-global vars victim_proplost fam_chief terr_fizi
 
 
 
@@ -285,192 +482,7 @@ drop $ints
 **Proper Analyses**
 ***********************
 
-*check orthogonality
-local using using "$tableloc\balance.tex"
-orth_out age victim_any dot_husband dot_wife mar_rap mar_agediff terr_fizi using "$tableloc\balance1.tex", by(ball5) pcompare test se count latex full overall vce(cluster vill_id)
-
-orth_out dot_husband dot_wife mar_rap mar_agediff using "$tableloc\balance2.tex", by(ball5) pcompare test se count latex overall vce(cluster vill_id)
-
-
-balance_table age victim_any dot_husband dot_wife mar_rap mar_agediff terr_fizi dot_husband dot_wife mar_rap mar_agediff if !missing(ball5) using "$tableloc\test.tex", ///
-sheet(sheet1) treatment(ball5) cluster(vill_id)
-
-brok
-
-*check for design effect
-kict deff numballs, nnonkey(4) condition(ball5)
-
-/* 
-*do some histograms 
-hist numballs if ball5, d frac
-hist numballs if !ball5, d frac
-
-
-*run kict
-eststo linear_1: kict ls numballs, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
-eststo linear_2: kict ls numballs age victim_any dot_husband dot_wife mar_rap mar_agediff terr_fizi, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) //26% of the women in the sample have experienced sexual violence(!!!); delta is the relevant coeff
-
-//eststo imai_1: kict ml numballs, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id)
-//eststo imai_2: kict ml numballs age victim_any dot_husband dot_wife mar_rap mar_agediff terr_fizi, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id)
-
-
-esttab linear_? imai_? using "$tableloc\results.tex", replace ///
-	mgroups("Linear" "ML", pattern(1 0 1 0)) nomtitles keep(Delta:*)
-eststo clear
 
 
 
 
- */
-
- *villager fe
- //kict ml numballs vill_fe*, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id) 
- //kict ls numballs age victim_any dot_husband dot_wife mar_rap mar_agediff villfe_*, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id)
-
-
-global vars victim_any villfe_*
-
-global ints
-foreach var of varlist $vars {
-	gen ball5_`var' =  ball5 * `var'
-	global ints $ints ball5_`var'
-}
-reg numballs ball5 $vars $ints
-drop $ints
-
-*secteir FEs
-global vars victim_any sectfe_*
-
-global ints
-foreach var of varlist $vars {
-	gen ball5_`var' =  ball5 * `var'
-	global ints $ints ball5_`var'
-}
-reg numballs ball5 $vars $ints
-drop $ints
-
-
-//kict ls numballs $vars, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) 
-//kict ml numballs $vars, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id) 
-
-
-
-**************
-**Coefplots**
-*************
-//https://stats.idre.ucla.edu/stata/faq/how-can-i-make-a-bar-graph-with-error-bars/
-
-drop if ball5 == .
-
-
-preserve
-collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5)
-
-generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
-generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
-
-
-graph twoway (scatter meanballs ball5) (rcap hiballs loballs ball5), ///
-	ytitle(Number of reported issues) xtitle(Treatment) ///
-	ylabel(0(0.5)3) xscale(range(-0.5 1.5)) xlabel(0/1) ///
-	legend(order(1 "Average number of issues" 2 "95% CI"))
-
-graph export "$figloc/meancompare1.png", as(png) replace
-
-tempfile all
-save `all'
-restore
-
-
-*victimization
-preserve
-collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 victim_any)
-generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
-generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
-
-generate victim_ball5 = .
-replace victim_ball5 = ball5 if victim_any == 0
-replace victim_ball5 = ball5 + 3 if victim_any == 1
-
-graph twoway ///
-	(scatter meanballs victim_ball5 if ball5 == 0, msymbol(circle)) ///
-	(scatter meanballs victim_ball5 if ball5 == 1, msymbol(triangle)) ///
- 	(rcap hiballs loballs victim_ball5), ///
-	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
-	xtitle(Victimization)  xlabel( 0.5 "Not victimized" 3.5 "Victimized", noticks) xscale(range(-0.5 4.5))  ///
-	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
-graph export "$figloc/meancompare2.png", as(png) replace
-
-restore
-
-*marriage
-preserve
-drop if mar_rap == .
-collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 mar_rap)
-generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
-generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
-
-generate subgroup = .
-replace subgroup = ball5 if mar_rap == 1
-replace subgroup = ball5 + 3 if mar_rap == 0
-
-graph twoway ///
-	(scatter meanballs subgroup if ball5 == 0, msymbol(circle)) ///
-	(scatter meanballs subgroup if ball5 == 1, msymbol(triangle)) ///
- 	(rcap hiballs loballs subgroup), ///
-	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
-	xtitle(Victimization)  xlabel( 0.5 "Forced marriage" 3.5 "Other Marriages", noticks) xscale(range(-0.5 4.5))  ///
-	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
-graph export "$figloc/meancompare3.png", as(png) replace
-
-restore
-
-bys ball5: su numballs
-ttest numballs, by(ball5) unequal
-
-
-*****************************
-**Comparison of differences**
-*****************************
-
-*base
-preserve 
-reg numballs ball5, vce(cluster vill_id)
-regsave, ci
-keep if var == "ball5"
-tempfile base
-save `base'
-restore
-
-*victimized
-preserve
-gen ball5_victim = ball5 * victim_any
-reg numballs ball5 victim_any ball5_victim, vce(cluster vill_id)
-regsave, ci
-keep if var == "ball5_victim"
-tempfile victim
-save `victim'
-restore
-
-*marriage
-preserve
-reg numballs ball5 mar_rap ball5_marrap, vce(cluster vill_id)
-regsave, ci
-keep if var == "ball5_marrap"
-tempfile marriage
-save `marriage'
-
-
-*merge and plot
-use `base'
-append using `victim'
-append using `marriage'
-gen n = _n
-
-graph twoway ///
-	(scatter coef n) (rcap ci_upper ci_lower n), ///
-	xtitle( )  xlabel( 1 "Overall" 2 "Victimization" 3 "Marriage", noticks) xscale(range(0.6/3.4))  ///
-	legend(off)
-
-graph export "$figloc/meancompare4.png", as(png) replace
-restore

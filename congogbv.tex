@@ -89,7 +89,8 @@ While from the literature it is obvious that GBV is endemic in Eastern Congo, it
 \section*{Background and data}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{}
-Data for this research comes from an evaluation of Dutch development aid. A household survey formed part of this evaluation. The final module of this survey dealt with gender issues, and was administered to an adult female in the household.  To collect data on the sensitive topic of GBV, this module contained a list experiment. For this, the respondents were randomly divided into two groups. Each group was presented with a number of problems that women can realistically face in Eastern Congo. They then indicated how many of the problems applied to them. The first group (Group 0) was presented with the following issues:
+%to do in this section: desctibe N.varlabels
+The data for this study was collected as part of an evaluation of Dutch development aid in 2012. This evaluation concerned projects ran by three NGOs in the territories of Fizi and Uvira in South Kivu province. A household survey formed part of this evaluation. The final module of this survey dealt with gender issues, and was administered to an adult female in the household.  To collect data on the sensitive topic of GBV, this module contained a list experiment. For this, the respondents were randomly divided into two groups. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Group 0) was presented with the following issues:
 \begin{itemize}
 	\item Lack of food;
 	\item Lack of money;
@@ -98,21 +99,14 @@ Data for this research comes from an evaluation of Dutch development aid. A hous
 \end{itemize}
 
 \paragraph{}
-The women then indicated how many of these issues were applicable to them. Women in the second group (Group 1) were presented with the same four items, but a fifth item was added: Sexual Violence. This means we cannot know who among our respondents was the victim of GBV. All we know for the individual respondents is the number of problems. However, since any difference in the two groups will be caused by the addition of the fifth item, a simple comparison of the mean number of issues faced by women in both groups reveals the population-level incidence of GBV. However, my interest here goes beyond the computation of an incidence rate. The goals is to find correlates of GBV. To do so, note that the computation of the diffence in means requires nothing esle than to regress the number of issues faced on the treatment indicator. To include more covariates, I simply interact them with the treatment indicator.
+ Women in the second group (Group 1) were presented with the same four items, but a fifth item was added: Sexual Violence. While this means I cannot know who among our respondents was the victim of GBV, I can compare the means of the number of issues between the groups to arrive at an estimate of GBV. By comparing means between sub-samples, and by using more sophisticated methods proposed by \citet{Imai2011}, I can find the correlates of GBV. 
 
 \paragraph{}
-\cite{Imai2011} identifies two issues with this linear estimation technique. First, the predicted values it generates for the probability of answering affirmitavily to being a victim of GBV can lie outside the 0-1 range. Second, the method is inefficient. He proposes a more efficient Maximum likelihood estimator. However, given the inherent difficulties in interpreting the coefficients obtained through his method, here I prefer to present the results of the linear model first. I present results from the ML model as robustness checks. 
-
 
 %Table \ref{table:balance} presents descriptive statistics of the sample. Our sample consists of 508 married women. Their a
 
-
-\input{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/test.tex"}
-
-
-
-
-
+%consider using csvsimple or DataTools to import this,
+\input{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/balance.tex"}
 
 
 %some examples on how to interpret list experiments:
@@ -133,9 +127,7 @@ The women then indicated how many of these issues were applicable to them. Women
 %	* Sexual Violence can come from a number of sources. Salient in the DRC is conflict-related GBV.
 %	
 %
-%	* use village FEs to compare to individuals who've been through the same
-
-
+%	* Is there difference for women married "after" the war vs. before the war?
 
 \paragraph{}
 First, I compare the number of issues faced by the two groups of women. The difference between the group who were presented with only four issues (the control group) and the group who were presented four issues plus GBV is my estimate of the incidence of GBV. The average number of issues reported by the control group is 2.35, while the number if issues reported by the treatment group is 2.62 (see Figure \ref{fig:meancompare1}). The difference of 0.27 implies that the incidence of GBV is 26\% in this sample. This number of slightly higher than some estimates \citep{Quattrochi2019}.
