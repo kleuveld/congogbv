@@ -244,7 +244,14 @@ ren N nummarriage
 la var nummarriage "Number of times married"
 
 *rename variables
+ren m1_3_j_a mar_libre
+ren m1_3_j_b mar_trad
+ren m1_3_j_c mar_civil
+ren m1_3_j_d mar_reli
 ren m1_3_j_e mar_rap
+ren m1_3_j_f mar_other
+
+
 gen mar_agediff = m1_3_c - m1_3_f
 la var mar_agediff "Age husband - Age wife"
 
@@ -252,6 +259,12 @@ ren m1_3_k_aa mar_year
 la var mar_year "Year of marriage"
 gen mar_years = 2012 - mar_year
 la var mar_years "Years married"
+
+gen mar_beforewar = mar_year < 1997
+la var mar_beforewar "Married before conflict"
+
+gen mar_afterwar = mar_year > 2006 & !missing(mar_year)
+la var mar_afterwar "Married after conflict"
 
 tempfile marriage
 save `marriage'
@@ -296,6 +309,9 @@ balance_table age victim_* dot_husband dot_wife mar_rap mar_agediff mar_year mar
 //https://stats.idre.ucla.edu/stata/faq/how-can-i-make-a-bar-graph-with-error-bars/
 
 
+*create csv file from which to read estimates in the paper
+tempfile diffs
+
 
 preserve
 collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5)
@@ -311,8 +327,12 @@ graph twoway (scatter meanballs ball5) (rcap hiballs loballs ball5), ///
 
 graph export "$figloc/meancompare1.png", as(png) replace
 
-tempfile all
-save `all'
+keep ball5  meanballs n
+gen var = "overall"
+reshape wide meanballs n, i(var) j(ball5)
+ren * *0
+ren var0 var
+save `diffs'
 restore
 
 **********************************************************
@@ -324,6 +344,7 @@ preserve
 collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 victim_any)
 generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
 generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
+
 
 generate victim_ball5 = .
 replace victim_ball5 = ball5 if victim_any == 0
@@ -338,7 +359,17 @@ graph twoway ///
 	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
 graph export "$figloc/meancompare2.png", as(png) replace
 
+*reshape and store estimate
+keep ball5  meanballs victim_any n
+reshape wide meanballs n, i(victim_any) j(ball5)
+gen var = "victimany" //no underscore because latex doesn't like it
+reshape wide meanballs0 meanballs1 n0 n1, i(var) j(victim_any)
+
+append using `diffs'
+save `diffs', replace
+
 restore
+
 
 **********************************************************
 **Figure 2: Mean Comparison 3: Marriage**
@@ -363,11 +394,34 @@ graph twoway ///
 	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
 graph export "$figloc/meancompare3.png", as(png) replace
 
+
+
+*reshape and store estimate
+keep ball5  meanballs mar_rap n
+reshape wide meanballs n, i(mar_rap) j(ball5)
+gen var = "marrap" //no underscore because latex doesn't like it
+reshape wide meanballs0 meanballs1 n0 n1, i(var) j(mar_rap)
+append using `diffs'
+
+
+
+*create CSV file from which LaTeX can read estimates of incidence
+gen incidence0 = meanballs10 - meanballs00
+gen incidence1 = meanballs11 - meanballs01
+gen diff = incidence1 - incidence0
+gen percent = diff * 100
+
+foreach var of varlist incidence* diff{
+	gen `var'_pct = `var' * 100
+}
+
+
+format meanballs* incidence* diff %9.2f
+format *_pct %9.0f
+
+export delimited using "$tableloc\incidence.csv", datafmt replace
+
 restore
-
-bys ball5: su numballs
-ttest numballs, by(ball5) unequal
-
 
 ***************************************
 **Figure 3: Comparison of differences**
@@ -406,83 +460,31 @@ graph export "$figloc/meancompare4.png", as(png) replace
 restore
 
 
-********************************
-**Figure 4: Pre-war vs Postwar**
-********************************
-
-gen ball5_age = ball5 * age
-
-tempfile coef
-
-reg numballs ball5 victim_any ball5_victim_any age ball5_age, vce(cluster vill_id)
-regsave using `coef' , addlabel(regno, 1) ci replace
-
-reg numballs ball5 victim_any ball5_victim_any age ball5_age if mar_year < 1997, vce(cluster vill_id)
-regsave using `coef' , addlabel(regno, 2) ci append
-
-reg numballs ball5 victim_any ball5_victim_any age ball5_age if mar_year > 2006, vce(cluster vill_id)
-regsave using `coef' , addlabel(regno, 3) ci append
-
-preserve
-use `coef', clear
-
-drop if var == "_cons"
-drop if var == "ball5_age"
-drop if !regexm(var,"^ball5_") //& regno > 1
-sort regno
-
-
-graph twoway ///
-	(scatter coef regno) (rcap ci_upper ci_lower regno), ///
-	xtitle(Mean Difference Victimized vs Non-victimized)  xlabel( 1 "Overall" 2 "Married pre-war" 3 "Married post-war", noticks) xscale(range(0.6/3.8))  ///
-	legend(off)
-
+****************************************
+**Table 2: Full-on regression Analysis**
+****************************************
 brok
-restore
+
+local using using "$tableloc\results_ml1.tex"
+
+eststo ml_1: kict ml numballs victim_any, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id) 
+eststo ml_2: kict ml numballs mar_rap, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id) 
+eststo ml_3: kict ml numballs victim_any mar_rap, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id) 
+eststo ml_4: kict ml numballs victim_any mar_rap age terr_fizi, nnonkey(4) condition(ball5) estimator(imai) vce(cluster vill_id) 
 
 
-***********************
-**Regression Analyses**
-***********************
-*full sample
+esttab ml_? `using', replace ///
+	nomtitles keep(Delta:*)  se label
 
+eststo clear
 
+********************************
+**Table 3: Pre-war vs Postwar**
+********************************
+*WIP
 
-*generate interaction terms
-global ints
-foreach var of varlist $vars {
-	gen ball5_`var' =  ball5 * `var'
-	global ints $ints ball5_`var'
-}
-
-reg numballs ball5 $vars $ints, vce(cluster vill_id)
-
-drop $ints
-
-
-*married sample
-global vars victim_proplost fam_chief dot_husband dot_wife mar_rap mar_agediff terr_fizi
-
-*check orthogonality
-orth_out $vars, by(ball5)
-
-
-global ints
-foreach var of varlist $vars {
-	gen ball5_`var' =  ball5 * `var'
-	global ints $ints ball5_`var'
-}
-
-reg numballs ball5 $vars $ints, vce(cluster vill_id)
-drop $ints
-
-
-
-***********************
-**Proper Analyses**
-***********************
-
-
+eststo war_1: kict ls numballs victim_any mar_rap age terr_fizi if mar_beforewar, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) 
+eststo war_1: kict ls numballs victim_any mar_rap age terr_fizi if mar_afterwar, nnonkey(4) condition(ball5) estimator(linear) vce(cluster vill_id) 
 
 
 
