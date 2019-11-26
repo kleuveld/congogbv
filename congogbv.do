@@ -117,3 +117,282 @@ program define balance_table
 end
 
 
+
+*Main
+use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain.dta",clear
+
+tempfile nosave
+save `nosave'
+
+*list experiment split into two variables: chef de menage and epouse
+gen numballs = v283
+la var numballs "Number of issues faced"
+replace numballs = v327 if numballs == . 
+gen ball5 = hh_grp_gendergender_eplist_conli == 5 if !missing(hh_grp_gendergender_eplist_conli)
+la var ball5 "Treatment"
+replace ball5 = hh_grp_gendergender_cdmlist_cdml == 5 if ball5 == .
+
+
+*id of respondent 
+ren hh_grp_gendergender_ep_who resp_id
+replace resp_id = 1 if resp_id == . & numballs != . //chef de menage is always line 1
+
+
+*territory fe 
+tab territory, gen(terrfe_)
+drop terrfe_1
+
+
+*risk game 
+ren hh_grp_gendergender_eprisk_f riskspouse
+la var riskspouse "Bargaining: choice wife"
+ren hh_grp_gendergender_cdmrisk_cdm riskhead
+la var riskhead "Barganing: choice husband"
+ren hh_grp_gendergender_crisk_c riskcouple 
+la var riskcouple "Barganing: choice couple"
+
+
+gen riskspousediff = riskcouple - riskspouse  
+gen riskheaddiff = riskcouple - riskhead
+
+gen riskheadcloser = abs(riskspousediff) > abs(riskheaddiff) if !missing(riskcouple)
+gen riskspousecloser = abs(riskheaddiff) > abs(riskspousediff) if !missing(riskcouple)
+
+la var riskheadcloser "Bargaining: closer to husband"
+la var riskspousecloser "Bargaining: closer to wife"
+
+*keep relevant vars
+keep KEY vill_id numballs ball5 resp_id terrfe_* riskspouse riskhead riskcouple riskheadcloser  riskspousecloser
+
+tempfile main 
+save `main'
+
+
+*get data of spouses of heads
+use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", clear
+keep if a_relhead == 2
+
+*identify, and deal with, duplicates
+bys PARENT_KEY: gen linenum2 = _n
+egen numwives = max(linenum2)
+drop if linenum2 > 1
+drop linenum2
+
+*save only relevant data
+replace linenum = 1
+keep KEY PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts
+tempfile spouses
+save `spouses'
+
+*roster
+use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", clear
+
+*merge in spouse data
+merge 1:1 PARENT_KEY linenum using `spouses', update gen(spousemerge)
+*ids
+ren linenum resp_id
+ren KEY ROSTER_KEY
+ren PARENT_KEY KEY
+
+tempfile roster
+save `roster'
+
+*merge dat scheiss
+use `main'
+merge 1:1 KEY resp_id using `roster', keep(match) gen(rostermerge)
+
+
+*final cleaning
+drop if a_gender == 1
+
+gen wifemoreland = a_marrnonhh_statpar == 1
+la var wifemoreland "Family wife had more land"
+gen husbmoreland = a_marrnonhh_statpar == 3
+la var husbmoreland "Family husband had more land"
+
+replace a_relhead = 1 if resp_id == 1
+
+	*items
+	foreach i of numlist 1/3{
+		gen marrwiveprov`i' = .
+		gen marrhusbprov`i' = .
+		
+		*respondent is head
+		replace marrwiveprov`i' = a_marrheadprov`i' if a_relhead == 1
+		replace marrhusbprov`i' = a_marrspouseprov`i' if a_relhead == 1
+
+		*respondent is spouse
+		replace marrwiveprov`i' = a_marrheadprov`i' if a_relhead == 2
+		replace marrhusbprov`i' = a_marrspouseprov`i' if a_relhead == 2
+	}
+
+
+	
+	*value
+	foreach item in dot gifts{
+		*dot value
+		gen marrhusb`item' = .
+		gen marrwive`item' = .
+
+		*respondent is head
+		replace marrwive`item' =  a_marrhead`item' if a_relhead == 1
+		replace marrhusb`item' =  a_marrspouse`item' if a_relhead == 1
+
+		*respondent is spouse
+		replace marrwive`item' =  a_marrspouse`item' if a_relhead == 2
+		replace marrhusb`item'=  a_marrhead`item' if a_relhead == 2
+
+		replace marrhusb`item' = 0 if marrhusb`item' == . 
+		replace marrhusb`item' = . if marrhusb`item' == 98
+		
+		replace marrwive`item' = 0 if marrwive`item' == .
+		replace marrwive`item' = . if marrwive`item' == 98
+	}
+
+egen marcohab = anymatch(a_marrmarr_type?), values(1)
+egen marcivil = anymatch(a_marrmarr_type?), values(2)
+egen marreli = anymatch(a_marrmarr_type?), values(3)
+egen martrad = anymatch(a_marrmarr_type?), values(4)
+
+
+
+
+
+**************************
+**Table 1: Balance Table**
+**************************
+balance_table numballs husbmoreland wifemoreland riskspouse riskhead riskheadcloser riskspousecloser terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
+	sheet(sheet1) treatment(ball5) cluster(vill_id)
+
+*****************************
+**Figure 1: Mean Comparison**
+*****************************
+//https://stats.idre.ucla.edu/stata/faq/how-can-i-make-a-bar-graph-with-error-bars/
+
+*create csv file from which to read estimates in the paper
+tempfile diffs
+
+preserve
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5)
+
+generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
+generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
+
+
+graph twoway (scatter meanballs ball5) (rcap hiballs loballs ball5), ///
+	ytitle(Number of reported issues) xtitle(Treatment) ///
+	ylabel(0(0.5)3) xscale(range(-0.5 1.5)) xlabel(0/1) ///
+	legend(order(1 "Average number of issues" 2 "95% CI"))
+
+graph export "$figloc/meancompare1.png", as(png) replace
+
+keep ball5  meanballs n
+gen var = "overall"
+reshape wide meanballs n, i(var) j(ball5)
+ren * *0
+ren var0 var
+save `diffs'
+restore
+
+
+**********************************************************
+**Figure 3: Mean Comparison 2: Status**
+**********************************************************
+*marriage
+preserve
+
+brok
+drop if husbmoreland == .
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 husbmoreland)
+generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
+generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
+
+generate subgroup = .
+replace subgroup = ball5 if husbmoreland == 1
+replace subgroup = ball5 + 3 if husbmoreland == 0
+
+graph twoway ///
+	(scatter meanballs subgroup if ball5 == 0, msymbol(circle)) ///
+	(scatter meanballs subgroup if ball5 == 1, msymbol(triangle)) ///
+ 	(rcap hiballs loballs subgroup), ///
+	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
+	xtitle(Relative Status)  xlabel( 0.5 "Family husband more land" 3.5 "Other", noticks) xscale(range(-0.5 4.5))  ///
+	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
+graph export "$figloc/meancompare2.png", as(png) replace
+
+
+
+*reshape and store estimate
+keep ball5  meanballs husbmoreland n
+reshape wide meanballs n, i(husbmoreland) j(ball5)
+gen var = "husbmoreland" //no underscore because latex doesn't like it
+reshape wide meanballs0 meanballs1 n0 n1, i(var) j(husbmoreland)
+append using `diffs'
+save `diffs', replace
+restore
+
+**********************************************************
+**Figure 4: Mean Comparison 2: Bargaining**
+**********************************************************
+*marriage
+preserve
+drop if riskheadcloser == .
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 riskheadcloser)
+generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
+generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
+
+generate subgroup = .
+replace subgroup = ball5 if riskheadcloser == 1
+replace subgroup = ball5 + 3 if riskheadcloser == 0
+
+graph twoway ///
+	(scatter meanballs subgroup if ball5 == 0, msymbol(circle)) ///
+	(scatter meanballs subgroup if ball5 == 1, msymbol(triangle)) ///
+ 	(rcap hiballs loballs subgroup), ///
+	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
+	xtitle(Bargaining)  xlabel( 0.5 "Couple closer to head" 3.5 "Other", noticks) xscale(range(-0.5 4.5))  ///
+	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
+graph export "$figloc/meancompare3.png", as(png) replace
+
+
+
+*reshape and store estimate
+keep ball5  meanballs riskheadcloser n
+reshape wide meanballs n, i(riskheadcloser) j(ball5)
+gen var = "riskheadcloser" //no underscore because latex doesn't like it
+reshape wide meanballs0 meanballs1 n0 n1, i(var) j(riskheadcloser)
+append using `diffs'
+
+
+
+
+*create CSV file from which LaTeX can read estimates of incidence
+gen incidence0 = meanballs10 - meanballs00
+gen incidence1 = meanballs11 - meanballs01
+gen diff = incidence1 - incidence0
+gen percent = diff * 100
+
+foreach var of varlist incidence* diff{
+	gen `var'_pct = `var' * 100
+}
+
+
+format meanballs* incidence* diff %9.2f
+format *_pct %9.0f
+
+export delimited using "$tableloc\incidence.csv", datafmt replace
+
+restore
+
+
+
+
+*base estimate
+kict ls numballs, condition(ball5) nnonkey(4) estimator(linear)
+kict ls numballs husbmoreland wifemoreland  terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+kict ls numballs husbmoreland riskspousecloser riskheadcloser  terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+
+
+kict ml numballs husbmoreland riskspousecloser riskheadcloser  terrfe*, condition(ball5) nnonkey(4) estimator(imai)
+
+//kict ml numballs a_age a_marrheadagemarr wifemoreland husbmoreland terrfe*, condition(ball5) nnonkey(4) estimator(imai)

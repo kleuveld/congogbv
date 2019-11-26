@@ -145,6 +145,7 @@ The data for this study was collected as part of an evaluation of Dutch developm
 %command to get incidences from csv file
 \newcommand{\incid}[2]{\csvreader[filter strcmp={\var}{#1}]{\tableloc/incidence.csv}{var=\var,#2=\inc}{\inc}}
 
+%columns are VAR&Treatment&Group
 
 \paragraph{}
 First, I compare the number of issues faced by the two groups of women. The difference between the group who were presented with only four issues (the control group) and the group who were presented four issues plus GBV is my estimate of the incidence of GBV. The average number of issues reported by the control group is \incid{overall}{meanballs00}, while the number if issues reported by the treatment group is \incid{overall}{meanballs10} (see Figure \ref{fig:meancompare1}). The difference of \incid{overall}{incidence0} implies that the incidence of GBV is \incid{overall}{incidence0_pct}\% in this sample. This number of slightly higher than some estimates \citep{Quattrochi2019}.
@@ -156,7 +157,7 @@ First, I compare the number of issues faced by the two groups of women. The diff
 \end{figure}
 
 \paragraph{}
-I then compare the number of issues faced in several sub-groups. First, I compare women who are members of households that have reported being victimized by conflict, with those who are not in \ref{fig:meancompare2}. Victimized during the conflict includes having lost property, and having household members being injured, killed or kidnapped. In the non-vitimized group, the average number of issues was \incid{victimany}{meanballs00} 1.85 for the control group, and \incid{victimany}{meanballs10} for the treatment group. This implies a rate of GBV of \incid{victimany}{incidence0_pct}. Note that the confidence intervals are fairly large for this group, since only 63 respondents in the sample responded not being victimized at all during the conflict. In the victimized group, the average number of issues was \incid{victimany}{meanballs01} for the control group, and \incid{victimany}{meanballs11} for the treatment group. This implies a rate of GBV of \incid{victimany}{incidence1_pct}\%. 
+I then compare the number of issues faced in several sub-groups. First, I compare across relative status. I compare women in marriages in which the family of the husband had more land at the time of marriage to other women in \ref{fig:meancompare2}. In the group where the husband had more status, the average number of issues was \incid{husbmoreland}{meanballs01} for the control group, and \incid{husbmoreland}{meanballs11} for the treatment group. This implies a rate of GBV of \incid{husbmoreland}{incidence1_pct}. In the other group (which includes women who had more status, and couple with equal status), the average number of issues was \incid{husbmoreland}{meanballs00} for the control group, and \incid{husbmoreland}{meanballs10} for the treatment group. This implies a rate of GBV of \incid{husbmoreland}{incidence0_pct}\%. 
 
 \begin{figure}
   \includegraphics[width=0.8\linewidth]{\figureloc/meancompare2.png}
@@ -165,7 +166,7 @@ I then compare the number of issues faced in several sub-groups. First, I compar
 \end{figure}
 
 \paragraph{}
-Second, I compare women in forced marriages to women in other marriage types in \ref{fig:meancompare3}. In the forced marriage group, the average number of issues was \incid{marrap}{meanballs01} for the control group, and \incid{marrap}{meanballs11} for the treatment group. This implies a rate of GBV of \incid{marrap}{incidence1_pct}\%. Note that the confidence intervals are fairly large for this group, since only 72 respondents in the sample reported being in a forced marriage. In the non-forced marriage group, the average number of issues was \incid{marrap}{meanballs00} for the control group, and \incid{marrap}{meanballs10} for the treatment group. This implies a rate of GBV of \incid{marrap}{incidence0_pct}\%. 
+Second, I compare across the results of a bargaining game played with couples: I compare women in couples where the coupe result was closer to the husband's decisions to other women. The other group includes women in couples where the couple's decision was closer the woman's, and those where the couple's decision was precisely between the two decisions. See figure \ref{fig:meancompare3}. In the group where the couple decision was closest to the husband, the average number of issues was \incid{riskheadcloser}{meanballs01} for the control group, and \incid{riskheadcloser}{meanballs11} for the treatment group. This implies a rate of GBV of \incid{riskheadcloser}{incidence1_pct}\%. In the other group, the average number of issues was \incid{riskheadcloser}{meanballs00} for the control group, and \incid{riskheadcloser}{meanballs10} for the treatment group. This implies a rate of GBV of \incid{riskheadcloser}{incidence0_pct}\%. 
 
 \begin{figure}
   \includegraphics[width=0.8\linewidth]{\figureloc/meancompare3.png}
@@ -173,30 +174,6 @@ Second, I compare women in forced marriages to women in other marriage types in 
   \label{fig:meancompare3}
 \end{figure}
 
-
-\paragraph{}
-The mean comparisons above can be done using a regression model. This allows for hypothesis testing on the differences in means found. To find the overall victimization rate, I regress the number of issues on the treatment indicator. To find the differences in subgroups, I also include an indicator for the subgroup, and an interaction term of this indicator with the treatment indicator. The interaction term then is an estimate of the difference between the two groups. Results are displayed graphically in \ref{fig:meancompare4}. I find that the overall incidence is statistically significant at the 5\% level, but that the differences between the subgroups tested are not. This is due to the low efficiency of this test \cite{Imai2011}. In addition to this low efficiency, this simple analysis does not take into account confounding factors, such as age and location.
-
-\begin{figure}
-  \includegraphics[width=0.8\linewidth]{\figureloc/meancompare4.png}
-  \caption{Overall incidence GBV, difference between victimized and non-victimized women, and difference between forced and other marriages. Whiskers indicate 95\% confidence interval, based on naive regression.}
-  \label{fig:meancompare4}
-\end{figure}
-
-
-\paragraph{}
-While the comparisons of means above has been instructive in showing some general relationships between conflict, marriage and sexual violence, the limited nature of these comparisons restrict the conclusions we can draw from them. I therefore follow \cite{Imai2011} in analyzing the data from the list experiment more rigorously. Results from this analysis are shown in Table \ref{table:resultsml1}. Note that only the Delta coeffecients are shown. The psi coefficients are omitted for brevity. I find that when controlling for territory and age, being in a forced marriage is strongly correlated with a higher incidence of GBV. Being a victim of violence, on the other hand, is negatively related with GBV.
-
-\begin{table}
-	\caption{Results from ML estimations}\label{table:resultsml1}
-	\begin{center}
-	\input{\tableloc/results_ml1.tex}
-	\end{center}
-\end{table}
-
-
-\paragraph{}
-These results can be interpreted in two ways: first, that women in forced marriages suffer more from GBV; and second, that victims of GBV are subsequently forced into a marriage.
 
 %interpretatie voorbeelden:
 %\cite{Meng2017} first simply present mean differences; they then present a maximum likelihood model. Based on this model, they predict mean differences and present this as their quantity of interest. They have replication files online.
