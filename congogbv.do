@@ -8,7 +8,7 @@ Date: 14/11/2019
 
 */
 
-
+set scheme lean1
 
 global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data
 global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables
@@ -152,6 +152,7 @@ ren hh_grp_gendergender_crisk_c riskcouple
 la var riskcouple "Barganing: choice couple"
 
 
+
 gen riskspousediff = riskcouple - riskspouse  
 gen riskheaddiff = riskcouple - riskhead
 
@@ -161,8 +162,12 @@ gen riskspousecloser = abs(riskheaddiff) > abs(riskspousediff) if !missing(riskc
 la var riskheadcloser "Bargaining: closer to husband"
 la var riskspousecloser "Bargaining: closer to wife"
 
+gen barg = 2
+replace barg = 1 if riskspousecloser
+replace barg = 3 if riskheadcloser
+
 *keep relevant vars
-keep KEY vill_id numballs ball5 resp_id terrfe_* riskspouse riskhead riskcouple riskheadcloser  riskspousecloser
+keep barg KEY vill_id numballs ball5 resp_id terrfe_* riskspouse riskhead riskcouple riskheadcloser  riskspousecloser
 
 tempfile main 
 save `main'
@@ -286,99 +291,119 @@ graph twoway (scatter meanballs ball5) (rcap hiballs loballs ball5), ///
 
 graph export "$figloc/meancompare1.png", as(png) replace
 
-keep ball5  meanballs n
-gen var = "overall"
-reshape wide meanballs n, i(var) j(ball5)
-ren * *0
-ren var0 var
+keep ball5  meanballs n sdballs
+gen key = "overall"
+reshape wide meanballs n sdballs, i(key) j(ball5)
+
+//ren * *0
+//ren var0 var
+
 save `diffs'
 restore
-
 
 **********************************************************
 **Figure 3: Mean Comparison 2: Status**
 **********************************************************
 *marriage
+
 preserve
 
-brok
-drop if husbmoreland == .
-collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 husbmoreland)
+ren a_marrnonhh_statpar statpar
+replace statpar = . if statpar > 3
+drop if statpar == .
+
+
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 statpar)
 generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
 generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
 
 generate subgroup = .
-replace subgroup = ball5 if husbmoreland == 1
-replace subgroup = ball5 + 3 if husbmoreland == 0
+replace subgroup = (statpar - 1) * 3 + ball5
 
 graph twoway ///
 	(scatter meanballs subgroup if ball5 == 0, msymbol(circle)) ///
 	(scatter meanballs subgroup if ball5 == 1, msymbol(triangle)) ///
  	(rcap hiballs loballs subgroup), ///
 	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
-	xtitle(Relative Status)  xlabel( 0.5 "Family husband more land" 3.5 "Other", noticks) xscale(range(-0.5 4.5))  ///
+	xtitle(Partner whose family had more land)  xlabel( 0.5 "Wife" 3.5 "Same" 6.5 "Husband", noticks) xscale(range(-0.5 7.5))  ///
 	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
 graph export "$figloc/meancompare2.png", as(png) replace
 
 
 
 *reshape and store estimate
-keep ball5  meanballs husbmoreland n
-reshape wide meanballs n, i(husbmoreland) j(ball5)
-gen var = "husbmoreland" //no underscore because latex doesn't like it
-reshape wide meanballs0 meanballs1 n0 n1, i(var) j(husbmoreland)
+keep ball5  meanballs statpar n sdballs
+ren statpar group
+la val group
+
+reshape wide meanballs n sdballs, i(group) j(ball5)
+gen key = "statpar" + string(group) //no underscore because latex doesn't like it
+
+
+//reshape wide meanballs0 meanballs1 n0 n1, i(var) j(statpar)
 append using `diffs'
 save `diffs', replace
+
 restore
 
 **********************************************************
 **Figure 4: Mean Comparison 2: Bargaining**
 **********************************************************
 *marriage
+
+
+
 preserve
-drop if riskheadcloser == .
-collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 riskheadcloser)
+drop if riskcouple == .
+
+
+collapse (mean) meanballs= numballs (sd) sdballs=numballs (count) n=numballs, by(ball5 barg)
 generate hiballs = meanballs + invttail(n-1,0.025)*(sdballs / sqrt(n))
 generate loballs = meanballs - invttail(n-1,0.025)*(sdballs / sqrt(n))
 
 generate subgroup = .
-replace subgroup = ball5 if riskheadcloser == 1
-replace subgroup = ball5 + 3 if riskheadcloser == 0
+replace subgroup = (barg - 1) * 3 + ball5
 
 graph twoway ///
 	(scatter meanballs subgroup if ball5 == 0, msymbol(circle)) ///
 	(scatter meanballs subgroup if ball5 == 1, msymbol(triangle)) ///
  	(rcap hiballs loballs subgroup), ///
 	ytitle(Number of reported issues) ylabel(0(0.5)3) ///
-	xtitle(Bargaining)  xlabel( 0.5 "Couple closer to head" 3.5 "Other", noticks) xscale(range(-0.5 4.5))  ///
+	xtitle(Bargaining: couple decision closer to)  xlabel( 0.5 "Wife" 3.5 "Same" 6.5 "Husband", noticks) xscale(range(-0.5 7.5))  ///
 	legend(order(1 "Control" 2 "Treatment" 2 "95% CI"))
 graph export "$figloc/meancompare3.png", as(png) replace
 
 
-
 *reshape and store estimate
-keep ball5  meanballs riskheadcloser n
-reshape wide meanballs n, i(riskheadcloser) j(ball5)
-gen var = "riskheadcloser" //no underscore because latex doesn't like it
-reshape wide meanballs0 meanballs1 n0 n1, i(var) j(riskheadcloser)
+keep ball5  meanballs barg n sdballs
+ren barg group
+la val group
+
+reshape wide meanballs n sdballs, i(group) j(ball5)
+gen key = "barg" + string(group) //no underscore because latex doesn't like it
+
 append using `diffs'
 
 
 
-
 *create CSV file from which LaTeX can read estimates of incidence
-gen incidence0 = meanballs10 - meanballs00
-gen incidence1 = meanballs11 - meanballs01
-gen diff = incidence1 - incidence0
-gen percent = diff * 100
 
-foreach var of varlist incidence* diff{
-	gen `var'_pct = `var' * 100
+gen p = .
+forvalues i = 1/`=_N'{
+	ttesti `=n0[`i']' `=meanballs0[`i']' `=sdballs0[`i']' `=n1[`i']' `=meanballs1[`i']' `=sdballs1[`i']', unequal
+	replace p = r(p) in `i'
+
 }
 
+gen n = n0 + n1
+gen incidence = meanballs1 - meanballs0
+gen incidence_pct = incidence * 100
 
-format meanballs* incidence* diff %9.2f
+format meanballs* incidence %9.2f
 format *_pct %9.0f
+format p %9.3f
+
+
 
 export delimited using "$tableloc\incidence.csv", datafmt replace
 
@@ -386,7 +411,10 @@ restore
 
 
 
+kict ls numballs husbmoreland riskspousecloser riskheadcloser  terrfe*, condition(ball5) nnonkey(4) estimator(linear)
 
+
+/*
 *base estimate
 kict ls numballs, condition(ball5) nnonkey(4) estimator(linear)
 kict ls numballs husbmoreland wifemoreland  terrfe*, condition(ball5) nnonkey(4) estimator(linear)
