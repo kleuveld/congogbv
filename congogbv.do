@@ -71,7 +71,7 @@ replace bargresult = 1 if bargspousecloser
 replace bargresult = 3 if bargheadcloser
 
 *keep relevant vars
-keep barg* KEY vill_id numballs ball5 resp_id terrfe_* riskspouse riskhead barg*
+keep barg* KEY vill_id grp_id hh_id numballs ball5 resp_id terrfe_* riskspouse riskhead barg*
 
 tempfile main 
 save `main'
@@ -177,6 +177,49 @@ egen martrad = anymatch(a_marrmarr_type?), values(4)
 
 
 
+*save endline
+tempfile endline
+save `endline'
+
+use "$dataloc\baseline\HH_Base_sorted.dta" , clear
+tempfile nosave2
+save `nosave2'
+
+
+
+*victimization
+gen victimproplost = m7_1_1 == 1
+la var victimproplost "Conflict: property lost"
+
+
+gen victimhurt = m7_1_3 == 1
+la var victimhurt "Conflict: HH member hurt"
+
+gen victimkidnap = m7_1_5 == 1
+la var victimkidnap "Conflict: HH member kidnapped"
+gen victimfamlost = m7_1_7 == 1
+la var victimfamlost "Conflict: HH member killed"
+
+gen victimany = m7_1_1 ==1 | m7_1_3 == 1 | m7_1_5 == 1 | m7_1_7 == 1
+la var victimany "Conflict: any"
+
+ren group_id grp_id
+keep vill_id grp_id hh_id victim*
+tempfile baseline
+save `baseline'
+
+
+
+use `endline'
+duplicates tag vill_id grp_id hh_id, gen(dup)
+
+duplicates drop vill_id grp_id hh_id, force
+merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge)
+
+la def yesno 0 "No" 1 "Yes"
+la val victim* yesno
+
+
 
 
 **************************
@@ -185,20 +228,44 @@ egen martrad = anymatch(a_marrmarr_type?), values(4)
 balance_table numballs husbmoreland wifemoreland riskspouse riskhead bargheadcloser bargspousecloser terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
 	sheet(sheet1) treatment(ball5) cluster(vill_id)
 
-*****************************
-**Figure 1: Mean Comparison**
-*****************************
+**********************************************
+**Mean Comparisons Overall**
+**********************************************
 tempfile diffs
-set trace on
-set tracedepth 1
-meandiffs numballs using "$figloc/meancompare1.png", treatment(ball5) coeffs(`diffs') // by(statpar)
-meandiffs numballs using "$figloc/meancompare2.png", treatment(ball5)  by(statpar) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare3.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_overall.png", treatment(ball5) coeffs(`diffs')
 
+**********************************************
+**Mean Comparisons Marriage**
+**********************************************
+meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(statpar) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
+
+
+
+**********************************************
+**Figure 2: Mean Comparisons across Conflict**
+**********************************************
+meandiffs numballs using "$figloc/meancompare_conf1.png", treatment(ball5)  by(victimproplost) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimhurt) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(victimkidnap) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf4.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf5.png", treatment(ball5)  by(victimany) coeffs(`diffs') append
+
+
+
+
+**********************************************
+**Figures 1: Mean Comparisons across SES**
+**********************************************
+
+*export to CSV
 preserve
 use `diffs', clear
 export delimited using "$tableloc\incidence.csv", datafmt replace
 restore
+
+
+
 
 
 
