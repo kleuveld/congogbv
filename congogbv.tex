@@ -80,18 +80,18 @@ The issue of GBV is complicated. While the armed conflict is universally seen as
 Antecedents of this paper include (perhaps weave this in with contribution):
 \begin{itemize}
 	\item Conflict literature on Congo:
-	\item GBV literature:
+	\item GBV literature
 %\cite{Hilhorst2018}:  question whether the reponse of the international community should be labelled a hype.
 %\cite{Quattrochi2019}: "Empowerment programs often target women who have survived sexual and gender-basedviolence (SGBV), with the justification that these women may develop disempowered beliefs as a copingmechanism, or face greater barriers to, or derive greater benefits from, the adoption of empowered beliefs andpreferences."
 %\cite{Porter2019}: argues that rape as a weapon of war is not helpful. It is embedded in existing mores and customs. 
 %close to my paper: \cite{Stark2017} assess disclosement bias.
-	\item List experiment literature: 
+%	\item List experiment literature: 
 %Classic example: The 1991 National Race and Politics Survey (\cite{Sniderman1991}). Used to measure racial prejudice. Recently, more of of them have been done. \cite{Imai2011}: introduction of new estimator. \cite{Blair2012}: overview of literature. \cite{Tsai2019}: implement methods in Stata.
 \end{itemize}
 
 \paragraph{}
 %Contribution
-While from the literature it is obvious that GBV is endemic in Eastern Congo, it is difficult to get quantitative evidence on the problem. The area is poorly accessible to research teams, and women may be unwilling to divulge information on victimization due to the stigma involved. We collected data in the region in 2012, as part of the evaluation of Dutch development efforts. The questionnaires included a section on gender. As part of this section, a list experiment was administered.
+While from the literature it is obvious that GBV is endemic in Eastern Congo, it is difficult to get quantitative evidence on the problem. The area is poorly accessible to research teams, and women may be unwilling to divulge information on victimization due to the stigma involved. We collected data in the region in 2014, as part of the evaluation of Dutch development efforts. The questionnaire included a section on gender. As part of this section, a list experiment was administered.
 
 \paragraph{}
 %Road Map
@@ -102,7 +102,7 @@ While from the literature it is obvious that GBV is endemic in Eastern Congo, it
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{}
 %to do in this section: desctibe N.varlabels
-The data for this study was collected as part of an evaluation of Dutch development aid in 2012. This evaluation concerned projects ran by three NGOs in the territories of Fizi and Uvira in South Kivu province. A household survey formed part of this evaluation. The final module of this survey dealt with gender issues, and was administered to an adult female in the household.  To collect data on the sensitive topic of GBV, this module contained a list experiment. For this, the respondents were randomly divided into two groups. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Control) was presented with the following issues:
+The data for this study was collected as part of an evaluation of Dutch development aid in 2014. This evaluation concerned projects ran by three NGOs in the territories of Fizi and Uvira in South Kivu province. A household survey formed part of this evaluation. The final module of this survey dealt with gender issues, and was administered to an adult female in the household.  To collect data on the sensitive topic of GBV, this module contained a list experiment. For this, the respondents were randomly divided into two groups. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Control) was presented with the following issues:
 \begin{itemize}
 	\item Lack of food;
 	\item Lack of money;
@@ -117,8 +117,7 @@ The data for this study was collected as part of an evaluation of Dutch developm
  In addition to the list experiment, I conducted a household bargaining game based on \cite{Martinsson2009}. In this, couples choose between a set of six risky lotteries, based on \cite{Holt2002}; first individually, then jointly. The lotteries presented range from fairly low-risk ones -- where low and high pay-out are nearly equal -- to high-risk one, with a large difference between high and low pay-outs. By comparing the couple decision with the individual decision, I obtain an indicator for barganing power. Specifically, I divide the women in three groups: where the joint decision is closer to the woman's decision, where the joint decision is equally far from both decisions, and where the joint decision is closest to the husband's.
 
 \paragraph{}
-
-%Table \ref{table:balance} presents descriptive statistics of the sample. Our sample consists of 508 married women. Their a
+Table \ref{tab:balance} presents descriptive statistics of the sample. Our sample consists of 508 married women. Their a
 
 %consider using csvsimple or DataTools to import this,
 \input{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/balance.tex"}
@@ -149,7 +148,7 @@ The data for this study was collected as part of an evaluation of Dutch developm
 \newcommand{\incid}[2]{\csvreader[filter strcmp={\key}{#1}]{\tableloc/incidence.csv}{key=\key,#2=\inc}{\inc}}
 
 \paragraph{}
-First, I compare the number of issues faced by the two groups of women. The difference between the group who were presented with only four issues (the control group) and the group who were presented four issues plus GBV (the treatment group) is my estimate of the incidence of GBV. The average number of issues reported by the control group is \incid{overall}{meanballs0}, while the number if issues reported by the treatment group is \incid{overall}{meanballs1} (see Figure \ref{fig:meancompare1}). The difference of \incid{overall}{incidence} implies that the incidence of GBV is \incid{overall}{incidence_pct}\% in this sample. The p-value for a t-test on this difference is \incid{overall}{p}. This incidence is slightly higher than some estimates \citep{Quattrochi2019}.
+First, I compare the number of issues faced by the two groups of women. The difference between the group who were presented with only four issues (the control group) and the group who were presented four issues plus GBV (the treatment group) is my estimate of the incidence of GBV. The average number of issues reported by the control group is \incid{overall1}{mean0}, while the number if issues reported by the treatment group is \incid{overall1}{mean1} (see Figure \ref{fig:meancompare1}). The difference of \incid{overall1}{incidence} implies that the incidence of GBV is \incid{overall1}{incidence_pct}\% in this sample. The p-value for a t-test on this difference is \incid{overall1}{p}. This incidence is slightly higher than some estimates \citep{Quattrochi2019}.
 
 \begin{figure}
   \includegraphics[width=0.8\linewidth]{\figureloc/meancompare1.png}
@@ -158,7 +157,7 @@ First, I compare the number of issues faced by the two groups of women. The diff
 \end{figure}
 
 \paragraph{}
-I then compare the number of issues faced in several sub-groups. First, I compare across relative status of the partners at the time of marriage. For this, I use the land held by the partners' families as proxy for status (figure \ref{fig:meancompare2}). Given the importance of agriculture, and conversely land, in the study area, this is a reasonably proxy. In the group where the wife had more status before the marriage (n=\incid{statpar1}{n}), the average number of issues was \incid{statpar1}{meanballs0} for the control group, and \incid{statpar1}{meanballs1} for the treatment group. The difference in means implies a rate of GBV of \incid{statpar1}{incidence_pct} (p-value of a t-test on the means = \incid{statpar1}{p}). In the group where the partners were of equal standing (n=\incid{statpar2}{n}), the average number of issues was \incid{statpar2}{meanballs0} for the control group, and \incid{statpar2}{meanballs1} for the treatment group. This implies a rate of GBV of \incid{statpar2}{incidence_pct} (p = \incid{statpar2}{p}). In the group where the husband had more status (n=\incid{statpar3}{n}), the average number of issues was \incid{statpar3}{meanballs0} for the control group, and \incid{statpar3}{meanballs1} for the treatment group. This implies a rate of GBV of \incid{statpar3}{incidence_pct} (p = \incid{statpar3}{p}).
+I then compare the number of issues faced in several sub-groups. First, I compare across relative status of the partners at the time of marriage. For this, I use the land held by the partners' families as proxy for status (figure \ref{fig:meancompare2}). Given the importance of agriculture, and conversely land, in the study area, this is a reasonably proxy. In the group where the wife had more status before the marriage (n=\incid{statpar1}{n}), the average number of issues was \incid{statpar1}{mean0} for the control group, and \incid{statpar1}{mean1} for the treatment group. The difference in means implies a rate of GBV of \incid{statpar1}{incidence_pct} (p-value of a t-test on the means = \incid{statpar1}{p}). In the group where the partners were of equal standing (n=\incid{statpar2}{n}), the average number of issues was \incid{statpar2}{mean0} for the control group, and \incid{statpar2}{mean1} for the treatment group. This implies a rate of GBV of \incid{statpar2}{incidence_pct} (p = \incid{statpar2}{p}). In the group where the husband had more status (n=\incid{statpar3}{n}), the average number of issues was \incid{statpar3}{mean0} for the control group, and \incid{statpar3}{mean1} for the treatment group. This implies a rate of GBV of \incid{statpar3}{incidence_pct} (p = \incid{statpar3}{p}).
 
 \begin{figure}
   \includegraphics[width=0.8\linewidth]{\figureloc/meancompare2.png}
@@ -167,7 +166,7 @@ I then compare the number of issues faced in several sub-groups. First, I compar
 \end{figure}
 
 \paragraph{}
-Second, I compare across the results of a bargaining game played with couples. Couples first took a decision individually, and then jointly. I then create three groups, based on whether the joint decision is closer to the husband's decision, to the wife's, or if the distance is equal. See figure \ref{fig:meancompare3}. In the group where the couple decision was closest to the wife's decision (n=\incid{barg1}{n}), the average number of issues was \incid{barg1}{meanballs0} for the control group, and \incid{barg1}{meanballs1} for the treatment group. This implies a rate of GBV of \incid{barg1}{incidence_pct}\% (p = \incid{barg1}{p}). In the group where the couple decision was equally close to the husband and wife (n=\incid{barg2}{n}), the average number of issues was \incid{barg2}{meanballs0} for the control group, and \incid{barg2}{meanballs1} for the treatment group. This implies a rate of GBV of \incid{barg2}{incidence_pct}\% (p = \incid{barg2}{p}). In the group where the couple decision was closest to the husband's (n=\incid{barg3}{n}), the average number of issues was \incid{barg3}{meanballs0} for the control group, and \incid{barg3}{meanballs1} for the treatment group. This implies a rate of GBV of \incid{barg3}{incidence_pct}\% (p = \incid{barg3}{p}).
+Second, I compare across the results of a bargaining game played with couples. Couples first took a decision individually, and then jointly. I then create three groups, based on whether the joint decision is closer to the husband's decision, to the wife's, or if the distance is equal. See figure \ref{fig:meancompare3}. In the group where the couple decision was closest to the wife's decision (n=\incid{barg1}{n}), the average number of issues was \incid{barg1}{mean0} for the control group, and \incid{barg1}{mean1} for the treatment group. This implies a rate of GBV of \incid{barg1}{incidence_pct}\% (p = \incid{barg1}{p}). In the group where the couple decision was equally close to the husband and wife (n=\incid{barg2}{n}), the average number of issues was \incid{barg2}{mean0} for the control group, and \incid{barg2}{mean1} for the treatment group. This implies a rate of GBV of \incid{barg2}{incidence_pct}\% (p = \incid{barg2}{p}). In the group where the couple decision was closest to the husband's (n=\incid{barg3}{n}), the average number of issues was \incid{barg3}{mean0} for the control group, and \incid{barg3}{mean1} for the treatment group. This implies a rate of GBV of \incid{barg3}{incidence_pct}\% (p = \incid{barg3}{p}).
 
 \begin{figure}
   \includegraphics[width=0.8\linewidth]{\figureloc/meancompare3.png}
