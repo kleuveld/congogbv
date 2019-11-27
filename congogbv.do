@@ -70,8 +70,38 @@ la val bargresult bargresult
 replace bargresult = 1 if bargspousecloser
 replace bargresult = 3 if bargheadcloser
 
+*aid
+egen aidwomen = anymatch(hh_aid?), values(5)
+gen aidany = hh_aid1 > 0 if !missing(hh_aid1)
+
+la var aidwomen "Household was beneficiary of woman's rights project"
+la var aidany "Household was beneficiary of a development project"
+la val aidany aidwomen yes_no
+
+
+
+*livestock
+egen livestockcow = anymatch(hh_livestock?), values(1)
+la var livestockcow "Household owns cow(s)"
+
+egen livestockgoat = anymatch(hh_livestock?), values(2)
+la var livestockgoat "Household owns goat(s)"
+
+egen livestockchicken =  anymatch(hh_livestock?), values(3)
+la var livestockchicken "Household owns chicken(s)"
+
+egen livestockpigs =  anymatch(hh_livestock?), values(4)
+la var livestockpig "Household owns pigs(s)"
+
+gen livestockany = hh_livestock1 > 0 if !missing(hh_livestock1)
+la var livestockany "Household owns livestock"
+
+la val livestock* yes_no
+
 *keep relevant vars
-keep barg* KEY vill_id grp_id hh_id numballs ball5 resp_id terrfe_* riskspouse riskhead barg*
+keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
+			numballs ball5 /// list experiment
+			barg* riskspouse riskhead barg* hh_c_roofmat aidany aidwomen livestock* //contrib*
 
 tempfile main 
 save `main'
@@ -93,11 +123,22 @@ keep KEY PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts
 tempfile spouses
 save `spouses'
 
+*occupations
+use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-a_-occs.dta", clear
+collapse (sum) contribcash = occ_cash contribinkind = occ_inkind, by(PARENT_KEY)
+ren PARENT_KEY KEY
+tempfile occupations
+save `occupations'
+
 *roster
 use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", clear
 
 *merge in spouse data
 merge 1:1 PARENT_KEY linenum using `spouses', update gen(spousemerge)
+
+*merge in occupation data 
+merge 1:1 KEY using `occupations', keep(master match) gen(occmerge)
+
 *ids
 ren linenum resp_id
 ren KEY ROSTER_KEY
@@ -110,6 +151,10 @@ save `roster'
 use `main'
 merge 1:1 KEY resp_id using `roster', keep(match) gen(rostermerge)
 
+save `main', replace
+
+
+
 
 *final cleaning
 drop if a_gender == 1
@@ -120,14 +165,10 @@ replace statpar = . if statpar > 3
 la var statpar "Land holdings of families before marriage"
 la def statpar 1 "Wife's had more land" 2 "Equal" 3 "Husband's had more land"
 
-
 gen wifemoreland = statpar == 1 if !missing(statpar)
 la var wifemoreland "Family wife had more land"
 gen husbmoreland = statpar == 3 if !missing(statpar)
 la var husbmoreland "Family husband had more land"
-
-
-
 
 *dots and gifts
 replace a_relhead = 1 if resp_id == 1
@@ -145,8 +186,6 @@ foreach i of numlist 1/3{
 	replace marrwiveprov`i' = a_marrheadprov`i' if a_relhead == 2
 	replace marrhusbprov`i' = a_marrspouseprov`i' if a_relhead == 2
 }
-
-
 
 *value
 foreach item in dot gifts{
@@ -176,21 +215,33 @@ egen marreli = anymatch(a_marrmarr_type?), values(3)
 egen martrad = anymatch(a_marrmarr_type?), values(4)
 
 
+*contribution cash
+gen contribcashyn = contribcash >= 50 if !missing(contribcash)
+la var contribcashyn "Wife contributes more than half of cash income."
+la val contribcashyn yes_no
 
+gen contribinkindyn = contribinkind >= 50 if !missing(contribinkind)
+la var contribinkindyn "Wife contributes more than half of in-kind income."
+la val contribinkindyn yes_no
+
+*roof types
+tab hh_c_roofmat
+gen tinroof = hh_c_roofmat == 1 if !missing(hh_c_roofmat)
+la var tinroof "Household has a tin roof"
+la val tinroof yes_no
 *save endline
-tempfile endline
-save `endline'
+save `main', replace
 
+*********************
+**Baseline Conflict**
+*********************
 use "$dataloc\baseline\HH_Base_sorted.dta" , clear
 tempfile nosave2
 save `nosave2'
 
-
-
 *victimization
 gen victimproplost = m7_1_1 == 1
 la var victimproplost "Conflict: property lost"
-
 
 gen victimhurt = m7_1_3 == 1
 la var victimhurt "Conflict: HH member hurt"
@@ -209,8 +260,7 @@ tempfile baseline
 save `baseline'
 
 
-
-use `endline'
+use `main'
 duplicates tag vill_id grp_id hh_id, gen(dup)
 
 duplicates drop vill_id grp_id hh_id, force
@@ -219,13 +269,11 @@ merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge
 la def yesno 0 "No" 1 "Yes"
 la val victim* yesno
 
-
-
-
 **************************
 **Table 1: Balance Table**
 **************************
-balance_table numballs husbmoreland wifemoreland riskspouse riskhead bargheadcloser bargspousecloser terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
+balance_table numballs husbmoreland wifemoreland riskspouse riskhead bargheadcloser bargspousecloser victimproplost victimfamlost ///
+contribcashyn contribinkindyn tinroof livestockany terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
 	sheet(sheet1) treatment(ball5) cluster(vill_id)
 
 **********************************************
@@ -239,24 +287,20 @@ meandiffs numballs using "$figloc/meancompare_overall.png", treatment(ball5) coe
 **********************************************
 meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(statpar) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
-
-
+meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
 
 **********************************************
-**Figure 2: Mean Comparisons across Conflict**
+**Mean Comparisons across Conflict**
 **********************************************
 meandiffs numballs using "$figloc/meancompare_conf1.png", treatment(ball5)  by(victimproplost) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimhurt) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(victimkidnap) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf4.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf5.png", treatment(ball5)  by(victimany) coeffs(`diffs') append
-
-
-
+meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append
 
 **********************************************
-**Figures 1: Mean Comparisons across SES**
+**Mean Comparisons across SES**
 **********************************************
+meandiffs numballs using "$figloc/meancompare_ses1.png", treatment(ball5)  by(tinroof) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_ses2.png", treatment(ball5)  by(livestockany) coeffs(`diffs') append
+
 
 *export to CSV
 preserve
@@ -265,20 +309,28 @@ export delimited using "$tableloc\incidence.csv", datafmt replace
 restore
 
 
+**********************************************
+**Regression Analysis**
+**********************************************
+local using using "$tableloc\results_regression.tex"
+
+tempfile regs //"$tableloc\regs.csv"
+eststo l1: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", replace addlabel(reg,l1)  pval 
+eststo l2: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*  victimproplost victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", append addlabel(reg,l2)  pval
+eststo l3: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe* bargheadcloser, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", append addlabel(reg,l3)  pval
+
+eststo l4: kict ls numballs  husbmoreland bargheadcloser contribcashyn victimproplost victimfamlost tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", append addlabel(reg,l4)  pval
 
 
+esttab l? `using', replace ///
+	nomtitles keep(Delta:*)  se label ///
+	drop(terr*) ///
+	starlevels(* 0.10 ** 0.05 *** 0.01)
 
-
-kict ls numballs husbmoreland riskspousecloser riskheadcloser  terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-
-
-/*
-*base estimate
-kict ls numballs, condition(ball5) nnonkey(4) estimator(linear)
-kict ls numballs husbmoreland wifemoreland  terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-kict ls numballs husbmoreland riskspousecloser riskheadcloser  terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-
-
-kict ml numballs husbmoreland riskspousecloser riskheadcloser  terrfe*, condition(ball5) nnonkey(4) estimator(imai)
-
-//kict ml numballs a_age a_marrheadagemarr wifemoreland husbmoreland terrfe*, condition(ball5) nnonkey(4) estimator(imai)
+preserve
+use `regs', clear
+export delimited using "$tableloc\regs.csv", datafmt replace
