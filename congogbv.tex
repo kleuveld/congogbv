@@ -10,22 +10,24 @@
 \usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=3cm]{geometry}
 \usepackage[pdftex, hidelinks]{hyperref}
 \usepackage{graphicx}
-\usepackage{grffile}
 \usepackage{booktabs}
 \usepackage[blocks]{authblk} %for affil
 \usepackage{url}
 \usepackage{tabularx}
 \usepackage{csvsimple}
 \usepackage[nomessages]{fp}
+\usepackage{xcolor}
 \usepackage{enumitem}
 \setlist{noitemsep} % \setlist{nosep} to reove separation around lists as well
 
 
 %citation cheat sheet:
-	%\cite{key}					Jones et al. (1990)
+	%\ cite{key}				Jones et al. (1990)
+	% \citet{key1,key2}			Jones et al. (1990); Ladze (1986)
 	% \citet{key}				Jones et al. (1990)
 	% \citet*{key}				Jones, Baker, and Smith (1990)
 	% \citep{key}				(Jones et al. 1990)
+	% \citep{key1,key2}			(Jones et al. 1990; Ladze 1986)
 	% \citep*{key}				(Jones, Baker, and Smith 1990)
 	% \citep[p.~99]{key}		(Jones et al., 1990, p. 99)
 	% \citep[e.g.][]{key}		(e.g. Jones et al., 1990)
@@ -53,11 +55,14 @@
 
 
 
-\title{Sexual Violence in Eastern DRC}
-\subtitle{Exploratory evidence from a list experiment} %needs scrartcl
+\title{Sexual Violence, conflict and intra-household relations}
+\subtitle{Exploratory evidence from a list experiment in Eastern DR Congo} %needs scrartcl
 
 \maketitle
 
+\begin{center}
+\textcolor{red}{\Large VERY EARLY DRAFT!!!!}
+\end{center}
 %\begin{abstract}
 %Abstract to come
 %\end{abstract}
@@ -70,44 +75,30 @@
 \paragraph{}
 %Hook
 Eastern DR Congo has been called the "rape capital of the world". Much of this has been linked to the decades of violence that the region has seen over the past decades. Various armed groups have used Gender Based Violence (GBV) as a weapon against the population. This has put the issue on the radar of the international community. Today, most of the NGOs operating in the region focus on GBV, either exclusively, or as part of broader programmes. The 2018 Nobel Peace prize was awarded to Dr. Denis Mukwege, for his work on victims of GBV at Bukavu's Panzi Hospital.
-
+%waarom is sexual violence bad? 
+%\cite{Post2002} argue the enormous cost of rape and sexual violence. Both tangible and intangible (US).
+%\cite{Peterson2018} estimate productivity losses due to sexual violence (US)
+%insiration from John?
 \paragraph{}
 %Research question
-The issue of GBV is complicated. While the armed conflict is universally seen as a large driver of GBV, customs and tradition leave Congolese women in a powerless position. This paper aims to provide quantitative evidence on the correlates of sexual violence.
-
+This paper aims to answer the following question: what are the characteristics of victims of GBV in Eastern Congo? In particular, I consider conflict victimization, intra-household dynamics, and poverty as potential characteristics.
 \paragraph{}
 %Antecedents
-Antecedents of this paper include (perhaps weave this in with contribution):
-
-GBV in Congo: \\
-\textbf{The role of conflict in GBV}: \cite{Porter2019} argues that conflict shapes what behaviour is acceptable. In this way, conflict may have an effect on the degree to which women experience GBV. \\%weakly doe.
-
-\cite{Autesserre2012a} argues that this focus on the role of sexual violence in the conflict in the DRC has been counter-productive, as it has distracted attention from other pressing problems the country faces.	\cite{Hilhorst2018} agree that the focus on the role of conflict in GBV (rape as a weapon of war) constituted a hype. However, they do note the local aid landscape has evolved from treating conflict victims, to improving the general conditions of women, even in peacetime, while the international narrative has remained focus on rape. \\
-	%citeer ook: 
-	%Kirby, P. (2015) ‘Ending sexual violence in conflict: the preventing sexual violence initiative and its critics’. International Affairs. 91(3). pp. 457–472.
-	%Bouta, T., G. Frerks, and I. Bannon (2005) Gender, Conflict and Development. The World Bank, Washington, DC
-	%Peterman, A., T. Palermo, and C. Bredenkamp (2011) ‘Estimates and determinants of sexual violence against women in the Democratic Republic of Congo’. American Journal of Public Health. 101(6).pp. 1060–1067.
-	%Maria Eriksson Baaz and Maria Stern, ‘The complexity of violence: a critical analysis of sexual violence in the Democratic Republic of Congo (DRC)’ (SIDA and the Nordic Africa Institute, Stockholm, 2010), pp. 15–16 and 59
-\textbf{Other determinants of GBV}: In a study where 87 women and girls in South Kivu were interviewed using Audio Assisted Self-Interviews (ACASI) techniques, \citet{Stark2017} find that 14\% of respondents reported having been victim of sexual coercion. Half of these were perpetrated by the respondents' husbands or boyfriends. Crucially, in complementary group discussions, respondents did not bring up intimate partners at all. This points at the difficulties of collecting accurate data about GBV. \\
-%include papers cited by stark on the role of intimate partners in conflict settings.
-	
-\textbf{Female empowerment in Congo}: In Congolese society, women hold an inferior position. For example, views that men have the right to physically abuse their wife if she is disobedient are broadly held \citep{Quattrochi2019}. \\
-%add papers cited by Johny boy.
-
-%\cite{Hilhorst2018}:  question whether the reponse of the international community should be labelled a hype.
-%\cite{Quattrochi2019}: "Empowerment programs often target women who have survived sexual and gender-basedviolence (SGBV), with the justification that these women may develop disempowered beliefs as a copingmechanism, or face greater barriers to, or derive greater benefits from, the adoption of empowered beliefs andpreferences."
-%\cite{Porter2019}: argues that rape as a weapon of war is not helpful. It is embedded in existing mores and customs. 
-%close to my paper: \cite{Stark2017} assess disclosement bias.
-%	\item List experiment literature: 
-%Classic example: The 1991 National Race and Politics Survey (\cite{Sniderman1991}). Used to measure racial prejudice. Recently, more of of them have been done. \cite{Imai2011}: introduction of new estimator. \cite{Blair2012}: overview of literature. \cite{Tsai2019}: implement methods in Stata.
-
-
+While estimates for the incidence of GBV in DR Congo vary, they are invariably high, ranging from 15 to 40\% \citep{Johnson2010,Peterman2011}. A frequently cited driver for this high rate, is the conflict that has persisted in the country for the past decades. \cite{Johnson2010} carried out a large-scale survey in Eastern DRC to investigate incidence and perpetrators of GBV. They find that the majority of sexual violence reported in a large-scale survey was conflict-related; of female victims of sexual violence, 74.3\% reported being victim to conflict-related sexual violence. It is therefore not surprising that the topic of GBV in Congo has often been analysed within the context of violence \cite{Baaz2013}. Likewise, the aspect of the conflict that has received the most world-wide media attention has been GBV \cite{Autesserre2012a}.  
+%Kirby, P. (2015) ‘Ending sexual violence in conflict: the preventing sexual violence initiative and its critics’. International Affairs. 91(3). pp. 457–472.
+%Bouta, T., G. Frerks, and I. Bannon (2005) Gender, Conflict and Development. The World Bank, Washington, DC
+\paragraph{}
+This view of the central role of conflict in sexual violence has come under increasing scrutiny. This focus on the relationship between sexual violence and conflict has been counter-productive, as it has distracted attention from other pressing problems the country faces \citep{Autesserre2012a, Hilhorst2018,Porter2019}. Based on DHS data, \cite{Peterman2011} find that Intimate Partner violence is a large contributor to the incidence of Sexual Violence in Congo. This has fostered an increased awareness in the role of empowerment of women in preventing GBV in the first place \cite{Hilhorst2018}. However, it is clear that to this day, women hold a precarious position in Congolese society. For example, views that men have the right to physically abuse their wife if she is disobedient are broadly held \citep{Quattrochi2019}.
+\paragraph{}
+\citet{Stark2017} provide a possible explanation why some of the literature see the conflict as a main driver of GBV, while others see civilian-perpetrated GBV as the larger issue. In a study where 87 women and girls in South Kivu were interviewed using Audio Assisted Self-Interviews (ACASI) techniques,they find that 14\% of respondents reported having been victim of sexual coercion. Half of these were perpetrated by the respondents' husbands or boyfriends. Crucially, in complementary group discussions, respondents did not bring up intimate partners at all. This points at the difficulties of collecting accurate data about GBV, and the importance of data collection methodologies. 
 \paragraph{}
 %Contribution
-While from the literature it is obvious that GBV is endemic in Eastern Congo, it is difficult to get quantitative evidence on the problem. The area is poorly accessible to research teams, and women may be unwilling to divulge information on victimization due to the stigma involved. We collected data in the region in 2014, as part of the evaluation of Dutch development efforts. The questionnaire included a section on gender. As part of this section, a list experiment was administered.
-
+This paper contributes to the empirical evidence base on the incidence of GBV in Eastern Congo using List Experiments. List Experiments remove the bias in answering sensitive question, by removing the possibility of the researcher to view individual answers. Group-level analysis is still possible, to provide estimates of correlates of GBV. This does come at a cost: since the field staff did not know victimization status of individual respondents, follow-up questions (e.g. on perpetrators) were impossible. However, combined with rich data from a household survey and behavioural experiments, collected in 2012 and 2014, the List Experiment allows for a rich characterization of victims of GBV. This data can be of tremendous usefulness in addressing and preventing GBV.
+%perhaps note that tia finds no predictors for GBV.
 \paragraph{}
+I find no correlation between victimization of GBV and victimization of the conflict. I do find a strong correlation between victimization of GBV and intra-household dynamics: the result from a bargaining game, and the pre-marriage relative status of the wife and husband. This early draft of the paper is structured as follows: first I describe the research setting and data. I then present the results from various analyses on the list experiments conducted. In the concluding remarks, I contextualize the findings and present policy implications.
 %Road Map
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
