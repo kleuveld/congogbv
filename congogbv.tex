@@ -102,9 +102,10 @@ I find no correlation between victimization of GBV and victimization of the conf
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{}
 %to do in this section: desctibe N.varlabels
-The data for this study was collected as part of an evaluation of Dutch development aid in 2014. This evaluation concerned projects ran by three NGOs in the territories of Fizi and Uvira in South Kivu province. A household survey formed part of this evaluation. Data was collected in 
+The main source of data for this study was collected as part of an evaluation of Dutch development aid in 2014 (with a baseline round in 2012). This evaluation concerned projects ran by three NGOs in the territories of Fizi and Uvira in South Kivu province. A household survey formed part of this evaluation. Data was collected among 902 households in 65 villages. The final module of this survey dealt with gender issues. To collect data on the sensitive topic of GBV, this module contained a list experiment. This list experiment was administered to the head of the household in female-headed households (n=150) or to the spouse of the head of the household (n=439). The total number of respondents to the list experiment is thus 589. This is lower than the overall survey n, as it was not possible to interview a woman for each household: either because the male head was divorced, single or a widower, because the spouse was unavailable, or because the spouse refused to participate.
 
-The final module of this survey dealt with gender issues, and was administered to an adult female in the household.  To collect data on the sensitive topic of GBV, this module contained a list experiment. For this, the respondents were randomly divided into two groups. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Control) was presented with the following issues:
+\paragraph{}
+For the list experiment, the respondents were randomly divided into two groups. I follow \cite{Imai2011} in calling these groups Treatment and Control. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Control) was presented with the following issues:
 \begin{itemize}
 	\item Lack of food;
 	\item Lack of money;
@@ -113,10 +114,30 @@ The final module of this survey dealt with gender issues, and was administered t
 \end{itemize}
 
 \paragraph{}
- Women in the second group (Treatment) were presented with the same four items, but a fifth item was added: Sexual Violence. While this means I cannot know who among our respondents was the victim of GBV, I can compare the means of the number of issues between the groups to arrive at an estimate of GBV. By comparing means between sub-samples, and by using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), I can find the correlates of GBV. 
+ Women in the second group (Treatment) were presented with the same four items, but a fifth item was added: Sexual Violence. The questionnaire was field tested prior to field work to ensure that respondents understood these concepts. While using a list experiment means I cannot know who among the respondents was the victim of GBV, I can compare the means of the number of issues between the groups to arrive at an estimate of SGBV. By comparing means between sub-samples, and by using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), I can find the correlates of SGBV. 
 
  \paragraph{}
- In addition to the list experiment, I conducted a household bargaining game based on \cite{Martinsson2009}. In this, couples choose between a set of six risky lotteries, based on \cite{Holt2002}; first individually, then jointly. The lotteries presented range from fairly low-risk ones -- where low and high pay-out are nearly equal -- to high-risk one, with a large difference between high and low pay-outs. By comparing the couple decision with the individual decision, I obtain an indicator for barganing power. Specifically, I divide the women in three groups: where the joint decision is closer to the woman's decision, where the joint decision is equally far from both decisions, and where the joint decision is closest to the husband's.
+ In addition to the list experiment, I conducted a household bargaining game modified \cite{Martinsson2009}. In this, couples choose between a set of six risky lotteries, based on \cite{Eckel2002}. The lotteries presented range from fairly low-risk ones -- where low and high pay-out are nearly equal -- to high-risk one, with a large difference between high and low pay-outs (see Table \ref{tab:bargaining} for details of the lotteries). The respondents first choose individually (without knowing their partner's choice), and then jointly. By comparing the couple decision with the individual decision, I obtain an indicator for barganing power. \cite{Martinsson2009} use a risk experiment based on \cite{Holt2002}, however, this is a more complicated experiment compared to Eckel and Grossman. This added complication may cause participants not fully understanding the procedure, leading to poor results \citep{Dave2010a}. Given the low numeracy of the subjects, I implemented the simpler of the two experiments. 
+
+\begin{table}
+	\centering
+	\caption{Bargaining game lotteries}
+	\label{tab:bargaining}
+	\begin{tabular}{l c c c c}
+	\hline
+	\# & Low & High & Expected & Risk aversion \\
+	\hline
+	1 & 4,000 CDF & 4,000 CDF & 4,000 CDF & Extremely risk-averse \\
+	2 & 3,600 CDF & 4,800 CDF & 4,200 CDF & Extremely risk-averse \\
+	3 & 3,200 CDF & 5,600 CDF & 4,400 CDF & Moderately risk-averse \\
+	4 & 2,800 CDF & 6,400 CDF & 4,600 CDF & Moderately risk-averse \\
+	5 & 2,400 CDF & 7,200 CDF & 4,800 CDF & Risk-neutral \\
+	6 & 1,400 CDF & 8,200 CDF & 4,800 CDF & Risk-loving \\
+	\end{tabular}
+\end{table}
+
+\paragraph{}
+Conflict victimization data is not available for the 2014 round of the survey. However, for 479, conflict data is available from the 2012 round of data collection. 
 
 \paragraph{}
 Table \ref{tab:balance} presents descriptive statistics of the sample. Our sample consists of 508 married women. Their a

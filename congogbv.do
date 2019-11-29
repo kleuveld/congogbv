@@ -26,8 +26,10 @@ tempfile nosave
 save `nosave'
 
 *list experiment split into two variables: chef de menage and epouse
-gen numballs = v283
-replace numballs = v327 if numballs == . 
+gen list_spouse = !missing(v327)
+gen list_head = !missing(v283)
+gen numballs = v283 //head
+replace numballs = v327 if numballs == .  //epouse
 la var numballs "Number of reported issues"
 
 gen ball5 = hh_grp_gendergender_eplist_conli == 5 if !missing(hh_grp_gendergender_eplist_conli)
@@ -100,7 +102,7 @@ la val livestock* yes_no
 
 *keep relevant vars
 keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
-			numballs ball5 /// list experiment
+			numballs ball5  list_spouse list_head /// list experiment
 			barg* riskspouse riskhead barg* hh_c_roofmat aidany aidwomen livestock* //contrib*
 
 tempfile main 
@@ -269,6 +271,7 @@ merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge
 la def yesno 0 "No" 1 "Yes"
 la val victim* yesno
 
+kaas
 **************************
 **Table 1: Balance Table**
 **************************
