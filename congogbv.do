@@ -48,6 +48,7 @@ tab territory, gen(terrfe_)
 drop terrfe_1
 
 
+
 *risk game 
 ren hh_grp_gendergender_eprisk_f riskspouse
 la var riskspouse "Bargaining: choice wife"
@@ -271,13 +272,13 @@ merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge
 la def yesno 0 "No" 1 "Yes"
 la val victim* yesno
 
-kaas
+
 **************************
 **Table 1: Balance Table**
 **************************
 balance_table numballs husbmoreland wifemoreland riskspouse riskhead bargheadcloser bargspousecloser victimproplost victimfamlost ///
 contribcashyn contribinkindyn tinroof livestockany terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
-	sheet(sheet1) treatment(ball5) cluster(vill_id)
+	rawcsv treatment(ball5) cluster(vill_id)
 
 **********************************************
 **Mean Comparisons Overall**

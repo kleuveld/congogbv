@@ -1,9 +1,8 @@
 
 capture program drop balance_table
-pause off
 program define balance_table
 	version  13
-	syntax varlist [if] using/, Treatment(varlist) Cluster(varlist) Sheet(string) [Title(string) Weight(varlist)]
+	syntax varlist [if] using/, Treatment(varlist) [Cluster(varlist)] [Sheet(string)] [Title(string) Weight(varlist)] [rawcsv]
 	preserve
 	if "`if'"!="" {
 		keep `if'
@@ -17,8 +16,12 @@ program define balance_table
 	}
 	**Create table
 	tempname memhold
+	tempname memhold_raw
+	tempname raw 
 	tempfile balance
-	qui postfile `memhold' str80 Variable N2 str12 MeanSD2 N1 str12 MeanSD1 N0 str12 MeanSD0 str12 diff using "`balance'", replace
+	tempfile balance_raw
+	qui postfile `memhold' str80 Variable Nall str12 MeanSDall N1 str12 MeanSD1 N0 str12 MeanSD0 str12 diff using "`balance'", replace
+	qui postfile `memhold_raw' str32 var str80 varlabel nall meanall sdall n1 mean1 sd1 n0 mean0 sd0 diff p using "`balance_raw'", replace
 	**Calculate statistics
 	foreach var of varlist `varlist' {
 		n di "test: start var loop `var'"
@@ -26,35 +29,24 @@ program define balance_table
 
 		 *calculate statistics for full sample
 		su `var' [aweight=`weight']
-		scalar N2 = `r(N)'
-		scalar Mean2 = `r(mean)'
-		scalar SD2 = round(`r(sd)',2)
+		scalar nall = `r(N)'
+		scalar meanall = `r(mean)'
+		scalar sdall = r(sd)
 
-		***Calculate statistics for upgraded
-		su `var' if `treatment'== 1 [aweight=`weight']
-
-		scalar N1 = `r(N)'
-		scalar Mean1 = `r(mean)'
-		scalar SD1 = round(`r(sd)',2)
-		
-		***Calculate statistics for non-upgraded
-		qui su `var' if `treatment'==0  [aweight=`weight']
-		scalar N0 = `r(N)'
-		scalar Mean0 = `r(mean)'
-		scalar SD0 = round(`r(sd)',2)
-
-		scalar diff = Mean1 - Mean0 
-
-		forvalues i = 0/2{
-			local Mean`i' = string(Mean`i',"%9.2f")
-			local SD`i' = "("+ string(SD`i',"%9.2f") + ")"
-
-			n di "`Mean`i''"
-			n di "`SD`i''"
+		*calculate statistics per treatment
+		forvalues i = 0/1{
+			su `var' if `treatment'== `i' [aweight=`weight']
+			scalar n`i' = `r(N)'
+			scalar mean`i' = `r(mean)'
+			scalar sd`i' = `r(sd)'
 		}
 
-		n di "test2"
-
+		foreach x in all 0 1{
+			
+			local mean`x'_f = string(mean`x',"%9.2f")
+			local sd`x'_f = "("+ string(sd`x',"%9.2f") + ")"
+		}
+		
 		**Calculate p-values with correction for clusters
 		local aweight "[aweight=`weight']"
 		local reg_weight "[aweight=`weight']"
@@ -62,24 +54,32 @@ program define balance_table
 	
 		regress `var' `treatment' `reg_weight', vce(cluster `cluster')
 		matrix table = r(table)
+		scalar diff = table[1,1]
 		scalar pvalue = table[4,1]
 
 		*calculate difference
-		local diff = string(diff,"%9.2f") + cond(pvalue < 0.1,"*","") + cond(pvalue < 0.05,"*","") + cond(pvalue < 0.01,"*","")
-		n di "`diff'"
-		pause
-		post `memhold' (Variable) (N2) ("`Mean2'") (N1) ("`Mean1'") (N0) ("`Mean0'") ("`diff'")
-		post `memhold' ("")       (.)  ("`SD2'")   (.)  ("`SD1'")   (.)  ("`SD0'")   ("")
+		local diff_f = string(diff,"%9.2f") + cond(pvalue < 0.1,"*","") + cond(pvalue < 0.05,"*","") + cond(pvalue < 0.01,"*","")
+		n di "`diff_f'"
+		
+		post `memhold' (Variable) (nall) ("`meanall_f'") (n1) ("`mean1_f'") (n0) ("`mean0_f'") ("`diff_f'")
+		post `memhold' ("")       (.)  ("`sdall_f'")   (.)  ("`sd1_f'")   (.)  ("`sd0_f'")   ("")
+		
+
+		post `memhold_raw' ("`var'") (Variable) (nall) (meanall) (sdall) (n1) (mean1) (sd1) (n0) (mean0) (sd0) (diff) (pvalue)
+
 		scalar drop _all
 		n di "test: end var loop `var'"
 		}
+
+
 	postclose `memhold'
+	postclose `memhold_raw'
 	**Export table
-	
 	use "`balance'", clear
-	forvalues i = 0/2{
-		la var N`i' "N"
-		la var MeanSD`i' "Mean"		
+	
+	foreach x in all 1 0{
+		la var N`x' "N"
+		la var MeanSD`x' "Mean"		
 	}
 	la var diff " "
 
@@ -97,7 +97,25 @@ program define balance_table
 		n di "c"
 		
 	}
-	
+	if regexm("`using'",".csv$")==1 {
+		n di "exporting csv"
+		export delimited using "`using'", datafmt replace
+	}
+
+	if length("`raw'") > 0{
+		n di "exporting rawcsv"
+		use "`balance_raw'", clear
+		format mean* sd* %9.2f
+		if regexm("`using'","(.*)\..*"){
+			local usingraw = regexs(1) 
+		}
+		di "`usingraw'"
+		export delimited using "`usingraw'.csv", datafmt replace
+	}
+
+	local using file.tex
+
+
 	restore
 end
 
