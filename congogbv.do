@@ -18,12 +18,28 @@ global gitloc C:\Users\Koen\Documents\GitHub
 *run helpers
 qui do "$gitloc\congogbv\congogbv_helpers.do"
 
-
-*Main
+********************************************************************************************
+**MAIN
+********************************************************************************************
 use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain.dta",clear
 
 tempfile nosave
 save `nosave'
+
+*drop IDs with errors
+drop if KEY == "uuid:a162f061-2dd8-4354-9d78-a854a3112c82" //21 1 9 : interviewer interviewed hh twice, keep second
+replace grp_id = 2 if KEY == "uuid:c0558804-97ac-48d6-ae11-aed32437da5e" //wrong group id entered,
+drop if KEY == "uuid:e2dacb86-d5f0-4047-8085-566f4f538331" //Supervisor fixed mistake by interviewer
+replace hh_id = 98 if KEY == "uuid:45d19b1b-d2c1-4655-838e-e45ed51bc5df" //interviewer interviewd wrong hh
+replace hh_id = 7 if KEY == "uuid:c1f787f6-528e-4969-a078-599cfadac202" //basded on lists
+replace hh_id = 99 if KEY == "uuid:7f823a73-32fa-4a07-a616-7ea61f2e5d34"
+
+*raw cleaning 
+replace hh_grp_gendergender_available1 = . if KEY == "uuid:fcf80486-1912-4a15-90ff-0e8d1ce0d2a5"
+replace hh_grp_gendergender_accept_cdm = 0 if KEY == "uuid:2d39dac9-60ea-449e-98d9-afe36bfe3e04"
+replace hh_grp_gendergender_accept_ep = 0 if KEY == "uuid:2d39dac9-60ea-449e-98d9-afe36bfe3e04"
+
+
 
 *list experiment split into two variables: chef de menage and epouse
 gen list_spouse = !missing(v327)
@@ -33,13 +49,13 @@ replace numballs = v327 if numballs == .  //epouse
 la var numballs "Number of reported issues"
 
 gen ball5 = hh_grp_gendergender_eplist_conli == 5 if !missing(hh_grp_gendergender_eplist_conli)
-replace ball5 = hh_grp_gendergender_cdmlist_cdml == 5 if ball5 == .
+replace ball5 = hh_grp_gendergender_cdmlist_cdml == 5 if ball5 == . & numballs != .
 la var ball5 "Treatment"
 la def treatment 0 "Control" 1 "Treatment"
 
 
 *id of respondent 
-ren hh_grp_gendergender_ep_who resp_id
+gen resp_id = hh_grp_gendergender_ep_who 
 replace resp_id = 1 if resp_id == . & numballs != . //chef de menage is always line 1
 
 
@@ -48,30 +64,81 @@ tab territory, gen(terrfe_)
 drop terrfe_1
 
 
-
 *risk game 
-ren hh_grp_gendergender_eprisk_f riskspouse
-la var riskspouse "Bargaining: choice wife"
-ren hh_grp_gendergender_cdmrisk_cdm riskhead
-la var riskhead "Barganing: choice husband"
+*get genders of head and spouse 
+gen linenum = 1
+ren KEY PARENT_KEY
+merge 1:1 PARENT_KEY linenum using "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", keepusing(a_gender a_marstat) keep(match) nogen
+ren a_gender genderhead
+ren a_marstat marstathead
+la var genderhead "Gender of HH Head"
+
+replace linenum =  hh_grp_gendergender_ep_who 
+merge 1:1 PARENT_KEY linenum using "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", keepusing(a_gender) keep(master match) nogen
+ren a_gender genderspouse
+ren  PARENT_KEY KEY
+
+la var genderspouse "Gender of Spouse"
+
+
+//ren hh_grp_gendergender_eprisk_f riskspouse
+gen riskwife = hh_grp_gendergender_eprisk_f if genderspouse == 2
+replace riskwife = hh_grp_gendergender_cdmrisk_cdm if genderhead == 2
+la var riskwife "Bargaining: choice wife"
+
+
+
+//ren hh_grp_gendergender_cdmrisk_cdm riskhead
+gen riskhusband = hh_grp_gendergender_cdmrisk_cdm if genderhead == 1
+replace riskhusband = hh_grp_gendergender_eprisk_f if genderspouse == 1
+la var riskhusband "Barganing: choice husband"
+
 ren hh_grp_gendergender_crisk_c riskcouple 
 la var riskcouple "Barganing: choice couple"
 
-gen bargspousediff = riskcouple - riskspouse  
-gen bargheaddiff = riskcouple - riskhead
+gen bargwifediff = riskcouple - riskwife  
+gen barghusbanddiff = riskcouple - riskhusband
 
-gen bargheadcloser = abs(bargspousediff) > abs(bargheaddiff) if !missing(riskcouple)
-gen bargspousecloser = abs(bargheaddiff) > abs(bargspousediff) if !missing(riskcouple)
+gen barghusbandcloser = abs(bargwifediff) > abs(barghusbanddiff) if !missing(riskcouple)
+gen bargwifecloser = abs(barghusbanddiff) > abs(bargwifediff) if !missing(riskcouple)
 
-la var bargheadcloser "Bargaining: closer to husband"
-la var bargspousecloser "Bargaining: closer to wife"
+la var barghusbandcloser "Bargaining: closer to husband"
+la var bargwifecloser "Bargaining: closer to wife"
 
 gen bargresult = 2
 la var bargresult "Bargaining result"
 la def bargresult 1 "Closest to wife" 2 "Equal distance" 3 "Closest to husband"
 la val bargresult bargresult
-replace bargresult = 1 if bargspousecloser
-replace bargresult = 3 if bargheadcloser
+replace bargresult = 1 if bargwifecloser
+replace bargresult = 3 if barghusbandcloser
+
+*available for rsik / refuse
+egen riskheadpresent = anymatch(hh_grp_gendergender_available?), values(1)
+la var riskheadpresent "Risk game: head present"
+egen riskspousepresent = anymatch(hh_grp_gendergender_available?), values(2)
+la var riskspousepresent "Risk game: spouse present"
+
+gen riskhusbandpresent = riskheadpresent if genderhead == 1
+replace riskhusbandpresent = riskspousepresent if genderspouse == 1
+la var riskhusbandpresent "Risk game: husband present"
+gen riskwifepresent = riskheadpresent if genderhead == 2
+replace riskwifepresent = riskspousepresent if genderspouse == 2
+la var riskwifepresent "Risk game: wife present"
+
+
+ren hh_grp_gendergender_accept_cdm riskheadconsent
+la var riskheadconsent "Risk game: head consents"
+ren hh_grp_gendergender_accept_ep riskspouseconsent //spouse accepts risk 
+la var riskspouseconsent "Risk game: spouse consents"
+
+
+gen riskhusbandconsent = riskheadconsent if genderhead == 1
+replace riskhusbandconsent = riskspouseconsent if genderspouse == 1
+la var riskhusbandconsent "Risk game: husband consents"
+gen riskwifeconsent = riskheadconsent if genderhead == 2
+replace riskwifeconsent = riskspouseconsent if genderspouse == 2
+la var riskwifeconsent "Risk game: wife consents"
+
 
 *aid
 egen aidwomen = anymatch(hh_aid?), values(5)
@@ -101,43 +168,71 @@ la var livestockany "Household owns livestock"
 
 la val livestock* yes_no
 
+*roof types
+tab hh_c_roofmat
+gen tinroof = hh_c_roofmat == 1 if !missing(hh_c_roofmat)
+la var tinroof "Household has a tin roof"
+la val tinroof yes_no
+
+
+*keep relevant obs
+//keep if !missing(numballs)
+
 *keep relevant vars
 keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
 			numballs ball5  list_spouse list_head /// list experiment
-			barg* riskspouse riskhead barg* hh_c_roofmat aidany aidwomen livestock* //contrib*
+			barg* riskwife riskhusband tinroof aidany aidwomen livestock* ///
+			genderhead marstathead ///
+			risk*present ris*consent riskspouseconsent
 
 tempfile main 
 save `main'
 
-
-*get data of spouses of heads
+***********************************************************************************************************
+**ROSTER: SPOUSES
+***********************************************************************************************************
 use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", clear
+
+*merge in main to tag spouses that played list experiment (list_* will not be missing)
+ren KEY KEY_ORG
+ren PARENT_KEY KEY
+ren linenum resp_id
+di _N
+merge m:1 KEY resp_id using `main', keepusing(list_*) keep(master match) 
+di _N
+ren KEY PARENT_KEY
+ren KEY_ORG KEY
+
 keep if a_relhead == 2
 
-*identify, and deal with, duplicates
-bys PARENT_KEY: gen linenum2 = _n
-egen numwives = max(linenum2)
-drop if linenum2 > 1
-drop linenum2
+*identify, and deal with, duplicates (ones who played are kept)
+bys PARENT_KEY (list_spouse): gen spousenum = _n
+bys PARENT_KEY: egen numwives = count(a_relhead)
+
+drop if spousenum > 1
 
 *save only relevant data
-replace linenum = 1
-keep KEY PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts
+gen linenum = 1
+keep PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts
 tempfile spouses
 save `spouses'
 
-*occupations
+***********************************************************************************************************
+**OCCUPATIONS
+***********************************************************************************************************
 use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-a_-occs.dta", clear
 collapse (sum) contribcash = occ_cash contribinkind = occ_inkind, by(PARENT_KEY)
 ren PARENT_KEY KEY
 tempfile occupations
 save `occupations'
 
-*roster
+***********************************************************************************************************
+**ROSTER
+***********************************************************************************************************
 use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", clear
 
 *merge in spouse data
-merge 1:1 PARENT_KEY linenum using `spouses', update gen(spousemerge)
+merge 1:1 PARENT_KEY linenum using `spouses', update gen(spousemerge) assert(master match_update)
 
 *merge in occupation data 
 merge 1:1 KEY using `occupations', keep(master match) gen(occmerge)
@@ -147,20 +242,6 @@ ren linenum resp_id
 ren KEY ROSTER_KEY
 ren PARENT_KEY KEY
 
-tempfile roster
-save `roster'
-
-*merge dat scheiss
-use `main'
-merge 1:1 KEY resp_id using `roster', keep(match) gen(rostermerge)
-
-save `main', replace
-
-
-
-
-*final cleaning
-drop if a_gender == 1
 
 *status of parents
 ren a_marrnonhh_statpar statpar
@@ -211,29 +292,49 @@ foreach item in dot gifts{
 	replace marrwive`item' = . if marrwive`item' == 98
 }
 
+ren a_age age 
+la var age "age"
+gen head = resp_id == 1
+la var head "Household Head"
+la def L_head 1 "Head" 0 "Spouse"
+
+ren a_marstat marstat 
+la var marstat "Marital Status"
+
+ren a_school school 
+la var school  "Level of education"
+
+ren a_gender gender
+
 *marriage types
 egen marcohab = anymatch(a_marrmarr_type?), values(1)
+la var marcohab "Marriage: cohabiting"
 egen marcivil = anymatch(a_marrmarr_type?), values(2)
+la var marcivil "Marriage: Civil"
 egen marreli = anymatch(a_marrmarr_type?), values(3)
+la var marreli "Marriage: Religious"
 egen martrad = anymatch(a_marrmarr_type?), values(4)
-
+la var martrad "Marriage: Traditional"
+la val marcohab marcivil marreli martrad yes_no
 
 *contribution cash
 gen contribcashyn = contribcash >= 50 if !missing(contribcash)
-la var contribcashyn "Wife contributes more than half of cash income."
+la var contribcashyn "Major contribution cash-income"
 la val contribcashyn yes_no
 
 gen contribinkindyn = contribinkind >= 50 if !missing(contribinkind)
-la var contribinkindyn "Wife contributes more than half of in-kind income."
+la var contribinkindyn "Major contribution in-kind-income"
 la val contribinkindyn yes_no
 
-*roof types
-tab hh_c_roofmat
-gen tinroof = hh_c_roofmat == 1 if !missing(hh_c_roofmat)
-la var tinroof "Household has a tin roof"
-la val tinroof yes_no
-*save endline
-save `main', replace
+keep 	resp_id ROSTER_KEY KEY /// IDs
+		age head marstat school gender ///demographics
+		marstat marcohab marcivil marreli martrad /// marriage 
+		statpar wifemoreland husbmoreland ///status	
+		contribcash contribinkind contribcashyn contribinkindyn ///contributions	
+
+tempfile roster
+save `roster'
+
 
 *********************
 **Baseline Conflict**
@@ -257,28 +358,98 @@ la var victimfamlost "Conflict: HH member killed"
 gen victimany = m7_1_1 ==1 | m7_1_3 == 1 | m7_1_5 == 1 | m7_1_7 == 1
 la var victimany "Conflict: any"
 
+la def yes_no 0 "No" 1 "Yes"
+la val victim* yes_no
+
 ren group_id grp_id
 keep vill_id grp_id hh_id victim*
 tempfile baseline
 save `baseline'
 
+************************************************
+**MERGE AND FINAL CLEAN
+************************************************
 
 use `main'
-duplicates tag vill_id grp_id hh_id, gen(dup)
+merge 1:1 KEY resp_id using `roster', keep(master match) gen(rostermerge)
+replace vill_id = 999 if vill_id == .
+replace grp_id = 999 if grp_id == .
 
-duplicates drop vill_id grp_id hh_id, force
+*we don't merge in anything for households that we have no list experiment data for, so create fake, unique ids for those
+clonevar hh_id_orig = hh_id
+bys vill_id grp_id (hh_id): replace hh_id = 990 +  _n if numballs == .
+
 merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge)
 
-la def yesno 0 "No" 1 "Yes"
-la val victim* yesno
 
+
+assert gender == 2 if !missing(numballs)
+drop gender
+
+
+***************
+**Sample overview of bargaining 
+gen riskhusbandstatus = . 
+replace riskhusbandstatus = 1 if riskhusbandconsent == 1 
+replace riskhusbandstatus = 2 if riskhusbandconsent == 0
+replace riskhusbandstatus = 3 if riskhusbandpresent == 0
+replace riskhusbandstatus = 4 if riskhusbandstatus == .
+
+la def husbandstatus 1 "Consented" 2 "Refused" 3 "Absent" 4 "No Husband"
+la val riskhusbandstatus husbandstatus
+tab  riskhusbandstatus genderhead, m
+
+gen riskwifestatus = . 
+replace riskwifestatus = 1 if riskwifeconsent == 1 
+replace riskwifestatus = 2 if riskwifeconsent == 0
+replace riskwifestatus = 3 if riskwifepresent == 0
+replace riskwifestatus = 4 if riskwifestatus == .
+
+la def wifestatus 1 "Consented" 2 "Refused" 3 "Absent" 4 "No Wife"
+la val riskwifestatus wifestatus
+tab  riskwifestatus genderhead, m
+
+tab  riskwifestatus  riskhusbandstatus, m
+tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.csv", replace style(csv)
+
+stop
+
+tab riskheadconsent //riskheadpresent, m 
+// out of the 626 heads, 7 (1.12%) refused to participate in the risk game. 
+
+
+tab riskspousepresent, m 
+// in 535 out of 593 households (54.26) there was no spouse of the household head present at time of interview. 451 spouses were available
+
+tab riskspouseconsent 
+// out of the 451 spouses, 6 (1.33%) refused to participate in the risk game. We have data on
+
+
+
+
+
+// 256 risk games with just the spouse (3 where the head refused, 253 where the head was not present)
+// 184 with both 
+//153 with just the head
+
+//so: 256 + 184 = 440 with the spouse 
+//so: 184 + 153 with the head 
+
+tab riskheadpresent riskheadconsent, m
+tab riskspousepresent riskspouseconsent, m
+
+tab riskheadconsent riskspouseconsent, m
 
 **************************
 **Table 1: Balance Table**
 **************************
-balance_table numballs husbmoreland wifemoreland riskspouse riskhead bargheadcloser bargspousecloser victimproplost victimfamlost ///
+drop if ball5 == .
+balance_table numballs husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost ///
 contribcashyn contribinkindyn tinroof livestockany terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
 	rawcsv treatment(ball5) cluster(vill_id)
+
+reg ball5  husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost ///
+contribcashyn contribinkindyn tinroof livestockany terrfe*, vce(cluster vill_id)
 
 **********************************************
 **Mean Comparisons Overall**
@@ -319,15 +490,17 @@ restore
 local using using "$tableloc\results_regression.tex"
 
 tempfile regs //"$tableloc\regs.csv"
-eststo l1: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", replace addlabel(reg,l1)  pval 
-eststo l2: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*  victimproplost victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", append addlabel(reg,l2)  pval
-eststo l3: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe* bargheadcloser, condition(ball5) nnonkey(4) estimator(linear)
+eststo l1: kict ls numballs  tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", replace addlabel(reg,l1)  pval
+eststo l2: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", replace addlabel(reg,l2)  pval 
+eststo l3: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*  victimproplost victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l3)  pval
-
-eststo l4: kict ls numballs  husbmoreland bargheadcloser contribcashyn victimproplost victimfamlost tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+eststo l4: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe* barghusbandcloser, condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l4)  pval
+
+eststo l5: kict ls numballs  husbmoreland barghusbandcloser contribcashyn victimproplost victimfamlost tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", append addlabel(reg,l5)  pval
 
 
 esttab l? `using', replace ///
@@ -338,3 +511,4 @@ esttab l? `using', replace ///
 preserve
 use `regs', clear
 export delimited using "$tableloc\regs.csv", datafmt replace
+
