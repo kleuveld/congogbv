@@ -112,12 +112,13 @@ la val bargresult bargresult
 replace bargresult = 1 if bargwifecloser
 replace bargresult = 3 if barghusbandcloser
 
-*available for rsik / refuse
+*Head/spuce available for gender module
 egen riskheadpresent = anymatch(hh_grp_gendergender_available?), values(1)
 la var riskheadpresent "Risk game: head present"
 egen riskspousepresent = anymatch(hh_grp_gendergender_available?), values(2)
 la var riskspousepresent "Risk game: spouse present"
 
+*convert from head/spouse -> husband/wfie
 gen riskhusbandpresent = riskheadpresent if genderhead == 1
 replace riskhusbandpresent = riskspousepresent if genderspouse == 1
 la var riskhusbandpresent "Risk game: husband present"
@@ -125,19 +126,42 @@ gen riskwifepresent = riskheadpresent if genderhead == 2
 replace riskwifepresent = riskspousepresent if genderspouse == 2
 la var riskwifepresent "Risk game: wife present"
 
-
+*Head/spuce consent to gender module
 ren hh_grp_gendergender_accept_cdm riskheadconsent
 la var riskheadconsent "Risk game: head consents"
 ren hh_grp_gendergender_accept_ep riskspouseconsent //spouse accepts risk 
 la var riskspouseconsent "Risk game: spouse consents"
 
-
+*convert from head/spouse -> husband/wfie
 gen riskhusbandconsent = riskheadconsent if genderhead == 1
 replace riskhusbandconsent = riskspouseconsent if genderspouse == 1
 la var riskhusbandconsent "Risk game: husband consents"
 gen riskwifeconsent = riskheadconsent if genderhead == 2
 replace riskwifeconsent = riskspouseconsent if genderspouse == 2
 la var riskwifeconsent "Risk game: wife consents"
+
+*consolidate all into status indicators for wife and husband
+gen riskhusbandstatus = . 
+replace riskhusbandstatus = 1 if riskhusbandconsent == 1 
+replace riskhusbandstatus = 2 if riskhusbandconsent == 0
+replace riskhusbandstatus = 3 if riskhusbandpresent == 0
+replace riskhusbandstatus = 4 if riskhusbandstatus == .
+
+la def husbandstatus 1 "Consented" 2 "Refused" 3 "Absent" 4 "No Husband"
+la val riskhusbandstatus husbandstatus
+tab  riskhusbandstatus genderhead, m
+
+gen riskwifestatus = . 
+replace riskwifestatus = 1 if riskwifeconsent == 1 
+replace riskwifestatus = 2 if riskwifeconsent == 0
+replace riskwifestatus = 3 if riskwifepresent == 0
+replace riskwifestatus = 4 if riskwifestatus == .
+
+la def wifestatus 1 "Consented" 2 "Refused" 3 "Absent" 4 "No Wife"
+la val riskwifestatus wifestatus
+tab  riskwifestatus genderhead, m
+la var riskwifestatus "Wife"
+la var riskhusbandstatus "Husband"
 
 
 *aid
@@ -183,7 +207,7 @@ keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
 			numballs ball5  list_spouse list_head /// list experiment
 			barg* riskwife riskhusband tinroof aidany aidwomen livestock* ///
 			genderhead marstathead ///
-			risk*present ris*consent riskspouseconsent
+			risk*present ris*consent riskspouseconsent risk*status
 
 tempfile main 
 save `main'
@@ -248,6 +272,7 @@ ren a_marrnonhh_statpar statpar
 replace statpar = . if statpar > 3
 la var statpar "Land holdings of families before marriage"
 la def statpar 1 "Wife's had more land" 2 "Equal" 3 "Husband's had more land"
+
 
 gen wifemoreland = statpar == 1 if !missing(statpar)
 la var wifemoreland "Family wife had more land"
@@ -327,7 +352,7 @@ la var contribinkindyn "Major contribution in-kind-income"
 la val contribinkindyn yes_no
 
 keep 	resp_id ROSTER_KEY KEY /// IDs
-		age head marstat school gender ///demographics
+		age head school gender ///demographics
 		marstat marcohab marcivil marreli martrad /// marriage 
 		statpar wifemoreland husbmoreland ///status	
 		contribcash contribinkind contribcashyn contribinkindyn ///contributions	
@@ -369,7 +394,6 @@ save `baseline'
 ************************************************
 **MERGE AND FINAL CLEAN
 ************************************************
-
 use `main'
 merge 1:1 KEY resp_id using `roster', keep(master match) gen(rostermerge)
 replace vill_id = 999 if vill_id == .
@@ -381,64 +405,20 @@ bys vill_id grp_id (hh_id): replace hh_id = 990 +  _n if numballs == .
 
 merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge)
 
-
-
 assert gender == 2 if !missing(numballs)
 drop gender
 
-
-***************
-**Sample overview of bargaining 
-gen riskhusbandstatus = . 
-replace riskhusbandstatus = 1 if riskhusbandconsent == 1 
-replace riskhusbandstatus = 2 if riskhusbandconsent == 0
-replace riskhusbandstatus = 3 if riskhusbandpresent == 0
-replace riskhusbandstatus = 4 if riskhusbandstatus == .
-
-la def husbandstatus 1 "Consented" 2 "Refused" 3 "Absent" 4 "No Husband"
-la val riskhusbandstatus husbandstatus
-tab  riskhusbandstatus genderhead, m
-
-gen riskwifestatus = . 
-replace riskwifestatus = 1 if riskwifeconsent == 1 
-replace riskwifestatus = 2 if riskwifeconsent == 0
-replace riskwifestatus = 3 if riskwifepresent == 0
-replace riskwifestatus = 4 if riskwifestatus == .
-
-la def wifestatus 1 "Consented" 2 "Refused" 3 "Absent" 4 "No Wife"
-la val riskwifestatus wifestatus
-tab  riskwifestatus genderhead, m
-
-tab  riskwifestatus  riskhusbandstatus, m
-tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.csv", replace style(csv)
-
-stop
-
-tab riskheadconsent //riskheadpresent, m 
-// out of the 626 heads, 7 (1.12%) refused to participate in the risk game. 
-
-
-tab riskspousepresent, m 
-// in 535 out of 593 households (54.26) there was no spouse of the household head present at time of interview. 451 spouses were available
-
-tab riskspouseconsent 
-// out of the 451 spouses, 6 (1.33%) refused to participate in the risk game. We have data on
+save "$dataloc\clean\analysis.dta", replace
 
 
 
+*********************************************
+**TABLE X: Sample overview of bargaining 
+*********************************************
+use "$dataloc\clean\analysis.dta", clear
 
-
-// 256 risk games with just the spouse (3 where the head refused, 253 where the head was not present)
-// 184 with both 
-//153 with just the head
-
-//so: 256 + 184 = 440 with the spouse 
-//so: 184 + 153 with the head 
-
-tab riskheadpresent riskheadconsent, m
-tab riskspousepresent riskspouseconsent, m
-
-tab riskheadconsent riskspouseconsent, m
+tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.csv", cells(freq row col) replace style(csv)
+tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace style(tex) format(0c) h3(nil)
 
 **************************
 **Table 1: Balance Table**
