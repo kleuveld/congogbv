@@ -14,6 +14,7 @@
 \usepackage[blocks]{authblk} %for affil
 \usepackage{url}
 \usepackage{tabularx}
+\usepackage{float} %allows the H positioning specifier
 \usepackage{csvsimple}
 \usepackage[nomessages]{fp}
 \usepackage{xcolor}
@@ -78,7 +79,7 @@ The high incidence of Sexual and Gender Based Violence (SGBV) in the Congo has b
  
 \paragraph{}
 %research question
-To adequately address this issue, data on the victims of SGBV is of crucial importance. In this paper, I explore the characteristics of the victims SGBV.In particular, I consider conflict victimization, intra-household dynamics, and poverty as potential characteristics.
+To adequately address this issue, data on the victims of SGBV is of crucial importance. In this paper, I explore the characteristics of the victims SGBV to uncover the dynamics and potential drivers of SGBV.In particular, I consider conflict victimization, intra-household dynamics, and poverty as potential characteristics.
 
 \paragraph{}
 %Antecedents
@@ -107,8 +108,7 @@ I find no correlation between victimization of GBV and victimization of the conf
 %add map.
 %answer data questions
 %add distributions of balls
-The main source of data for this study is a household survey that was undertaken in 2014 as part of the evaluation of Dutch development aid in Eastern Congo. This evaluation concerned projects ran by three NGOs in the territories of Fizi and Uvira in South Kivu province. The household questionnaire contained a final module that: (i) collected detailed information on gender attitudes; (ii) contained a risk barganing game; and (iii) contained a list experiment designed to elicit the indicence of SGBV among female respondents. Where possible, this gender module was administered to both the head of the household and the spouse of the household head (in the vast majority of the cases, the husband is considered the head, but it was left open to the respondent to indicate the head). 
-
+The main source of data for this study is a household survey that was undertaken in 2014 as part of the evaluation of Dutch development aid in Eastern Congo. This evaluation concerned projects ran by four NGOs in the territories of Kabare, Fizi and Uvira, and the commune of Bagira, all in South Kivu province. Each individual project was small, and unlikely to have affected rates across the whole sample. The household questionnaire contained a final module that: (i) collected detailed information on gender attitudes; (ii) contained a list experiment designed to elicit the incidence of SGBV among female respondents; and (iii) contained a risk bargaining game. 
 
 \begin{table}[htbp]
 	\centering
@@ -122,10 +122,11 @@ The main source of data for this study is a household survey that was undertaken
 \end{table}
 
 \paragraph{}
-Table \ref{tab:bargsample} displays how the sample is built up. In total, there were 889 respondents to the survey. In 593 household, the wife (or the single female head, for convenience I will refer to both as wife) consented to responding to the gender module. In 1 household, the wife refused; in 5, the wife was absent during the interview, and in 290 households the head of the household had no wife. In 470 households, the husbands consented to the module, 6 refused, 255 husbands were absent, and in 158 households the head of the household was an unmarried woman. For 184 households, we have both husband and wife responding to the module. Efforts to increase this number, by tracking down absent household heads, were constricted by the limited time field teams had in each community, due to the security situation at the time of field work. \textcolor{red}{HOW DOES THIS AFFECT MY ESTIMATES, AND HOW CAN I MITIGATE THIS?}
+Where possible, this gender module was administered to a both the head of the household and the spouse of the household head (in the vast majority of the cases, the husband is considered the head, but it was left open to the respondent to indicate the head). Table \ref{tab:bargsample} displays how the sample is built up. In total, there were 889 respondents to the survey. In 593 household, the wife of the household head (or the single female head, for convenience I will refer to both as wife) consented to responding to the gender module. In 1 household, the wife refused; in 5, the wife was absent during the interview, and in 290 households the head of the household had no wife. In 470 households, the husbands consented to the module, 6 refused, 255 husbands were absent, and in 158 households the head of the household was an unmarried woman. For 184 households, we have both husband and wife responding to the module. Efforts to increase this number, by tracking down absent household heads, were constricted by the limited time field teams had in each community, due to the security situation at the time of field work. \textcolor{red}{HOW DOES THIS AFFECT MY ESTIMATES, AND HOW CAN I MITIGATE THIS?}
 
 \paragraph{}
-For the list experiment, the respondents were randomly divided into two groups. I follow \cite{Imai2011} in calling these groups Treatment and Control. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Control) was presented with the following issues:
+%list experiments have been increasingly used to uncover sensitive information
+For the list experiment, the female respondents were randomly divided into two groups. I follow \cite{Imai2011} in calling these groups Treatment and Control. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Control) was presented with the following issues:
 \begin{itemize}
 	\item Lack of food;
 	\item Lack of money;
@@ -134,10 +135,10 @@ For the list experiment, the respondents were randomly divided into two groups. 
 \end{itemize}
 
 \paragraph{}
- Women in the second group (Treatment) were presented with the same four items, but a fifth item was added: Sexual Violence. The questionnaire was field tested prior to field work to ensure that respondents understood these concepts. While using a list experiment means I cannot know who among the respondents was the victim of GBV, I can compare the means of the number of issues between the groups to arrive at an estimate of SGBV. By comparing means between sub-samples, and by using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), I can find the correlates of SGBV. 
+ Women in the second group (Treatment) were presented with the same four items, but a fifth item was added: Sexual Violence. The questionnaire was field tested prior to field work to ensure that respondents understood these concepts. While using a list experiment means I cannot know who among the respondents was the victim of SGBV, I can compare the means of the number of issues between the groups to arrive at an estimate of SGBV. By comparing means between sub-samples, and by using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), I can find the correlates of SGBV. 
 
  \paragraph{}
- The risk bargaining game in the module was modified from \cite{Martinsson2009}. In the game, couples choose between a set of six risky lotteries, based on \cite{Eckel2002}. The lotteries presented range from fairly low-risk ones -- where low and high pay-out are nearly equal -- to high-risk one -- where there is a large difference between high and low pay-outs (see Table \ref{tab:bargaining} for details of the lotteries). The respondents first choose individually (without knowing their partner's choice), and then jointly. By comparing the couple decision with the individual decision, I obtain an indicator for barganing power. The difference between the procedure used by \cite{Martinsson2009} and the one here, is that they use a risk experiment based on \cite{Holt2002}. However, this is a more complicated experiment compared to Eckel and Grossman. This added complication may cause participants to not fully understand the procedure, leading to poor results \citep{Dave2010a}. Given the low numeracy of the subjects, I implemented the simpler of the two experiments.
+ The risk bargaining game in the module was modified from \cite{Martinsson2009}. In the game, couples choose between a set of six risky lotteries, based on \cite{Eckel2002}. The lotteries presented range from fairly low-risk ones -- where low and high pay-out are nearly equal -- to high-risk one -- where there is a large difference between high and low pay-outs (see Table \ref{tab:bargaining} for details of the lotteries). The respondents first choose individually (without knowing their partner's choice), and then jointly. By comparing the couple decision with the individual decision, I obtain an indicator for bargaining power. The difference between the procedure used by \cite{Martinsson2009} and the one here, is that they use a risk experiment based on \cite{Holt2002}. However, this is a more complicated experiment compared to \citeauthor{Eckel2002}. This added complication may cause participants to not fully understand the procedure, leading to poor results \citep{Dave2010a}. Given the low numeracy of the subjects, I implemented the simpler of the two experiments.
 
 \begin{table}
 	\centering
@@ -152,19 +153,20 @@ For the list experiment, the respondents were randomly divided into two groups. 
 	3 & 3,200 CDF & 5,600 CDF & 4,400 CDF & Moderately risk-averse \\
 	4 & 2,800 CDF & 6,400 CDF & 4,600 CDF & Moderately risk-averse \\
 	5 & 2,400 CDF & 7,200 CDF & 4,800 CDF & Risk-neutral \\
-	6 & 1,400 CDF & 8,200 CDF & 4,800 CDF & Risk-loving \\ \bottomrule
+	6 & 1,400 CDF & 8,200 CDF & 4,800 CDF & Risk-loving \\ 
+	\bottomrule
 	\end{tabular}
 \end{table}
 
 \paragraph{}
-Conflict victimization data is not available for the 2014 round of the survey. However, for 479, conflict data is available from the 2012 round of data collection. Since the majority of conclict events happened before this time, I used this data as a proxy for conflict exposure.
+Conflict victimization data was not collected during the 2014 round of the survey. However, for 479, conflict data is available from the 2012 round of data collection. Since the majority of conflict events happened before this time, I used this data as a proxy for conflict exposure.
 
 \paragraph{}
-Table \ref{tab:balance} presents descriptive statistics of the sample. Our sample consists of 589 women. For 383 women, I have detailed information on their marriage. These women are married to head of the household. One question asked was whether the family of the wife or the husband had more land at the time of marriage. Given the importance of agriculture in the area, this amount of land is a good proxy for status. In 38\% of the cases, the husband's family had more land, in 24\% of the cases the wife's family did. For the bargaining game, I have 182 respondents. This number is lower than the 383 married couples, because both spouses needed to be present in the two days research teams spent in each community.If they were present, both spouses would need to consent to the risk game. In 40\% of the cases, the couple's bargained decision was closest to the husbands. In 27\% of the cases, the couple's decision was closest to the wife's. In the remainder, the final decision was equally close to both. Conflict victimization is high in the sample. 80\% of the household indicate having lost property due to the conflict; 53\% report having lost a family or household member. The women in the sample, on average, contribute 20\% of the cash income in their household, and 24\% of the in-kind income. About 61\% of the households have a tin roof (with the vast majority of the remainder owning simple thatch roofs), and 49\% own any kind of livestock.
+Table \ref{tab:balance} presents descriptive statistics of the sample. The household questionnaire contained detailed questions about the marriage of the household head. One question asked was whether the family of the wife or the husband had more land at the time of marriage. In consultation with local partners (including NGOs and universities) this was chosen as the best proxy for status, due to the importance of agriculture in the area. In 38\% of the cases, the husband's family had more land, in 24\% of the cases the wife's family did. Note that only 384 households responded to this question, as some refused to give a definite answer. As for the bargaining game: in 40\% of the cases, the couple's bargained decision was closest to the husbands. In 27\% of the cases, the couple's decision was closest to the wife's. In the remainder, the final decision was equally close to both. Conflict victimization is high in the sample. 80\% of the household indicate having lost property due to the conflict; 53\% report having lost a family or household member. The women in the sample, on average, contribute 20\% of the cash income in their household, and 24\% of the in-kind income. About 61\% of the households have a tin roof (with the vast majority of the remainder owning simple thatch roofs), and 49\% own any kind of livestock.
 
 \paragraph{}
 %is hh_id 1 determined randomly? If not, perhaps exlude it?
-The treatment and control group are not perfectly balanced across some of the variables presented in table \ref{tab:balance}. As randomization was done at the time of data collection (based on randomly assigned ID codes). An F-test on the differences between treatment and control being jointly equal to zero fails to reject the null-hypothesis that they are equal (p=0.20). However, care should be taken in interpreting the differences in the variables with differences: results being closer to the women's choice, and the cash income of the household. 
+The treatment and control group are not perfectly balanced across some of the variables presented in table \ref{tab:balance} (Column 7). As randomization was done at the time of data collection (based on randomly assigned ID codes). An F-test on the differences between treatment and control being jointly equal to zero fails to reject the null-hypothesis that they are equal (p=0.20). However, care should be taken in interpreting the differences in the variables with differences: results being closer to the women's choice, and the cash income of the household. 
 
 \input{\tableloc/balance.tex}
 
@@ -177,41 +179,43 @@ The treatment and control group are not perfectly balanced across some of the va
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textcolor{red}{NB: THIS SECTION IS WRITTEN SO THAT COEFFICIENTS AND ESTIMATES ARE PULLED FROM EXTERNAL FILES AUTOMATICALLY. THE TEXT IS THUS VERY GENERIC. WILL UPDATE ONCE EVERYTHING IS MORE FINAL}
 %command to get incidences from csv file
 \newcommand{\incid}[2]{\csvreader[filter strcmp={\key}{#1}]{\tableloc/incidence.csv}{key=\key,#2=\inc}{\inc}}
 
-\begin{figure}[hp]
+\paragraph{}
+First, I compare the number of issues faced by the Treatment and Control groups in the entire sample. I then compare the number of issues faced in several sub-groups. These sub-groups divide the sample along dimensions of intra-household dynamics, conflict exposure and asset holdings. In the full sample, the difference between the group who were presented with only four issues (the control group) and the group who were presented four issues plus GBV (the treatment group) is the estimate of the incidence of GBV. The average number of issues reported by the control group is \incid{overall1}{mean0}, while the number if issues reported by the treatment group is \incid{overall1}{mean1} (see Figure \ref{fig:meancompare_overall}). The difference of \incid{overall1}{incidence} implies that the incidence of GBV is \incid{overall1}{incidence_pct}\% in this sample. The p-value for a t-test on this difference is \incid{overall1}{p}. This estimate is roughly in line with previous estimates \citep{Peterson2018,Stark2017,Johnson2010}.
+
+\begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_overall.png}
   \caption{Comparison of means of issues faced: treatment vs. control.}
   \label{fig:meancompare_overall}
 \end{figure}
 
-\paragraph{}
-First, I compare the number of issues faced by the two groups of women. The difference between the group who were presented with only four issues (the control group) and the group who were presented four issues plus GBV (the treatment group) is my estimate of the incidence of GBV. The average number of issues reported by the control group is \incid{overall1}{mean0}, while the number if issues reported by the treatment group is \incid{overall1}{mean1} (see Figure \ref{fig:meancompare_overall}). The difference of \incid{overall1}{incidence} implies that the incidence of GBV is \incid{overall1}{incidence_pct}\% in this sample. The p-value for a t-test on this difference is \incid{overall1}{p}. This incidence is slightly higher than some estimates \citep{Quattrochi2019}.
+\subsection*{Intra-household Dynamics}
 
-\subsection*{Intra-household dynamics}
-\begin{figure}[hp]
+\paragraph{}
+ The first dimension over which I create sub-groups is intra-household dynamics. First, I compare women across the relative status of the partners at the time of marriage. For this, I use the land held by the partners' families at the time of marriage as proxy for status (Figure \ref{fig:meancompare_mar1}). In the group where the wife had more status before the marriage (n=\incid{statpar1}{n}), the average number of issues was \incid{statpar1}{mean0} for the control group, and \incid{statpar1}{mean1} for the treatment group. The difference in means implies a rate of GBV of \incid{statpar1}{incidence_pct}\% (p-value of a t-test on the means = \incid{statpar1}{p}). In the group where the partners were of equal standing (n=\incid{statpar2}{n}), the average number of issues was \incid{statpar2}{mean0} for the control group, and \incid{statpar2}{mean1} for the treatment group. This implies a rate of GBV of \incid{statpar2}{incidence_pct} (p = \incid{statpar2}{p}). In the group where the husband had more status (n=\incid{statpar3}{n}), the average number of issues was \incid{statpar3}{mean0} for the control group, and \incid{statpar3}{mean1} for the treatment group. This implies a rate of GBV of \incid{statpar3}{incidence_pct} (p = \incid{statpar3}{p}).
+
+\begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_mar1.png}
   \caption{Comparison of means of issues faced by pre-marriage status.}
   \label{fig:meancompare_mar1}
 \end{figure}
 
 \paragraph{}
-I then compare the number of issues faced in several sub-groups. First, I focus on marriage dynamics. I compare women across the relative status of the partners at the time of marriage. For this, I use the land held by the partners' families as proxy for status (figure \ref{fig:meancompare_mar1}). Given the importance of agriculture, and conversely land, in the study area, this is a reasonably proxy. In the group where the wife had more status before the marriage (n=\incid{statpar1}{n}), the average number of issues was \incid{statpar1}{mean0} for the control group, and \incid{statpar1}{mean1} for the treatment group. The difference in means implies a rate of GBV of \incid{statpar1}{incidence_pct} (p-value of a t-test on the means = \incid{statpar1}{p}). In the group where the partners were of equal standing (n=\incid{statpar2}{n}), the average number of issues was \incid{statpar2}{mean0} for the control group, and \incid{statpar2}{mean1} for the treatment group. This implies a rate of GBV of \incid{statpar2}{incidence_pct} (p = \incid{statpar2}{p}). In the group where the husband had more status (n=\incid{statpar3}{n}), the average number of issues was \incid{statpar3}{mean0} for the control group, and \incid{statpar3}{mean1} for the treatment group. This implies a rate of GBV of \incid{statpar3}{incidence_pct} (p = \incid{statpar3}{p}).
-
-\paragraph{}
 The second intra-household aspect I explore is derived from the results of a bargaining game played with couples. Couples first took a decision individually, and then jointly. I then create three groups, based on whether the joint decision is closer to the husband's decision, to the wife's, or if the distance is equal. See figure \ref{fig:meancompare_mar2}. In the group where the couple decision was closest to the wife's decision (n=\incid{bargresult1}{n}), the average number of issues was \incid{bargresult1}{mean0} for the control group, and \incid{bargresult1}{mean1} for the treatment group. This implies a rate of GBV of \incid{bargresult1}{incidence_pct}\% (p = \incid{bargresult1}{p}). In the group where the couple decision was equally close to the husband and wife (n=\incid{bargresult2}{n}), the average number of issues was \incid{bargresult2}{mean0} for the control group, and \incid{bargresult2}{mean1} for the treatment group. This implies a rate of GBV of \incid{bargresult2}{incidence_pct}\% (p = \incid{bargresult2}{p}). In the group where the couple decision was closest to the husband's (n=\incid{bargresult3}{n}), the average number of issues was \incid{bargresult3}{mean0} for the control group, and \incid{bargresult3}{mean1} for the treatment group. This implies a rate of GBV of \incid{bargresult3}{incidence_pct}\% (p = \incid{bargresult3}{p}).
 
-\begin{figure}[hp]
+\begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_mar2.png}
-  \caption{Comparison of means of issues faced: forced marriage vs. other marriage types.}
+  \caption{Comparison of means of issues faced by bargaining result.}
   \label{fig:meancompare_mar2}
 \end{figure}
 
 \paragraph{}
 The final intra-household variable I use to compare women, is their relative contribution to the household's cash income (see figure \ref{fig:meancompare_mar3}). The household questionnaire collected data on all activities of household members, and what the contribution of these activities were to household income. I sum this for all activities for the women in the sample, and compare those who contribute more than 50\% of cash income with those who do not. In the group where the woman does not contribute more than 50\% of cash income (n=\incid{contribcashyn0}{n}), the average number of issues was \incid{contribcashyn0}{mean0} for the control group, and \incid{contribcashyn0}{mean1} for the treatment group. This implies a rate of GBV of \incid{contribcashyn0}{incidence_pct}\% (p = \incid{contribcashyn0}{p}). In the group where the woman does contribute more than 50\% of cash income (n=\incid{contribcashyn1}{n}), the average number of issues was \incid{contribcashyn1}{mean0} for the control group, and \incid{contribcashyn1}{mean1} for the treatment group. This implies a rate of GBV of \incid{contribcashyn1}{incidence_pct}\% (p = \incid{contribcashyn1}{p}). 
 
-\begin{figure}[hp]
+\begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_mar3.png}
   \caption{Comparison of means of issues faced across contribution to cash income.}
   \label{fig:meancompare_mar3}
@@ -220,7 +224,7 @@ The final intra-household variable I use to compare women, is their relative con
 \subsection*{Conflict}
 I then compare the conflict history of the respondents' households, to assess whether conflict victimization correlates with the incidence of GBV. I use data collected from an earlier round of the study that collected detailed conflict exposure data. First, I compare respondents who live in households who have suffered loss of (or damage to) property, including agricultural fields, due to conflict. See \ref{fig:meancompare_conf1}. In the non-victimized group (n=\incid{victimproplost0}{n}), the average number of issues was \incid{victimproplost0}{mean0} for the control group, and \incid{victimproplost0}{mean1} for the treatment group. This implies a rate of GBV of \incid{victimproplost0}{incidence_pct}\% (p = \incid{victimproplost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimproplost1}{n}), the average number of issues was \incid{victimproplost1}{mean0} for the control group, and \incid{victimproplost1}{mean1} for the treatment group. This implies a rate of GBV of \incid{victimproplost1}{incidence_pct}\% (p = \incid{victimproplost1}{p}).
 
-\begin{figure}[hp]
+\begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_conf1.png}
   \caption{Comparison of means of issues faced across conflict exposure.}
   \label{fig:meancompare_conf1}
@@ -228,7 +232,7 @@ I then compare the conflict history of the respondents' households, to assess wh
 
 The second conflict indicator I examine, is whether the respondent's household has lost any household members or family as a consequence of the conflict.See \ref{fig:meancompare_conf2}. In the non-victimized group (n=\incid{victimfamlost0}{n}), the average number of issues was \incid{victimfamlost0}{mean0} for the control group, and \incid{victimfamlost0}{mean1} for the treatment group. This implies a rate of GBV of \incid{victimfamlost0}{incidence_pct}\% (p = \incid{victimfamlost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimfamlost1}{n}), the average number of issues was \incid{victimfamlost1}{mean0} for the control group, and \incid{victimfamlost1}{mean1} for the treatment group. This implies a rate of GBV of \incid{victimfamlost1}{incidence_pct}\% (p = \incid{victimfamlost1}{p}).
 
-\begin{figure}[hp]
+\begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_conf2.png}
   \caption{Comparison of means of issues faced across conflict exposure.}
   \label{fig:meancompare_conf2}
@@ -237,7 +241,7 @@ The second conflict indicator I examine, is whether the respondent's household h
 \subsection*{Assets}
 I then explore the relationship between asset holdings and GBV. The first asset I consider, is having a tin roof (figure \ref{fig:meancompare_ses1}). These roofs are a substantial improvement over thatch roofs, but about half the sample doesn't own them. This makes for a simple, yet non-arbitrary, way to split the sample in richer and poorer households.   In the group without tin roofs (n=\incid{tinroof0}{n}), the average number of issues was \incid{tinroof0}{mean0} for the control group, and \incid{tinroof0}{mean1} for the treatment group. This implies a rate of GBV of \incid{tinroof0}{incidence_pct}\% (p = \incid{tinroof0}{p}). For the group with tin roofs (n=\incid{tinroof1}{n}), the average number of issues was \incid{tinroof1}{mean0} for the control group, and \incid{tinroof1}{mean1} for the treatment group. This implies a rate of GBV of \incid{tinroof1}{incidence_pct}\% (p = \incid{tinroof1}{p}).
 
-\begin{figure}[hp]
+\begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_ses1.png}
   \caption{Comparison of means of issues faced across asset holdings (tin roof).}
   \label{fig:meancompare_ses1}
@@ -246,7 +250,7 @@ I then explore the relationship between asset holdings and GBV. The first asset 
 \paragraph{}
 A second asset with important status implications for the household is livestock (see figure \ref{fig:meancompare_ses2}).  In the group without livestock (n=\incid{livestockany0}{n}), the average number of issues was \incid{livestockany0}{mean0} for the control group, and \incid{livestockany0}{mean1} for the treatment group. This implies a rate of GBV of \incid{livestockany0}{incidence_pct}\% (p = \incid{livestockany0}{p}). For the group with tin roofs (n=\incid{livestockany1}{n}), the average number of issues was \incid{livestockany1}{mean0} for the control group, and \incid{livestockany1}{mean1} for the treatment group. This implies a rate of GBV of \incid{livestockany1}{incidence_pct}\% (p = \incid{livestockany1}{p}).
 
-\begin{figure}[hp]
+\begin{figure}[H]
 \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_ses2.png}
   \caption{Comparison of means of issues faced across asset holdings (livestock).}
   \label{fig:meancompare_ses2}
@@ -257,7 +261,7 @@ In summary, I find that women who are in a disadvantageous position in their hou
 
 \subsection*{Regression analysis}
 \paragraph{}
-In table \ref{tab:results_regression} I display the results of a number of regressions. These are linear regressions: the coefficients reported should be interpreted as the marginal effects on the difference between control and treatment (i.e. the interaction between the variable and the treatment indicator). For brevity, the level effects of each variable on the total number of issues is omitted, as these coefficients are not of interest here. In the first column, I report the results of including only endline survey measures; in the second, I add baseline conflict indicators; in the third I include results from the bargaining game. Finally, I estimate a full model. I find that neither conflict exposure, nor household asset holdings are correlated to the incidence of GBV. Intra-household dynamics on the other hand, are strongly correlated to GBV. Nearly all the GBV happens to women who live in male dominated households. From this, we cannot conclude that it is the husbands who perpetrate the violence. It may be possible that both GBV, and choosing partners of high status, are both determined by the same factors. However, contrary to popular narratives, we find no evidence of correlation to conflict exposure.
+In table \ref{tab:results_regression} I display the results of a number of regressions. These are linear regressions: the coefficients reported should be interpreted as the interaction between each variable and the treatment indicator: i.e. the marginal effects of each variable on the difference in number of reported issues between control and treatment. For brevity, the level effects of each variable on the total number of issues are omitted, as these coefficients are not of interest here. In the first column, I report the results of including only endline survey measures; in the second, I add baseline conflict indicators; in the third I include results from the bargaining game. Finally, I estimate a full model. I find that neither conflict exposure, nor household asset holdings are correlated to the incidence of GBV. Intra-household dynamics on the other hand, are strongly correlated to GBV. Nearly all the GBV happens to women who live in male dominated households. From this, we cannot conclude that it is the husbands who perpetrate the violence. It may be possible that both GBV, and choosing partners of high status, are both determined by the same factors. However, contrary to popular narratives, we find no evidence of correlation to conflict exposure.
 
 
 \newcommand{\coeffget}[3]{\csvreader[filter=\equal{\reg}{#1} \and \equal{\var}{#2}]{\tableloc/regs.csv}{var=\var,reg=\reg,#3=\coeff}{\coeff}}

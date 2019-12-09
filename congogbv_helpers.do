@@ -201,3 +201,61 @@ program meandiffs
  	restore
 
 end
+
+
+*program to export tab to csv (didn;t like tabout)
+cap prog drop tab2csv
+
+program define tab2csv
+
+syntax varlist(min=2 max=2) using
+
+preserve
+
+
+tokenize `varlist'
+local var1 `1'
+local var2 `2'
+levelsof `var2',local(levels)
+
+local collapse (sum)
+
+*generate indicators foreach var2
+foreach level in `levels'{
+	tempvar `var2'`level'
+	//local vallab`level': label (`var2') `level'
+	gen ``var2'`level'' = `var2' == `level'
+	local collapse `collapse' `var2'`level' = ``var2'`level''
+	di "`collapse'"
+}
+
+*collapse all
+tempvar n 
+gen `n' = 1
+collapse `collapse' (count) total = `n', by(`var1')
+
+/*  labels don't get exported anyway
+*labels
+foreach level in `levels'{
+	la var `var2'`level' "`vallab`level''"
+}
+ */
+
+*generate total row
+set obs `= _N + 1'
+foreach var of varlist `var2'* total{
+	su `var'
+	replace `var' = r(sum) in `=_N'
+}
+
+*generate a key column to easily refer
+tostring riskwife,gen(key)
+replace key = "total" in `= _N'
+order key, first
+
+
+export delimited `using', datafmt replace
+restore
+end
+
+

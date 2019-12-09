@@ -10,10 +10,10 @@ Date: 14/11/2019
 
 set scheme lean1
 
-global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data
-global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables
-global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures
-global gitloc C:\Users\Koen\Documents\GitHub
+global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data //holds raw and clean data
+global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables //where tables are put
+global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures //where figures are put
+global gitloc C:\Users\Koen\Documents\GitHub //holds do files
 
 *run helpers
 qui do "$gitloc\congogbv\congogbv_helpers.do"
@@ -24,7 +24,7 @@ qui do "$gitloc\congogbv\congogbv_dataprep.do"
 *********************************************
 use "$dataloc\clean\analysis.dta", clear
 
-tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.csv", cells(freq row col) replace style(csv)
+tab2csv riskwifestatus riskhusbandstatus using "$tableloc/tabs.csv"
 tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace style(tex) format(0c) h3(nil)
 
 **************************
@@ -47,6 +47,7 @@ meandiffs numballs using "$figloc/meancompare_overall.png", treatment(ball5) coe
 **********************************************
 **Mean Comparisons Marriage**
 **********************************************
+//meandiffs fuction is defined in congogbv_helpers.do
 meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(statpar) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
