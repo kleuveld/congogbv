@@ -75,6 +75,16 @@ restore
 **********************************************
 **Regression Analysis**
 **********************************************
+
+
+//use "$dataloc\clean\analysis.dta", clear
+regfig husbmoreland victimfamlost livestockany using "$figloc/regfig1.png"
+regfig barghusbandcloser victimproplost tinroof using "$figloc/regfig2.png"
+
+kaas
+*table
+
+
 local using using "$tableloc\results_regression.tex"
 
 tempfile regs //"$tableloc\regs.csv"

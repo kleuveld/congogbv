@@ -203,7 +203,7 @@ program meandiffs
 end
 
 
-*program to export tab to csv (didn;t like tabout)
+*program to export tab to csv (I didn;t like tabout)
 cap prog drop tab2csv
 
 program define tab2csv
@@ -259,3 +259,72 @@ restore
 end
 
 
+
+cap prog drop regfig
+program define regfig
+
+syntax varlist(min=1) using/
+
+preserve
+
+tempname memhold
+tempfile coeffs
+postfile `memhold' str80 Variable coeff ll ul series using `coeffs', replace
+
+
+foreach var of varlist `varlist' {
+	gen ball5_`var' = ball5 * `var'
+	reg numballs ball5 `var' ball5_`var'
+	matrix table = r(table)
+	scalar coeff = table[1,3]
+	//scalar pvalue = table[4,3]
+	scalar ll = table[5,3]
+	scalar ul = table[6,3]
+
+	post `memhold' ("`: var label `var''") (coeff) (ll) (ul) (1)
+	//drop ball5_`var'
+}
+
+reg numballs ball5 ball5_* `varlist'
+matrix table = r(table)
+local counter 1
+foreach var of varlist `varlist' {
+	scalar coeff = table[1,1 +`counter']
+	//scalar pvalue = table[4,3]
+	scalar ll = table[5,1 +`counter']
+	scalar ul = table[6,1 +`counter']
+	local counter = `counter' + 1
+	post `memhold' ("`: var label `var''") (coeff) (ll) (ul) (2)
+}
+postclose `memhold'
+use `coeffs', clear
+bys series: gen regno = _n
+
+gen graphpos = (regno - 1) * 2 + series
+
+levelsof regno, local(levels)
+
+local xlabel
+foreach level in `levels'{
+	local label `= Variable[`level']'
+	local tick = 1+ (`level' - 1)* 2 + 0.5
+	local xlabel `xlabel' `tick' "`label'"
+	di `"`xlabel'"'
+}
+local xlabel `xlabel', noticks valuelabel angle(-45)
+di `"`xlabel'"'
+
+sort graphpos
+
+graph twoway ///
+	(scatter coeff graphpos if series == 1) ///
+	(scatter coeff graphpos if series == 2) ///
+	(rcap ul ll graphpos), /// 
+	xlabel(`xlabel') xtitle("") ///
+	yline(0,lpattern(dot)) legend(order(1 "Separate" 2 "Pooled"))
+
+
+graph export `"`using'"', as(png) replace	
+
+restore
+end
