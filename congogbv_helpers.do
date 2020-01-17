@@ -208,123 +208,171 @@ cap prog drop tab2csv
 
 program define tab2csv
 
-syntax varlist(min=2 max=2) using
+	syntax varlist(min=2 max=2) using
 
-preserve
-
-
-tokenize `varlist'
-local var1 `1'
-local var2 `2'
-levelsof `var2',local(levels)
-
-local collapse (sum)
-
-*generate indicators foreach var2
-foreach level in `levels'{
-	tempvar `var2'`level'
-	//local vallab`level': label (`var2') `level'
-	gen ``var2'`level'' = `var2' == `level'
-	local collapse `collapse' `var2'`level' = ``var2'`level''
-	di "`collapse'"
-}
-
-*collapse all
-tempvar n 
-gen `n' = 1
-collapse `collapse' (count) total = `n', by(`var1')
-
-/*  labels don't get exported anyway
-*labels
-foreach level in `levels'{
-	la var `var2'`level' "`vallab`level''"
-}
- */
-
-*generate total row
-set obs `= _N + 1'
-foreach var of varlist `var2'* total{
-	su `var'
-	replace `var' = r(sum) in `=_N'
-}
-
-*generate a key column to easily refer
-tostring riskwife,gen(key)
-replace key = "total" in `= _N'
-order key, first
+	preserve
 
 
-export delimited `using', datafmt replace
-restore
-end
+	tokenize `varlist'
+	local var1 `1'
+	local var2 `2'
+	levelsof `var2',local(levels)
+
+	local collapse (sum)
+
+	*generate indicators foreach var2
+	foreach level in `levels'{
+		tempvar `var2'`level'
+		//local vallab`level': label (`var2') `level'
+		gen ``var2'`level'' = `var2' == `level'
+		local collapse `collapse' `var2'`level' = ``var2'`level''
+		di "`collapse'"
+	}
+
+	*collapse all
+	tempvar n 
+	gen `n' = 1
+	collapse `collapse' (count) total = `n', by(`var1')
+
+	/*  labels don't get exported anyway
+	*labels
+	foreach level in `levels'{
+		la var `var2'`level' "`vallab`level''"
+	}
+	 */
+
+	*generate total row
+	set obs `= _N + 1'
+	foreach var of varlist `var2'* total{
+		su `var'
+		replace `var' = r(sum) in `=_N'
+	}
+
+	*generate a key column to easily refer
+	tostring riskwife,gen(key)
+	replace key = "total" in `= _N'
+	order key, first
 
 
+	export delimited `using', datafmt replace
+	restore
+	end
 
+
+*regfig
+*generates a graph of coefficients for a diff-in-diff regression
 cap prog drop regfig
 program define regfig
+	syntax varlist(min=1) using/ , [pool]
 
-syntax varlist(min=1) using/
+	preserve
 
-preserve
+	*initialize a file that will hold the coefficients that will be plotted
+	tempname memhold
+	tempfile coeffs
+	postfile `memhold' str80 Variable coeff ll ul series using `coeffs', replace
 
-tempname memhold
-tempfile coeffs
-postfile `memhold' str80 Variable coeff ll ul series using `coeffs', replace
+	*run the separate regressions, saving the outputs to the coeff file
+	foreach var of varlist `varlist' {
+		gen ball5_`var' = ball5 * `var'
+		reg numballs ball5 `var' ball5_`var'
+		matrix table = r(table)
+		scalar coeff = table[1,3]
+		scalar ll = table[5,3]
+		scalar ul = table[6,3]
+		splitlabel `var', l(15)
+		post `memhold' (`"`: var label `var''"') (coeff) (ll) (ul) (1)
 
+	}
 
-foreach var of varlist `varlist' {
-	gen ball5_`var' = ball5 * `var'
-	reg numballs ball5 `var' ball5_`var'
-	matrix table = r(table)
-	scalar coeff = table[1,3]
-	//scalar pvalue = table[4,3]
-	scalar ll = table[5,3]
-	scalar ul = table[6,3]
+	*parameters to use for the graph layout when there is NO pooled regression
+	local legend off
+	local series = 1
+	local offset = 0
 
-	post `memhold' ("`: var label `var''") (coeff) (ll) (ul) (1)
-	//drop ball5_`var'
-}
+	if length("`pool'") > 0{
+		reg numballs ball5 ball5_* `varlist'
+		matrix table = r(table)
+		local counter 1
+		foreach var of varlist `varlist' {
+			scalar coeff = table[1,1 +`counter']
+			scalar ll = table[5,1 +`counter']
+			scalar ul = table[6,1 +`counter']
+			local counter = `counter' + 1
+			post `memhold' (`"`: var label `var''"') (coeff) (ll) (ul) (2)
+		}
 
-reg numballs ball5 ball5_* `varlist'
-matrix table = r(table)
-local counter 1
-foreach var of varlist `varlist' {
-	scalar coeff = table[1,1 +`counter']
-	//scalar pvalue = table[4,3]
-	scalar ll = table[5,1 +`counter']
-	scalar ul = table[6,1 +`counter']
-	local counter = `counter' + 1
-	post `memhold' ("`: var label `var''") (coeff) (ll) (ul) (2)
-}
-postclose `memhold'
-use `coeffs', clear
-bys series: gen regno = _n
+		*parameters to use for the graph layout when there IS a pooled regression
+		local series2 (scatter coeff graphpos if series == 2)
+		local legend order(1 "Separate" 2 "Pooled")
+		local series = 2
+		local offset = 0.5
 
-gen graphpos = (regno - 1) * 2 + series
+	}
 
-levelsof regno, local(levels)
+	*generate a variable that holds the position of each coefficient on the X-axis
+	postclose `memhold'
+	use `coeffs', clear
+	bys series: gen regno = _n
+	gen graphpos = (regno - 1) * `series' + series
 
-local xlabel
-foreach level in `levels'{
-	local label `= Variable[`level']'
-	local tick = 1+ (`level' - 1)* 2 + 0.5
-	local xlabel `xlabel' `tick' "`label'"
-	di `"`xlabel'"'
-}
-local xlabel `xlabel', noticks valuelabel angle(-45)
-di `"`xlabel'"'
+	*define the definition for the x-axis. Format: # `" "label line 1" "label line 2" "' etc.
+	levelsof regno, local(levels)
+	local xlabel
+	foreach level in `levels'{
+		*get the label
+		local label `= Variable[`level']'		
+		*define tick (where the label will be placed)
+		*when there is a pooled regression, the tick ends up between the separate and pooled coefficients
+		local tick = 1 + (`level' - 1)* `series' + `offset'
+		local xlabel `xlabel' `tick'  `" "`label'" "'
+	}
+	local xlabel `xlabel', noticks valuelabel angle(90)
 
-sort graphpos
+	*graph away!
+	sort graphpos
+	graph twoway ///
+		(scatter coeff graphpos if series == 1) ///
+		`series2' ///
+		(rcap ul ll graphpos), /// 
+		xlabel(`xlabel') xtitle("") ///
+		yline(0,lpattern(dot)) legend(`legend')
+	graph export `"`using'"', as(png) replace	
 
-graph twoway ///
-	(scatter coeff graphpos if series == 1) ///
-	(scatter coeff graphpos if series == 2) ///
-	(rcap ul ll graphpos), /// 
-	xlabel(`xlabel') xtitle("") ///
-	yline(0,lpattern(dot)) legend(order(1 "Separate" 2 "Pooled"))
-
-
-graph export `"`using'"', as(png) replace	
-
-restore
+	restore
 end
+
+*splitlabel
+*Splits variable labels using quotes, so graph labels don't end up too long.
+cap prog drop splitlabel 
+program splitlabel
+	syntax varlist(min=1 max=1), [Length(integer 32)]
+	
+	*get the full variable label, and split it into words
+	local longlabel: var label `varlist'
+	tokenize "`longlabel'"
+	
+	*initialize a local, that will hold the label, split in "lines"; each line wrapped in quotes
+	local splitlabel 
+
+	while  "`1'"  != ""{
+		*(re-)initialize a buffer local to hold each "line"
+		local buffer
+		
+		*fill up the buffer with words until it reaches the length
+		while  length("`buffer'") + length("`2'") < `length' &  "`1'"  != ""{
+			local buffer "`buffer'`1' "
+			macro shift
+		}
+
+		*add the buffer at the end of the split label, making sure that quotes are added.
+		local splitlabel `" `splitlabel' "`buffer'" "'
+	}
+	
+	*clean up unwanted spaces, and apply to variable
+	local splitlabel = strtrim(`"`splitlabel'"' ) 
+	la var `varlist' `"`splitlabel'"'
+end
+
+
+

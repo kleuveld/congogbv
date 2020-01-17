@@ -52,11 +52,23 @@ meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(st
 meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
 
+regfig statpar bargresult contribcashyn using "$figloc/regfig_mar.png"
+
+
+
 **********************************************
 **Mean Comparisons across Conflict**
 **********************************************
 meandiffs numballs using "$figloc/meancompare_conf1.png", treatment(ball5)  by(victimproplost) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append 
+meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(acled_battles_d) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf4.png", treatment(ball5)  by(acled_violence_d) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf5.png", treatment(ball5)  by(acled_fatalities_d) coeffs(`diffs') append
+
+
+regfig victimproplost victimfamlost acled_battles_d acled_violence_d acled_fatalities_d  using "$figloc/regfig_conf.png"
+
+
 
 **********************************************
 **Mean Comparisons across SES**
@@ -64,6 +76,7 @@ meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(v
 meandiffs numballs using "$figloc/meancompare_ses1.png", treatment(ball5)  by(tinroof) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_ses2.png", treatment(ball5)  by(livestockany) coeffs(`diffs') append
 
+regfig tinroof livestockany using "$figloc/regfig_ses.png"
 
 *export to CSV
 preserve
@@ -78,12 +91,11 @@ restore
 
 
 //use "$dataloc\clean\analysis.dta", clear
-regfig husbmoreland victimfamlost livestockany using "$figloc/regfig1.png"
-regfig barghusbandcloser victimproplost tinroof using "$figloc/regfig2.png"
 
-kaas
+regfig husbmoreland victimfamlost livestockany using "$figloc/regfig_pool.png", pool
+
+
 *table
-
 
 local using using "$tableloc\results_regression.tex"
 

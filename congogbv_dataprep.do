@@ -392,6 +392,65 @@ tempfile baseline
 save `baseline'
 
 ************************************************
+**ACLED
+************************************************
+
+import delimited "$dataloc\acled\1997-01-01-2020-01-31-Democratic_Republic_of_Congo.csv", clear
+keep if admin1 == "Sud-Kivu"
+keep if inlist(event_type,"Battles","Violence against civilians")
+drop if year > 2014
+
+gen double acled_date= date(event_date,"DMY")
+format acled_date %td
+
+gen acled_battles = event_type == "Battles"
+gen acled_violence = event_type == "Violence against civilians"
+ren fatalities acled_fatalities
+
+keep latitude longitude acled_date acled_battles acled_violence acled_fatalities
+
+
+tempfile acled_raw 
+save `acled_raw'
+
+
+use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain.dta",clear
+gen int_date = dofc(start)
+format int_date %td
+keep KEY gpsLatitude gpsLongitude int_date
+drop if gpsLatitude == .
+drop if gpsLongitude == .
+
+cross using `acled_raw'
+geodist gpsLatitude gpsLongitude latitude longitude , generate(dist)
+keep if dist <= 30 
+keep if int_date > acled_date
+
+collapse (sum) acled_battles acled_violence acled_fatalities, by(KEY)
+
+foreach var of varlist acled_battles acled_violence acled_fatalities {
+	su `var', d
+	gen `var'_d = `var' > r(p50)
+	order `var'_d, after(`var')
+}
+
+la def median 0 "Less than median" 1 "More than median"
+la val acled_*_d median
+
+la var acled_battles "Number of battles (<30km)"
+la var acled_battles_d "Number of battles (<30km)"
+
+la var acled_violence "Instances of violence against civilians (<30km)"
+la var acled_violence_d "Instances of violence against civilians (<30km)"
+
+la var acled_fatalities "Number of fatalities (<30km)"
+la var acled_fatalities_d "Number of fatalities (<30km)"
+
+
+tempfile acled 
+save `acled'
+
+************************************************
 **MERGE AND FINAL CLEAN
 ************************************************
 use `main'
@@ -404,6 +463,7 @@ clonevar hh_id_orig = hh_id
 bys vill_id grp_id (hh_id): replace hh_id = 990 +  _n if numballs == .
 
 merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge)
+merge 1:1 KEY using `acled', keep(master match)  gen(acledmerge)
 
 assert gender == 2 if !missing(numballs)
 drop gender
@@ -412,83 +472,4 @@ save "$dataloc\clean\analysis.dta", replace
 
 
 
-*********************************************
-**TABLE X: Sample overview of bargaining 
-*********************************************
-use "$dataloc\clean\analysis.dta", clear
-
-tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.csv", cells(freq row col) replace style(csv)
-tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace style(tex) format(0c) h3(nil)
-
-**************************
-**Table 1: Balance Table**
-**************************
-drop if ball5 == .
-balance_table numballs husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost ///
-contribcashyn contribinkindyn tinroof livestockany terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
-	rawcsv treatment(ball5) cluster(vill_id)
-
-reg ball5  husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost ///
-contribcashyn contribinkindyn tinroof livestockany terrfe*, vce(cluster vill_id)
-
-**********************************************
-**Mean Comparisons Overall**
-**********************************************
-tempfile diffs
-meandiffs numballs using "$figloc/meancompare_overall.png", treatment(ball5) coeffs(`diffs')
-
-**********************************************
-**Mean Comparisons Marriage**
-**********************************************
-meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(statpar) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
-
-**********************************************
-**Mean Comparisons across Conflict**
-**********************************************
-meandiffs numballs using "$figloc/meancompare_conf1.png", treatment(ball5)  by(victimproplost) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append
-
-**********************************************
-**Mean Comparisons across SES**
-**********************************************
-meandiffs numballs using "$figloc/meancompare_ses1.png", treatment(ball5)  by(tinroof) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_ses2.png", treatment(ball5)  by(livestockany) coeffs(`diffs') append
-
-
-*export to CSV
-preserve
-use `diffs', clear
-export delimited using "$tableloc\incidence.csv", datafmt replace
-restore
-
-
-**********************************************
-**Regression Analysis**
-**********************************************
-local using using "$tableloc\results_regression.tex"
-
-tempfile regs //"$tableloc\regs.csv"
-eststo l1: kict ls numballs  tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", replace addlabel(reg,l1)  pval
-eststo l2: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", replace addlabel(reg,l2)  pval 
-eststo l3: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*  victimproplost victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", append addlabel(reg,l3)  pval
-eststo l4: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe* barghusbandcloser, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", append addlabel(reg,l4)  pval
-
-eststo l5: kict ls numballs  husbmoreland barghusbandcloser contribcashyn victimproplost victimfamlost tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", append addlabel(reg,l5)  pval
-
-
-esttab l? `using', replace ///
-	nomtitles keep(Delta:*)  se label ///
-	drop(terr*) ///
-	starlevels(* 0.10 ** 0.05 *** 0.01)
-
-preserve
-use `regs', clear
-export delimited using "$tableloc\regs.csv", datafmt replace
 
