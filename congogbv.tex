@@ -141,32 +141,17 @@ Where possible, this gender module was administered to a both the head of the ho
 \subsection*{List Experiment}
 \paragraph{}
 %what are they?
-Through the use of a list experiment, I aim to obtain estimates of the incidence of SGBV that are not affected by disclosure bias. Respondents are unlikely to be comfortable to truthfully answer questions about SGBV. What's worse, this unwillingness may be correlated to the identity of the perpetrators\citep{Stark2017}. Using answers to direct questions would thus lead to an underestimate of the incidence of SGBV, and biased estimates for the correlates of SGBV, due to the non-random nature of non-response.
+A major concern in collecting data on SGBV is reporting bias.Respondents are unlikely to be comfortable to truthfully answer questions about SGBV. What's worse, this unwillingness may be correlated to the identity of the perpetrators\citep{Stark2017}. Using answers to direct questions would thus lead to an underestimate of the incidence of SGBV, and biased estimates for the correlates of SGBV, due to the non-random nature of non-response. List Experiments have gained popularity in recent years as a way of address this issue by not asking the sensitive question directly. Instead, respondents are presented with a list of issues and indicate the number of issues from the list they have faced. By adding the sensitive item to the list of issues for half of the respondents (randomly selected), estimates for incidence of the sensitive item can be obtained by comparing the mean number of issues faced in both groups (hence ``item count technique'' as an alternative name for List Experiments). The advantage is thus that answers are guaranteed to be anonymous: the interviewer (or the data analyst) does not know the number of non-sensitive issues the respondent faces and so has no way of knowing the answer to sensitive item. This anonymity removes the need to hide the answer. 
+
 
 \paragraph{}
-The aim of list experiments is to avoid this issue by not asking the sensitive question directly. Instead, respondents are presented with a list of issues and indicate the number of issues from the list they have faced. By adding the sensitive item to the list of issues for half of the respondents (randomly selected), estimates for incidence of the sensitive item can be obtained by comparing the mean number of issues faced in both groups. The advantage is thus that answers are guaranteed to be anonymous: the interviewer (or the data analyst) does not know the number of non-sensitive issues the respondent faces and so has no way of knowing the answer to sensitive item. This anonymity removes the need to hide the answer. 
-
-%wie hebben dit gebruikt en hoe?
-This approach has gained attention recently:
-
-Bulte:
-Meng2017:
-Chuang2019:
-
-%\cite{Frye2017} use a list experiment to assess the whether Putin's high popularity ratings are caused by reporting bias. (NB: they've got some refs to other political science LEs)
-%\cite{Blair2014} perform a lidt experimet to determine the support for ISAF in Afghanistan. They compare list experimets to alternative  inidrect questioning methods. They find that list experiments accurately avoid Social Desirability bias.
-% \cite{Bulte2019} compare the results of direct questioning and list experiment to assess the incidence of IPV among beneficiaries of a program to boost female empowerment in Vietnam. They find that using direct questioning yields underestimates of the incidence of IPV. Moreover, the treatment effect of the project reverses its sign when using the List Experiment, compared to using direct questioning. 
+%examples:
 %\cite{Chuang2019} find that LEs weren't very precise.
 
+This approach has been applied to a wide range of topics, such as sensitve political opionions \citep{Frye2017,Blair2014,Meng2017} and SGBV \citep{Bulte2019}. \cite{Bulte2019} is of particular interest to the current paper. They compare the results of direct questioning and list experiment to assess the incidence of IPV among beneficiaries of a program to boost female empowerment in Vietnam. They find that using direct questioning yields underestimates of the incidence of IPV. Moreover, the treatment effect of the project reverses its sign when using the List Experiment, compared to using direct questioning. This underlines the potential of List Experiments to address potential biases caused by reporting bias and direct questions.
 
 %hoe ziet mijn implementatie er uit/
-
-%hoe doe ik de analyse, en interpreteer ik coefficienten etc.
-This does come at a cost; since 
-
-
-
-For the list experiment, the female respondents were randomly divided into two groups. I follow \cite{Imai2011} in calling these groups Treatment and Control. Each group was presented with a number of issues that women can realistically face in Eastern Congo. They then indicated how many of the issues they themselves had faced. The first group (Control) was presented with the following issues:
+For the list experiment, the female respondents were randomly divided into two groups. This was done by the electroninc survey software (ODK), based on the randomly assigned ID codes. I follow \cite{Imai2011} in calling these groups Treatment and Control. The groups were told by the interviewer; ``I will read 4 (or 5) problems that women can experience. These can be sensitive problems. When you've experienced a problem \textbf{in the last year}, please drop one of the balls to the ground. I will not look at when you drop these balls, and only want to know the total number of balls at the end.'' The first group (Control) was presented with the following issues:
 \begin{itemize}
 	\item Lack of food;
 	\item Lack of money;
@@ -175,7 +160,24 @@ For the list experiment, the female respondents were randomly divided into two g
 \end{itemize}
 
 \paragraph{}
- Women in the second group (Treatment) were presented with the same four items, but a fifth item was added: Sexual Violence. The questionnaire was field tested prior to field work to ensure that respondents understood these concepts. While using a list experiment means I cannot know who among the respondents was the victim of SGBV, I can compare the means of the number of issues between the groups to arrive at an estimate of SGBV. By comparing means between sub-samples, and by using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), I can find the correlates of SGBV. 
+Women in the second group (Treatment) were presented with the same four items, but a fifth item was added: Sexual Violence. After all items were read, the interviewer asked the respondent to count the number of balls, and report the number. The questionnaire was field tested prior to field work to ensure that respondents understood these concepts. All interviewers were thoroughly trained in the protocols, and the electronic questionnaire was programmed in such a way to ensure compliance to the protocol.
+
+%hoe doe ik de analyse, en interpreteer ik coefficienten etc.
+While the indirect nature of List Experiments prevents reporting bias, this does come at a cost of efficiency in statistical analysis. The incidence is easily computed by subtracting the mean of issues faced in the control group from the mean number of issues in the treatment group. This means that sample sizes have to be far larger for List Experiments than for direct questions. In a regression framework, the incidence would be estimated as follows:
+
+\begin{equation}
+\label{eq:basic}
+NumIssues_i = \beta_0 + \beta_1 Treatment_i + \epsilon_i
+\end{equation}
+
+Where \(NumIssues_i\) is the number of issues faced by repsondent i, and \(Treatment_i\) is her treatment assignment. Coefficient \(\beta_1\) yields the estimate for the incidence. To find correlates of SGBV, equation \ref{eq:basic} can be augmented using interaction terms as follows: 
+\begin{equation}
+\label{eq:interaction}
+NumIssues_i = \beta_0 + \beta_1 Treatment_i + \beta_2 X_i + \beta_3 Treatment_i X_i + \epsilon_i
+\end{equation}
+
+Where \(X_i\) is an explanatory variable and coefficient \(\beta_3\) gives the estimate for the additional incidence of SGBV associated with a unit increase of \(X\). This can be easily modified to allow for more variables. Again, this is much less efficient than when using direct questioning. By using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), more efficient estimates can be obtained. 
+
 
 \subsection*{Bargaining}
  \paragraph{}
@@ -201,7 +203,7 @@ For the list experiment, the female respondents were randomly divided into two g
 
 \subsection*{Conflict}
 \paragraph{}
-Conflict victimization data was not collected during the 2014 round of the survey. However, for 479, conflict data is available from the 2012 round of data collection. Since the majority of conflict events happened before this time, I used this data as a proxy for conflict exposure.
+Conflict victimization data was not collected during the 2014 round of the survey. However, for 479, conflict data is available from the 2012 round of data collection. Since the majority of conflict events happened before this time, I used this data as a proxy for conflict exposure. This allows for the historic effects of conflict. I used ACLED data for current effects.
 
 Also, ACLED.
 
@@ -263,6 +265,13 @@ The final intra-household variable I use to compare women, is their relative con
 
 \begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_mar3.png}
+  \caption{Comparison of means of issues faced across contribution to cash income.}
+  \label{fig:meancompare_mar3}
+\end{figure}
+
+
+\begin{figure}[H]
+  \includegraphics[width=0.6\linewidth]{\figureloc/regfig_mar.png}
   \caption{Comparison of means of issues faced across contribution to cash income.}
   \label{fig:meancompare_mar3}
 \end{figure}
