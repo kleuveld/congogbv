@@ -422,9 +422,10 @@ drop if gpsLatitude == .
 drop if gpsLongitude == .
 
 cross using `acled_raw'
+keep if  acled_date < int_date & acled_date > int_date - 365
 geodist gpsLatitude gpsLongitude latitude longitude , generate(dist)
 keep if dist <= 30 
-keep if int_date > acled_date
+
 
 collapse (sum) acled_battles acled_violence acled_fatalities, by(KEY)
 
