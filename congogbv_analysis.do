@@ -78,6 +78,18 @@ meandiffs numballs using "$figloc/meancompare_ses2.png", treatment(ball5)  by(li
 
 regfig tinroof livestockany using "$figloc/regfig_ses.png"
 
+
+**********************************************
+**Mean Comparisons across SES**
+**********************************************
+meandiffs numballs using "$figloc/meancompare_att1.png", treatment(ball5)  by(atthusbtotalbin) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_att2.png", treatment(ball5)  by(attwifetotalbin) coeffs(`diffs') append
+
+regfig atthusbtotalbin attwifetotalbin using "$figloc/regfig_att.png"
+regfig attwife?bin atthusb?bin using "$figloc/regfig_att_full.png"
+
+
+
 *export to CSV
 preserve
 use `diffs', clear

@@ -65,30 +65,26 @@ drop terrfe_1
 
 
 *risk game 
+
 *get genders of head and spouse 
 gen linenum = 1
 ren KEY PARENT_KEY
 merge 1:1 PARENT_KEY linenum using "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", keepusing(a_gender a_marstat) keep(match) nogen
 ren a_gender genderhead
-ren a_marstat marstathead
 la var genderhead "Gender of HH Head"
+ren a_marstat marstathead
 
 replace linenum =  hh_grp_gendergender_ep_who 
 merge 1:1 PARENT_KEY linenum using "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", keepusing(a_gender) keep(master match) nogen
 ren a_gender genderspouse
+la var genderspouse "Gender of Spouse"
 ren  PARENT_KEY KEY
 
-la var genderspouse "Gender of Spouse"
-
-
-//ren hh_grp_gendergender_eprisk_f riskspouse
+*bargaining
 gen riskwife = hh_grp_gendergender_eprisk_f if genderspouse == 2
 replace riskwife = hh_grp_gendergender_cdmrisk_cdm if genderhead == 2
 la var riskwife "Bargaining: choice wife"
 
-
-
-//ren hh_grp_gendergender_cdmrisk_cdm riskhead
 gen riskhusband = hh_grp_gendergender_cdmrisk_cdm if genderhead == 1
 replace riskhusband = hh_grp_gendergender_eprisk_f if genderspouse == 1
 la var riskhusband "Barganing: choice husband"
@@ -112,7 +108,7 @@ la val bargresult bargresult
 replace bargresult = 1 if bargwifecloser
 replace bargresult = 3 if barghusbandcloser
 
-*Head/spuce available for gender module
+*Head/spouse available for gender module
 egen riskheadpresent = anymatch(hh_grp_gendergender_available?), values(1)
 la var riskheadpresent "Risk game: head present"
 egen riskspousepresent = anymatch(hh_grp_gendergender_available?), values(2)
@@ -126,7 +122,7 @@ gen riskwifepresent = riskheadpresent if genderhead == 2
 replace riskwifepresent = riskspousepresent if genderspouse == 2
 la var riskwifepresent "Risk game: wife present"
 
-*Head/spuce consent to gender module
+*Head/spouse consent to gender module
 ren hh_grp_gendergender_accept_cdm riskheadconsent
 la var riskheadconsent "Risk game: head consents"
 ren hh_grp_gendergender_accept_ep riskspouseconsent //spouse accepts risk 
@@ -163,6 +159,66 @@ tab  riskwifestatus genderhead, m
 la var riskwifestatus "Wife"
 la var riskhusbandstatus "Husband"
 
+/*
+A 																															B
+1: Selon nos mœurs et coutumes, les femmes ont toujours été soumises et devraient rester comme telles. 						Dans notre pays les femmes devraient avoir des mêmes droits et obligations que les hommes. 
+2: Si un homme maltraite sa femme elle a droit de se plaîndre. 																Selon nos mœurs et coutumes les femmes ne devraient pas se plaîndre de leurs hommes même si elles se sentent maltraités. 
+3: Selon nos mœurs et coutumes, un homme dont la femme a été violée a le droit d’abandonner sa femme.						Une femme qui est victime d’un viol ne devrait pas être rejetée par son marie et la communauté.
+4: Les femmes devraient avoir la même chance que les hommes d’occupé des positions socio-administratives dans le village. 	Les hommes sont les meilleurs dirigents et ce sont eux seuls qui devraient occuper les positions socio-administratives dans le village. 
+5: Seulement les hommes devraient etre les presidents de comités de gestion qui existent dans le village.					Les femmes ont des connaisances à apporter. Elle devraient donc être eligibles au poste de président des comités de gestion qui existent dans le village. 
+
+*/
+
+*head to wife/husband
+di "`varlist'"
+local counter 1
+foreach var of varlist v261 - v273{
+	gen atthusb`counter' = `var' if genderhead == 1
+	la var atthusb`counter' "Husuband Gender Prop. `counter'"
+	gen attwife`counter' = `var' if genderhead == 2
+	la var attwife`counter' "Wife Gender Prop. `counter'"
+	local counter = `counter' + 1
+}
+
+*spouse to wife/husband
+local counter 1
+foreach var of varlist v305 - v317{
+	replace atthusb`counter' = `var' if genderspouse == 1
+	replace attwife`counter' = `var' if genderspouse == 2
+	local counter = `counter' + 1
+}
+recode att*2 att*4  (5=1) (4=2) (2=4) (1=5)
+
+forvalues i = 1/5{
+	local name Husband
+	foreach person in husb wife{
+		gen att`person'`i'bin = inlist(att`person'`i',4,5)
+		la var att`person'`i'bin "`name' response to Prop `i' "
+		local name Wife
+	}
+}
+la def empoweredyn 0 "Not Empowered" 1 "Empowered"
+la val att*bin empoweredyn
+
+
+lab def genderagree 1 "Strongly Agree with tradional" 2 "Agree with traditional" 3 "Neutral" 4 "Agree with empowered" 5 "Strongly agree with empowered"
+la val att* genderagree
+
+egen atthusbtotal = rowtotal(atthusb?)
+la var atthusbtotal "Husband empowerment attitudes"
+su atthusbtotal, d
+gen atthusbtotalbin = atthusbtotal > r(p50) if !missing(atthusbtotal)
+la var atthusbtotalbin "Husband  empowerment attitudes"
+
+egen attwifetotal = rowtotal(attwife?)
+la var attwifetotal "Wife empowerment attitudes"
+
+su atthusbtotal, d
+gen attwifetotalbin = attwifetotal > r(p50) if !missing(attwifetotal)
+la var attwifetotalbin "Wife empowerment attitudes"
+
+la def empowered 0 "Less empowered attidudes than median" 1 "More empowered attidudes than median" 
+la val atthusbtotalbin attwifetotalbin empowered
 
 *aid
 egen aidwomen = anymatch(hh_aid?), values(5)
@@ -206,7 +262,8 @@ la val tinroof yes_no
 keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
 			numballs ball5  list_spouse list_head /// list experiment
 			barg* riskwife riskhusband tinroof aidany aidwomen livestock* ///
-			genderhead marstathead ///
+			genderhead marstathead /// 
+			atthusbtotalbin attwifetotalbin atthusb?bin attwife?bin /// gender attituted
 			risk*present ris*consent riskspouseconsent risk*status
 
 tempfile main 
