@@ -130,7 +130,14 @@ The main source of data for this study is a household survey that was undertaken
 	\label{tab:bargsample}
 	\begin{tabular}{l c c c c c}
 		\toprule
-		\input{\tableloc/tabs.tex}
+		& \multicolumn{5}{c}{Husband} \\
+Wife&Consented&Refused&Absent&No Husband&Total \\
+\hline
+Consented&184&3&253&153&593 \\
+Refused&0&0&0&1&1 \\
+Absent&4&0&0&1&5 \\
+No Wife&282&3&2&3&290 \\
+Total&470&6&255&158&889 \\
 		\bottomrule
 	\end{tabular}
 \end{table}
@@ -205,7 +212,8 @@ Where \(X_i\) is an explanatory variable and coefficient \(\beta_3\) gives the e
 \paragraph{}
 Conflict victimization data was not collected during the 2014 round of the survey. However, for 479, conflict data is available from the 2012 round of data collection. Since the majority of conflict events happened before this time, I used this data as a proxy for conflict exposure. This allows for the historic effects of conflict. I used ACLED data for current effects.
 
-Also, ACLED.
+%EXPAND
+
 
 
 \subsection*{Descriptive Statistics}
@@ -270,10 +278,13 @@ The final intra-household variable I use to compare women, is their relative con
 \end{figure}
 
 
+\paragraph{}
+In order to test whether the differences in incidence between the subgroups created by each variable above, I estimate the model of equation \ref{eq:interaction} above, each time using a different variable as $X$. I plot the coefficients, as well as their 95\% confidence intervals in figure \ref{fig:regfig_mar}. Note that each coefficient is a separate model. I find that women whose families had more land than their husband's families face are victimized by SGBV at a significantly lower rate than other women. I find the same for women who have a better bargaining position, as indicated by the bargaining game.
+
 \begin{figure}[H]
   \includegraphics[width=0.6\linewidth]{\figureloc/regfig_mar.png}
-  \caption{Comparison of means of issues faced across contribution to cash income.}
-  \label{fig:meancompare_mar3}
+  \caption{Regression coefficients.}
+  \label{fig:regfig_mar}
 \end{figure}
 
 \subsection*{Conflict}
@@ -293,6 +304,26 @@ The second conflict indicator I examine, is whether the respondent's household h
   \label{fig:meancompare_conf2}
 \end{figure}
 
+
+The third conflict indicator I examine, is the number of cases of violence against civilians in a 30km radius in the past month. I split the sample in two, using the median as a cutoff point. See \ref{fig:meancompare_conf3}. In the non-victimized group (n=\incid{acledviolence30d0}{n}), the average number of issues was \incid{acledviolence30d0}{mean0} for the control group, and \incid{acledviolence30d0}{mean1} for the treatment group. This implies a rate of GBV of \incid{acledviolence30d0}{incidence_pct}\% (p = \incid{acledviolence30d0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{acledviolence30d1}{n}), the average number of issues was \incid{acledviolence30d1}{mean0} for the control group, and \incid{acledviolence30d1}{mean1} for the treatment group. This implies a rate of GBV of \incid{acledviolence30d1}{incidence_pct}\% (p = \incid{acledviolence30d1}{p}). Note that the results presented here are robust to using number of battles or number of fatalities rather than the instances of violence against civilians; using 5,10,15,20 or 25km as a radius, or using a continuous variable, rather than a binary variable.  
+
+\begin{figure}[H]
+  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_conf3.png}
+  \caption{Comparison of means of issues faced across conflict exposure.}
+  \label{fig:meancompare_conf3}
+\end{figure}
+
+
+\paragraph{}
+As above, I statistically test the differences in the differences of means by inserting the variables examined above in equation \ref{eq:interaction}. The results are displayed in figure \ref{fig:regfig_conf}. None of the coefficients plotted are significant at the 95\% level.
+
+\begin{figure}[H]
+  \includegraphics[width=0.6\linewidth]{\figureloc/regfig_conf.png}
+  \caption{Regression coefficients of conflict indicators.}
+  \label{fig:regfig_conf}
+\end{figure}
+
+
 \subsection*{Assets}
 I then explore the relationship between asset holdings and GBV. The first asset I consider, is having a tin roof (figure \ref{fig:meancompare_ses1}). These roofs are a substantial improvement over thatch roofs, but about half the sample doesn't own them. This makes for a simple, yet non-arbitrary, way to split the sample in richer and poorer households.   In the group without tin roofs (n=\incid{tinroof0}{n}), the average number of issues was \incid{tinroof0}{mean0} for the control group, and \incid{tinroof0}{mean1} for the treatment group. This implies a rate of GBV of \incid{tinroof0}{incidence_pct}\% (p = \incid{tinroof0}{p}). For the group with tin roofs (n=\incid{tinroof1}{n}), the average number of issues was \incid{tinroof1}{mean0} for the control group, and \incid{tinroof1}{mean1} for the treatment group. This implies a rate of GBV of \incid{tinroof1}{incidence_pct}\% (p = \incid{tinroof1}{p}).
 
@@ -311,8 +342,21 @@ A second asset with important status implications for the household is livestock
   \label{fig:meancompare_ses2}
 \end{figure}
 
+
 \paragraph{}
-In summary, I find that women who are in a disadvantageous position in their household, either because they are of lower status, or because they have less bargaining power, are more likely to have experienced GBV. The results with respect to conflict were ambiguous, and I find no suggestion that respondents in poorer household experience GBV at a higher rate than their peers in richer households. If anything, I find the opposite. There are two large caveats with these findings: (i) they are not causal; (ii) by running separate comparisons, any conclusions are at risk of missing variable bias. While the first one is hard to address using list experiments, it is possible to come to more rigourous estimates of effects than presented so far. 
+As above, I statistically test the differences in the differences of means by inserting the variables examined above in equation \ref{eq:interaction}. The results are displayed in figure \ref{fig:regfig_ses}. None of the coefficients plotted are significant at the 95\% level.
+
+\begin{figure}[H]
+  \includegraphics[width=0.6\linewidth]{\figureloc/regfig_ses.png}
+  \caption{Regression coefficients of conflict indicators.}
+  \label{fig:regfig_ses}
+\end{figure}
+
+
+
+
+\paragraph{}
+In summary, I find that women who are in a disadvantageous position in their household, either because they are of lower status, or because they have less bargaining power, are more likely to have experienced GBV. The results with respect to conflict were ambiguous, and I find no suggestion that respondents in poorer household experience GBV at a higher rate than their peers in richer households. If anything, I find the opposite. There are two large caveats with these findings: (i) they are not causal; (ii) by running separate comparisons, any conclusions are at risk of missing variable bias. While the first one is hard to address using list experiments, it is possible to come to more rigorous estimates of effects than presented so far. 
 
 \subsection*{Regression analysis}
 \paragraph{}

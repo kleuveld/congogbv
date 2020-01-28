@@ -31,7 +31,7 @@ tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace s
 **Table 3: Balance Table**
 **************************
 drop if ball5 == .
-balance_table numballs husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost ///
+balance_table numballs husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost acledviolence30 ///
 contribcashyn contribinkindyn tinroof livestockany terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
 	rawcsv treatment(ball5) cluster(vill_id)
 
@@ -61,14 +61,22 @@ regfig statpar bargresult contribcashyn using "$figloc/regfig_mar.png"
 **********************************************
 meandiffs numballs using "$figloc/meancompare_conf1.png", treatment(ball5)  by(victimproplost) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append 
-meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(acled_battles_d) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf4.png", treatment(ball5)  by(acled_violence_d) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_conf5.png", treatment(ball5)  by(acled_fatalities_d) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(acledviolence30d) coeffs(`diffs') append
 
 
-regfig victimproplost victimfamlost acled_battles_d acled_violence_d acled_fatalities_d  using "$figloc/regfig_conf.png"
+regfig victimproplost victimfamlost acledviolence30d using "$figloc/regfig_conf.png"
 
 
+*civilians
+regfig acledviolence5d acledviolence10d acledviolence15d acledviolence20d acledviolence25d acledviolence30d using "$figloc/regfig_conf_viold.png"
+regfig acledviolence5 acledviolence10 acledviolence15 acledviolence20 acledviolence25 acledviolence30 using "$figloc/regfig_conf_violc.png"
+
+
+regfig acledbattles5d acledbattles10d acledbattles15d acledbattles20d acledbattles25d acledbattles30d using "$figloc/regfig_conf_battd.png"
+regfig acledbattles5 acledbattles10 acledbattles15 acledbattles20 acledbattles25 acledbattles30 using "$figloc/regfig_conf_battc.png"
+
+regfig acledfatalities5d acledfatalities10d acledfatalities15d acledfatalities20d acledfatalities25d acledfatalities30d using "$figloc/regfig_conf_fatd.png"
+regfig acledfatalities5 acledfatalities10 acledfatalities15 acledfatalities20 acledfatalities25 acledfatalities30 using "$figloc/regfig_conf_fatc.png"
 
 **********************************************
 **Mean Comparisons across SES**
@@ -87,8 +95,6 @@ meandiffs numballs using "$figloc/meancompare_att2.png", treatment(ball5)  by(at
 
 regfig atthusbtotalbin attwifetotalbin using "$figloc/regfig_att.png"
 regfig attwife?bin atthusb?bin using "$figloc/regfig_att_full.png"
-
-
 
 *export to CSV
 preserve

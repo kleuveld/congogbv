@@ -457,14 +457,14 @@ keep if admin1 == "Sud-Kivu"
 keep if inlist(event_type,"Battles","Violence against civilians")
 drop if year > 2014
 
-gen double acled_date= date(event_date,"DMY")
-format acled_date %td
+gen double acleddate= date(event_date,"DMY")
+format acleddate %td
 
-gen acled_battles = event_type == "Battles"
-gen acled_violence = event_type == "Violence against civilians"
-ren fatalities acled_fatalities
+gen acledbattles = event_type == "Battles"
+gen acledviolence = event_type == "Violence against civilians"
+ren fatalities acledfatalities
 
-keep latitude longitude acled_date acled_battles acled_violence acled_fatalities
+keep latitude longitude acleddate acledbattles acledviolence acledfatalities
 
 
 tempfile acled_raw 
@@ -479,31 +479,43 @@ drop if gpsLatitude == .
 drop if gpsLongitude == .
 
 cross using `acled_raw'
-keep if  acled_date < int_date & acled_date > int_date - 365
+keep if  acleddate < int_date & acleddate > int_date - 365
 geodist gpsLatitude gpsLongitude latitude longitude , generate(dist)
 keep if dist <= 30 
 
 
-collapse (sum) acled_battles acled_violence acled_fatalities, by(KEY)
 
-foreach var of varlist acled_battles acled_violence acled_fatalities {
+forvalues i = 5(5)25{
+	foreach var in acledbattles acledviolence acledfatalities{
+		gen `var'`i' = `var' * dist <= `i'
+	}
+}
+ren (acledbattles acledviolence acledfatalities) (acledbattles30 acledviolence30 acledfatalities30)
+
+
+collapse (sum) acledbattles* acledviolence* acledfatalities*, by(KEY)
+
+foreach var of varlist acledbattles* acledviolence* acledfatalities* {
 	su `var', d
-	gen `var'_d = `var' > r(p50)
-	order `var'_d, after(`var')
+	gen `var'd = `var' > r(p50)
+	order `var'd, after(`var')
 }
 
 la def median 0 "Less than median" 1 "More than median"
-la val acled_*_d median
+la val acled*d median
 
-la var acled_battles "Number of battles (<30km)"
-la var acled_battles_d "Number of battles (<30km)"
+forvalues i = 5(5)30{
 
-la var acled_violence "Instances of violence against civilians (<30km)"
-la var acled_violence_d "Instances of violence against civilians (<30km)"
 
-la var acled_fatalities "Number of fatalities (<30km)"
-la var acled_fatalities_d "Number of fatalities (<30km)"
+	la var acledbattles`i' "Number of battles (<`i'km)"
+	la var acledbattles`i'd "Number of battles (<`i'km)"
 
+	la var acledviolence`i' "Instances of violence against civilians (<`i'km)"
+	la var acledviolence`i'd "Instances of violence against civilians (<`i'km)"
+
+	la var acledfatalities`i' "Number of fatalities (<`i'km)"
+	la var acledfatalities`i'd "Number of fatalities (<`i'km)"
+}
 
 tempfile acled 
 save `acled'
