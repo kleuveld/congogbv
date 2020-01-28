@@ -67,16 +67,7 @@ meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(a
 regfig victimproplost victimfamlost acledviolence30d using "$figloc/regfig_conf.png"
 
 
-*civilians
-regfig acledviolence5d acledviolence10d acledviolence15d acledviolence20d acledviolence25d acledviolence30d using "$figloc/regfig_conf_viold.png"
-regfig acledviolence5 acledviolence10 acledviolence15 acledviolence20 acledviolence25 acledviolence30 using "$figloc/regfig_conf_violc.png"
 
-
-regfig acledbattles5d acledbattles10d acledbattles15d acledbattles20d acledbattles25d acledbattles30d using "$figloc/regfig_conf_battd.png"
-regfig acledbattles5 acledbattles10 acledbattles15 acledbattles20 acledbattles25 acledbattles30 using "$figloc/regfig_conf_battc.png"
-
-regfig acledfatalities5d acledfatalities10d acledfatalities15d acledfatalities20d acledfatalities25d acledfatalities30d using "$figloc/regfig_conf_fatd.png"
-regfig acledfatalities5 acledfatalities10 acledfatalities15 acledfatalities20 acledfatalities25 acledfatalities30 using "$figloc/regfig_conf_fatc.png"
 
 **********************************************
 **Mean Comparisons across SES**
@@ -114,29 +105,44 @@ regfig husbmoreland victimfamlost livestockany using "$figloc/regfig_pool.png", 
 
 
 *table
-
 local using using "$tableloc\results_regression.tex"
 
 tempfile regs //"$tableloc\regs.csv"
-eststo l1: kict ls numballs  tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
+eststo l1: kict ls numballs  husbmoreland, condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", replace addlabel(reg,l1)  pval
-eststo l2: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", replace addlabel(reg,l2)  pval 
-eststo l3: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe*  victimproplost victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
+eststo l2: kict ls numballs  victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", replace addlabel(reg,l2)  pval
+eststo l3: kict ls numballs  acledviolence30d, condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", replace addlabel(reg,l2)  pval  
+eststo l4: kict ls numballs  livestockany, condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l3)  pval
-eststo l4: kict ls numballs  husbmoreland contribcashyn tinroof livestockany terrfe* barghusbandcloser, condition(ball5) nnonkey(4) estimator(linear)
+eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence30d livestockany , condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l4)  pval
 
-eststo l5: kict ls numballs  husbmoreland barghusbandcloser contribcashyn victimproplost victimfamlost tinroof livestockany terrfe*, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", append addlabel(reg,l5)  pval
 
 
 esttab l? `using', replace ///
 	nomtitles keep(Delta:*)  se label ///
-	drop(terr*) ///
 	starlevels(* 0.10 ** 0.05 *** 0.01)
 
 preserve
 use `regs', clear
 export delimited using "$tableloc\regs.csv", datafmt replace
 
+
+***************************
+**Robustness checks**
+*********************
+
+*choice of acled parameters:
+*civilians
+regfig acledviolence5d acledviolence10d acledviolence15d acledviolence20d acledviolence25d acledviolence30d using "$figloc/regfig_conf_viold.png"
+regfig acledviolence5 acledviolence10 acledviolence15 acledviolence20 acledviolence25 acledviolence30 using "$figloc/regfig_conf_violc.png"
+
+*battles
+regfig acledbattles5d acledbattles10d acledbattles15d acledbattles20d acledbattles25d acledbattles30d using "$figloc/regfig_conf_battd.png"
+regfig acledbattles5 acledbattles10 acledbattles15 acledbattles20 acledbattles25 acledbattles30 using "$figloc/regfig_conf_battc.png"
+
+*fatalities
+regfig acledfatalities5d acledfatalities10d acledfatalities15d acledfatalities20d acledfatalities25d acledfatalities30d using "$figloc/regfig_conf_fatd.png"
+regfig acledfatalities5 acledfatalities10 acledfatalities15 acledfatalities20 acledfatalities25 acledfatalities30 using "$figloc/regfig_conf_fatc.png"

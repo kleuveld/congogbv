@@ -505,8 +505,6 @@ la def median 0 "Less than median" 1 "More than median"
 la val acled*d median
 
 forvalues i = 5(5)30{
-
-
 	la var acledbattles`i' "Number of battles (<`i'km)"
 	la var acledbattles`i'd "Number of battles (<`i'km)"
 
@@ -533,10 +531,35 @@ clonevar hh_id_orig = hh_id
 bys vill_id grp_id (hh_id): replace hh_id = 990 +  _n if numballs == .
 
 merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge)
-merge 1:1 KEY using `acled', keep(master match)  gen(acledmerge)
+merge 1:1 KEY using `acled', keep(master match)  gen(aclmerge)
 
 assert gender == 2 if !missing(numballs)
 drop gender
+
+
+*impute violence 
+foreach var of varlist acledbattles* acledviolence* acledfatalities*{
+		bys vill_id: egen miss = mean(`var')
+		replace `var' = miss if missing(`var')
+		drop miss
+}
+
+
+ds acled*
+local all `r(varlist)'
+
+ds acled*d 
+local binaries `r(varlist)'
+
+
+local nobin: list all - binaries
+di "`nobin'"
+
+foreach var of varlist `nobin' {
+	su `var', d
+	replace `var'd = `var' > r(p50)
+	order `var'd, after(`var')
+}
 
 save "$dataloc\clean\analysis.dta", replace
 
