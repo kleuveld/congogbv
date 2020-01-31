@@ -8,13 +8,13 @@
 %\usepackage{amsfonts}
 %\usepackage{amssymb}
 \usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=3cm]{geometry}
-\usepackage[pdftex, hidelinks]{hyperref}
+%\usepackage[pdftex, hidelinks]{hyperref} %disable if using float package
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage[blocks]{authblk} %for affil
 \usepackage{url}
 \usepackage{tabularx}
-\usepackage{float} %allows the H positioning specifier
+\usepackage{float} %allows the H positioning specifier; conflicts with hyperref
 \usepackage{csvsimple}
 \usepackage[nomessages]{fp}
 \usepackage{xcolor}
@@ -52,7 +52,7 @@
 \author{Koen Leuveld}
 
 \affil{Development Economics Group, Wageningen University \\
-\href{mailto:koen.leuveld@wur.nl}{koen.leuveld@wur.nl}}
+koen.leuveld@wur.nl}
 
 
 
