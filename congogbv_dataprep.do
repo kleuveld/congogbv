@@ -187,6 +187,8 @@ foreach var of varlist v305 - v317{
 	replace attwife`counter' = `var' if genderspouse == 2
 	local counter = `counter' + 1
 }
+
+*recode to ensure higher is more empowered
 recode att*2 att*4  (5=1) (4=2) (2=4) (1=5)
 
 forvalues i = 1/5{

@@ -111,13 +111,13 @@ tempfile regs //"$tableloc\regs.csv"
 eststo l1: kict ls numballs  husbmoreland, condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", replace addlabel(reg,l1)  pval
 eststo l2: kict ls numballs  victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", replace addlabel(reg,l2)  pval
+regsave using "`regs'", append addlabel(reg,l2)  pval
 eststo l3: kict ls numballs  acledviolence30d, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", replace addlabel(reg,l2)  pval  
+regsave using "`regs'", append addlabel(reg,l3)  pval  
 eststo l4: kict ls numballs  livestockany, condition(ball5) nnonkey(4) estimator(linear)
-regsave using "`regs'", append addlabel(reg,l3)  pval
-eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence30d livestockany , condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l4)  pval
+eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence30d livestockany , condition(ball5) nnonkey(4) estimator(linear)
+regsave using "`regs'", append addlabel(reg,l5)  pval
 
 
 
@@ -127,13 +127,14 @@ esttab l? `using', replace ///
 
 preserve
 use `regs', clear
+format coef stderr pval %9.2f
 export delimited using "$tableloc\regs.csv", datafmt replace
 
 
 ***************************
 **Robustness checks**
 *********************
-
+restore
 *choice of acled parameters:
 *civilians
 regfig acledviolence5d acledviolence10d acledviolence15d acledviolence20d acledviolence25d acledviolence30d using "$figloc/regfig_conf_viold.png"
