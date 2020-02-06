@@ -98,6 +98,11 @@ program define balance_table
 		n di as result  "exporting rawcsv"
 		qui use "`balance_raw'", clear
 		format mean* sd* %9.2f
+		foreach var of varlist mean*{
+			gen `var'_pct = `var' * 100
+			format `var'_pct %9.0f
+		}
+
 		if regexm("`using'","(.*)\..*"){
 			local usingraw = regexs(1) 
 		}
