@@ -31,8 +31,14 @@ tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace s
 **Table 3: Balance Table**
 **************************
 drop if ball5 == .
-balance_table numballs husbmoreland wifemoreland contribcash contribcashyn riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost acledviolence30 ///
-contribcashyn contribinkindyn tinroof livestockany terrfe* if !missing(ball5) using "$tableloc\balance.tex", ///
+balance_table ///
+	numballs ///list experiment
+	victimproplost victimfamlost acledviolence30 /// conflict
+	husbmoreland wifemoreland contribcash contribcashyn riskwife riskhusband barghusbandcloser bargwifecloser  /// bargainin and empowerment
+	atthusbtotal attwifetotal /// gender attitidues 
+	tinroof livestockany ///assets
+	terrfe* /// other
+	if !missing(ball5) using "$tableloc\balance.tex", ///
 	rawcsv treatment(ball5) cluster(vill_id)
 
 reg ball5  husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost ///

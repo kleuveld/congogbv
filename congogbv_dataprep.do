@@ -265,7 +265,7 @@ keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
 			numballs ball5  list_spouse list_head /// list experiment
 			barg* riskwife riskhusband tinroof aidany aidwomen livestock* ///
 			genderhead marstathead /// 
-			atthusbtotalbin attwifetotalbin atthusb?bin attwife?bin /// gender attituted
+			atthusbtotal attwifetotal atthusbtotalbin attwifetotalbin atthusb?bin attwife?bin /// gender attituted
 			risk*present ris*consent riskspouseconsent risk*status
 
 tempfile main 
