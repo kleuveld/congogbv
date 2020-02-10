@@ -1,10 +1,10 @@
 /*
-Analysis of GBV in Congo, based on MFS II baseline data
+Processing of MFS II endline data (and ACLED Data) to allow for analysis of GBV.
 
 Author: Koen Leuveld
 Git repo: https://github.com/freetambo/congogbv.git
 
-Date: 14/11/2019
+Date: 10/02/2020
 
 */
 
@@ -294,9 +294,14 @@ bys PARENT_KEY: egen numwives = count(a_relhead)
 
 drop if spousenum > 1
 
+*age, ethn, education
+ren a_age age_spouse
+ren a_etn etn_spouse 
+ren a_school edu_spouse
+
 *save only relevant data
 gen linenum = 1
-keep PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts
+keep PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts age_spouse etn_spouse edu_spouse
 tempfile spouses
 save `spouses'
 
@@ -324,7 +329,35 @@ merge 1:1 KEY using `occupations', keep(master match) gen(occmerge)
 ren linenum resp_id
 ren KEY ROSTER_KEY
 ren PARENT_KEY KEY
+replace a_relhead = 1 if resp_id == 1
 
+
+*age, ethn, education
+ren a_age age_head
+ren a_etn etn_head
+ren a_school edu_head
+
+tokenize `""Age" "Etnicicity" "Level of education""'
+foreach var in age etn edu {
+	foreach partner in wife husband{
+		gen `var'`partner' = .
+		la var `var'`partner' "`1' of `partner'"
+	}
+	*respondent (woman) is head
+	replace `var'wife = `var'_head if a_relhead == 1
+	replace `var'husband = `var'_spouse if a_relhead == 1
+	
+	*respondent (woman) is spouse
+	replace `var'wife =  `var'_spouse if a_relhead == 2
+	replace `var'husband = `var'_head if a_relhead == 2
+	macro shift
+
+}
+
+*sameethiniciy
+gen sameethn = etnwife == etnhusband if !missing(etnwife) & !missing(etnhusband)
+la var sameethn "Couple same ethnicity" 
+la val sameethn yes_no
 
 *status of parents
 ren a_marrnonhh_statpar statpar
@@ -332,15 +365,12 @@ replace statpar = . if statpar > 3
 la var statpar "Land holdings of families before marriage"
 la def statpar 1 "Wife's had more land" 2 "Equal" 3 "Husband's had more land"
 
-
 gen wifemoreland = statpar == 1 if !missing(statpar)
 la var wifemoreland "Family wife had more land"
 gen husbmoreland = statpar == 3 if !missing(statpar)
 la var husbmoreland "Family husband had more land"
 
 *dots and gifts
-replace a_relhead = 1 if resp_id == 1
-
 *items
 foreach i of numlist 1/3{
 	gen marrwiveprov`i' = .
@@ -351,8 +381,8 @@ foreach i of numlist 1/3{
 	replace marrhusbprov`i' = a_marrspouseprov`i' if a_relhead == 1
 
 	*respondent is spouse
-	replace marrwiveprov`i' = a_marrheadprov`i' if a_relhead == 2
-	replace marrhusbprov`i' = a_marrspouseprov`i' if a_relhead == 2
+	replace marrwiveprov`i' =   a_marrspouseprov`i' if a_relhead == 2
+	replace marrhusbprov`i' = a_marrheadprov`i' if a_relhead == 2
 }
 
 *value
@@ -376,17 +406,12 @@ foreach item in dot gifts{
 	replace marrwive`item' = . if marrwive`item' == 98
 }
 
-ren a_age age 
-la var age "age"
 gen head = resp_id == 1
 la var head "Household Head"
 la def L_head 1 "Head" 0 "Spouse"
 
 ren a_marstat marstat 
 la var marstat "Marital Status"
-
-ren a_school school 
-la var school  "Level of education"
 
 ren a_gender gender
 
@@ -402,8 +427,10 @@ la var martrad "Marriage: Traditional"
 la val marcohab marcivil marreli martrad yes_no
 
 *contribution cash
+la var contribcash "Contribution to cash income"
+
 gen contribcashyn = contribcash >= 50 if !missing(contribcash)
-la var contribcashyn "Major contribution cash-income"
+la var contribcashyn "Contribution to cash income >50\%"
 la val contribcashyn yes_no
 
 gen contribinkindyn = contribinkind >= 50 if !missing(contribinkind)
@@ -411,7 +438,7 @@ la var contribinkindyn "Major contribution in-kind-income"
 la val contribinkindyn yes_no
 
 keep 	resp_id ROSTER_KEY KEY /// IDs
-		age head school gender ///demographics
+		agewife agehusband eduwife eduhusband sameethn head gender ///demographics
 		marstat marcohab marcivil marreli martrad /// marriage 
 		statpar wifemoreland husbmoreland ///status	
 		contribcash contribinkind contribcashyn contribinkindyn ///contributions	
@@ -461,6 +488,7 @@ drop if year > 2014
 
 gen double acleddate= date(event_date,"DMY")
 format acleddate %td
+keep if acleddate > td(1jan2012)
 
 gen acledbattles = event_type == "Battles"
 gen acledviolence = event_type == "Violence against civilians"
@@ -482,6 +510,7 @@ drop if gpsLongitude == .
 
 cross using `acled_raw'
 keep if  acleddate < int_date & acleddate > int_date - 365
+
 geodist gpsLatitude gpsLongitude latitude longitude , generate(dist)
 keep if dist <= 30 
 

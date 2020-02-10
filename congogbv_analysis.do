@@ -1,10 +1,14 @@
 /*
-Analysis of GBV in Congo, based on MFS II baseline data
+Analysis of GBV in Congo, based on MFS II baseline data.
+
+Dependencies:
+congogbv_dataprep.do: prepares MFS II data, and ACLED data.
+congogbv_helpers.do: defines programs to create figures and tables.
 
 Author: Koen Leuveld
 Git repo: https://github.com/freetambo/congogbv.git
 
-Date: 14/11/2019
+Date: 10/02/2020
 
 */
 
@@ -30,10 +34,14 @@ tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace s
 **************************
 **Table 3: Balance Table**
 **************************
+
+*add: age & education
+
 drop if ball5 == .
 balance_table ///
+	agewife agehusband eduwife eduhusband /// demograhpics
 	numballs ///list experiment
-	victimproplost victimfamlost acledviolence30 /// conflict
+	victimproplost victimfamlost acledviolence10 acledfatalities10 /// conflict
 	husbmoreland wifemoreland contribcash contribcashyn riskwife riskhusband barghusbandcloser bargwifecloser  /// bargainin and empowerment
 	atthusbtotal attwifetotal /// gender attitidues 
 	tinroof livestockany ///assets
@@ -61,13 +69,12 @@ meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(co
 regfig statpar bargresult contribcashyn using "$figloc/regfig_mar.png"
 
 
-
 **********************************************
 **Mean Comparisons across Conflict**
 **********************************************
 meandiffs numballs using "$figloc/meancompare_conf1.png", treatment(ball5)  by(victimproplost) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(victimfamlost) coeffs(`diffs') append 
-meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(acledviolence30d) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(acledviolence10d) coeffs(`diffs') append
 
 
 regfig victimproplost victimfamlost acledviolence30d using "$figloc/regfig_conf.png"
@@ -120,9 +127,9 @@ eststo l2: kict ls numballs  victimfamlost, condition(ball5) nnonkey(4) estimato
 regsave using "`regs'", append addlabel(reg,l2)  pval
 eststo l3: kict ls numballs  acledviolence30d, condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l3)  pval  
-eststo l4: kict ls numballs  livestockany, condition(ball5) nnonkey(4) estimator(linear)
+eststo l4: kict ls numballs  atthusbtotalbin attwifetotalbin, condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l4)  pval
-eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence30d livestockany , condition(ball5) nnonkey(4) estimator(linear)
+eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence30d atthusbtotalbin attwifetotalbin , condition(ball5) nnonkey(4) estimator(linear)
 regsave using "`regs'", append addlabel(reg,l5)  pval
 
 
