@@ -121,17 +121,16 @@ regfig husbmoreland victimfamlost livestockany using "$figloc/regfig_pool.png", 
 local using using "$tableloc\results_regression.tex"
 
 tempfile regs //"$tableloc\regs.csv"
-eststo l1: kict ls numballs  husbmoreland, condition(ball5) nnonkey(4) estimator(linear)
+eststo l1: kict ls numballs  husbmoreland, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", replace addlabel(reg,l1)  pval
-eststo l2: kict ls numballs  victimfamlost, condition(ball5) nnonkey(4) estimator(linear)
+eststo l2: kict ls numballs  victimfamlost, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l2)  pval
-eststo l3: kict ls numballs  acledviolence30d, condition(ball5) nnonkey(4) estimator(linear)
+eststo l3: kict ls numballs  acledviolence10d, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l3)  pval  
-eststo l4: kict ls numballs  atthusbtotalbin attwifetotalbin, condition(ball5) nnonkey(4) estimator(linear)
+eststo l4: kict ls numballs  atthusbtotalbin attwifetotalbin, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l4)  pval
-eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence30d atthusbtotalbin attwifetotalbin , condition(ball5) nnonkey(4) estimator(linear)
+eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence10d atthusbtotalbin attwifetotalbin , condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l5)  pval
-
 
 
 esttab l? `using', replace ///
