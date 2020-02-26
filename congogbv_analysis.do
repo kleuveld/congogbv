@@ -66,8 +66,11 @@ meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(st
 meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
 
-regfig statpar bargresult contribcashyn using "$figloc/regfig_mar.png"
+//regfig statpar bargresult contribcashyn using "$figloc/regfig_mar.png"
 
+meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbmoreland barghusbandcloser bargwifecloser contribcashyn) treat(ball5)
+
+kaas
 
 **********************************************
 **Mean Comparisons across Conflict**
@@ -78,9 +81,6 @@ meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(a
 
 
 regfig victimproplost victimfamlost acledviolence30d using "$figloc/regfig_conf.png"
-
-
-
 
 **********************************************
 **Mean Comparisons across SES**

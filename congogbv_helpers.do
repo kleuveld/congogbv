@@ -177,6 +177,7 @@ program meandiffs
 		ren `by' group
 		gen key = "`key'" + string(group)
 
+
 		*calculate p(s)
 		gen p = .
 		forvalues i = 1/`=_N'{
@@ -216,7 +217,6 @@ program define tab2csv
 	syntax varlist(min=2 max=2) using
 
 	preserve
-
 
 	tokenize `varlist'
 	local var1 `1'
@@ -321,6 +321,7 @@ program define regfig
 	bys series: gen regno = _n
 	gen graphpos = (regno - 1) * `series' + series
 
+
 	*define the definition for the x-axis. Format: # `" "label line 1" "label line 2" "' etc.
 	levelsof regno, local(levels)
 	local xlabel
@@ -346,6 +347,72 @@ program define regfig
 
 	restore
 end
+
+
+cap prog drop meandifftab
+program define meandifftab
+	syntax varlist(max=1) [using/] , by(varlist) treat(varname)
+	preserve
+	tempname memhold
+	tempfile coeffs
+	postfile `memhold' str32 var str80 varlabel  ///
+		n0 meancontrol0  meantreat0 diff0 sediff0 pdiff0 diff0pct ///
+		n1 meancontrol1  meantreat1 diff1 sediff1 pdiff1 diff1pct ///
+		dd sedd pdd ///
+		using `coeffs', replace
+
+	
+	foreach var of varlist `by'{ 
+
+		assert `var' == 0 | `var' == 1 | missing(`var')
+
+		*group 0
+		forvalues i=0/1{
+			reg `varlist' `treat' if `var' == `i'
+			matrix table = r(table)
+
+			count if `var' == `i'
+			scalar n`i' = r(N)
+			scalar meancontrol`i' = table[1,2] //intercept
+			scalar meantreat`i' = meancontrol`i' + table[1,1] //intercept + treatmentdummy
+			scalar diff`i' = table[1,1] //treatmentdummy
+			scalar sediff`i' = table[2,1] //treatmentdummy
+			scalar pdiff`i' = table[4,1] //p-value of treatment dummy
+			scalar diff`i'pct = diff`i' * 100
+		}
+
+
+
+		*diff-in-diff
+		reg `varlist' c.`treat'##i.`var'
+		matrix table = r(table)
+		scalar dd = table[1,5] //treatmentdummy*groupdummy
+		scalar sedd = table[2,5]
+		scalar pdd = table[4,5]
+
+		post `memhold' ("`var'") (`"`: var label `var''"') ///
+			(n0) (meancontrol0) (meantreat0) (diff0) (sediff0) (pdiff0) (diff0pct) ///
+			(n1) (meancontrol1) (meantreat1) (diff1) (sediff1) (pdiff1) (diff1pct) ///
+			(dd) (sedd) (pdd)
+	}
+	postclose `memhold'
+	use `coeffs', clear
+
+	foreach coeff in diff0 diff1 dd {
+		gen star`coeff' = string(`coeff',"%9.2f") + cond(p`coeff' < 0.1,"*","") + cond(p`coeff' < 0.05,"*","") + cond(p`coeff' < 0.01,"*","")
+	}
+	
+
+
+	format mean* diff* dd  %9.2f
+	format diff* pdd se* %9.3f
+	format n? *pct %9.0f
+
+	qui export delimited using "`using'", datafmt replace
+	restore
+end
+
+
 
 *splitlabel
 *Splits variable labels using quotes, so graph labels don't end up too long.
