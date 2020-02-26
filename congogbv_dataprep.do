@@ -100,6 +100,7 @@ gen bargwifecloser = abs(barghusbanddiff) > abs(bargwifediff) if !missing(riskco
 
 la var barghusbandcloser "Bargaining: closer to husband"
 la var bargwifecloser "Bargaining: closer to wife"
+la val barghusbandcloser bargwifecloser yes_no
 
 gen bargresult = 2
 la var bargresult "Bargaining result"
@@ -369,6 +370,7 @@ gen wifemoreland = statpar == 1 if !missing(statpar)
 la var wifemoreland "Family wife had more land"
 gen husbmoreland = statpar == 3 if !missing(statpar)
 la var husbmoreland "Family husband had more land"
+la val wifemoreland husbmoreland yes_no
 
 *dots and gifts
 *items
@@ -430,8 +432,9 @@ la val marcohab marcivil marreli martrad yes_no
 la var contribcash "Contribution to cash income"
 
 gen contribcashyn = contribcash >= 50 if !missing(contribcash)
-la var contribcashyn "Contribution to cash income >50\%"
-la val contribcashyn yes_no
+la var contribcashyn "Contribution to cash income"
+la def halfhalf 0 "Less than half" 1 "Half or more"
+la val contribcashyn halfhalf
 
 gen contribinkindyn = contribinkind >= 50 if !missing(contribinkind)
 la var contribinkindyn "Major contribution in-kind-income"
@@ -536,14 +539,14 @@ la def median 0 "Less than median" 1 "More than median"
 la val acled*d median
 
 forvalues i = 5(5)30{
-	la var acledbattles`i' "Number of battles (<`i'km)"
-	la var acledbattles`i'd "Number of battles (<`i'km)"
+	la var acledbattles`i' "ACLED: Number of battles"
+	la var acledbattles`i'd "ACLED: Number of battles"
 
-	la var acledviolence`i' "Instances of violence against civilians (<`i'km)"
-	la var acledviolence`i'd "Instances of violence against civilians (<`i'km)"
+	la var acledviolence`i' "ACLED: Instances of violence against civilians"
+	la var acledviolence`i'd "ACLED: Instances of violence against civilians"
 
-	la var acledfatalities`i' "Number of fatalities (<`i'km)"
-	la var acledfatalities`i'd "Number of fatalities (<`i'km)"
+	la var acledfatalities`i' "ACLED: Number of fatalities"
+	la var acledfatalities`i'd "ACLED: Number of fatalities"
 }
 
 tempfile acled 

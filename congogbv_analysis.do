@@ -58,19 +58,7 @@ contribcashyn contribinkindyn tinroof livestockany terrfe*, vce(cluster vill_id)
 tempfile diffs
 meandiffs numballs using "$figloc/meancompare_overall.png", treatment(ball5) coeffs(`diffs')
 
-**********************************************
-**Mean Comparisons Marriage**
-**********************************************
-//meandiffs fuction is defined in congogbv_helpers.do
-meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(statpar) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
 
-//regfig statpar bargresult contribcashyn using "$figloc/regfig_mar.png"
-
-meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbmoreland barghusbandcloser bargwifecloser contribcashyn) treat(ball5)
-
-kaas
 
 **********************************************
 **Mean Comparisons across Conflict**
@@ -80,25 +68,27 @@ meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(v
 meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(acledviolence10d) coeffs(`diffs') append
 
 
-regfig victimproplost victimfamlost acledviolence30d using "$figloc/regfig_conf.png"
-
-**********************************************
-**Mean Comparisons across SES**
-**********************************************
-meandiffs numballs using "$figloc/meancompare_ses1.png", treatment(ball5)  by(tinroof) coeffs(`diffs') append
-meandiffs numballs using "$figloc/meancompare_ses2.png", treatment(ball5)  by(livestockany) coeffs(`diffs') append
-
-regfig tinroof livestockany using "$figloc/regfig_ses.png"
+meandifftab numballs using "$tableloc\meandifftab_conf.csv",by(victimproplost victimfamlost acledviolence10d) treat(ball5)
 
 
 **********************************************
-**Mean Comparisons across SES**
+**Mean Comparisons Marriage**
+**********************************************
+//meandiffs fuction is defined in congogbv_helpers.do
+meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(statpar) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
+meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
+
+meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbmoreland barghusbandcloser bargwifecloser contribcashyn) treat(ball5)
+
+
+**********************************************
+**Mean Comparisons across Gender Attitudes**
 **********************************************
 meandiffs numballs using "$figloc/meancompare_att1.png", treatment(ball5)  by(atthusbtotalbin) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_att2.png", treatment(ball5)  by(attwifetotalbin) coeffs(`diffs') append
 
-regfig atthusbtotalbin attwifetotalbin using "$figloc/regfig_att.png"
-regfig attwife?bin atthusb?bin using "$figloc/regfig_att_full.png"
+meandifftab numballs using "$tableloc\meandifftab_att.csv",by(atthusbtotalbin attwifetotalbin) treat(ball5)
 
 *export to CSV
 preserve

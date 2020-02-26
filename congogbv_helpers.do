@@ -351,13 +351,16 @@ end
 
 cap prog drop meandifftab
 program define meandifftab
+
+
+
 	syntax varlist(max=1) [using/] , by(varlist) treat(varname)
 	preserve
 	tempname memhold
 	tempfile coeffs
 	postfile `memhold' str32 var str80 varlabel  ///
-		n0 meancontrol0  meantreat0 diff0 sediff0 pdiff0 diff0pct ///
-		n1 meancontrol1  meantreat1 diff1 sediff1 pdiff1 diff1pct ///
+		n0 str80 label0 meancontrol0  meantreat0 diff0 sediff0 pdiff0 diff0pct ///
+		n1 str80 label1 meancontrol1  meantreat1 diff1 sediff1 pdiff1 diff1pct ///
 		dd sedd pdd ///
 		using `coeffs', replace
 
@@ -391,10 +394,11 @@ program define meandifftab
 		scalar pdd = table[4,5]
 
 		post `memhold' ("`var'") (`"`: var label `var''"') ///
-			(n0) (meancontrol0) (meantreat0) (diff0) (sediff0) (pdiff0) (diff0pct) ///
-			(n1) (meancontrol1) (meantreat1) (diff1) (sediff1) (pdiff1) (diff1pct) ///
+			(n0) ("`: label( `var' ) 0 '") (meancontrol0) (meantreat0) (diff0) (sediff0) (pdiff0) (diff0pct) ///
+			(n1) ("`: label( `var' ) 1 '") (meancontrol1) (meantreat1) (diff1) (sediff1) (pdiff1) (diff1pct) ///
 			(dd) (sedd) (pdd)
 	}
+
 	postclose `memhold'
 	use `coeffs', clear
 
