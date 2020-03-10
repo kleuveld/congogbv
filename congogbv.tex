@@ -14,7 +14,7 @@
 \usepackage[blocks]{authblk} %for affil
 \usepackage{url}
 \usepackage{tabularx}
-\usepackage{float} %allows the H positioning specifier; conflicts with hyperref
+%\usepackage{float} %allows the H positioning specifier; conflicts with hyperref
 \usepackage{csvsimple}
 \usepackage[nomessages]{fp}
 \usepackage{xcolor}
@@ -59,11 +59,10 @@
 	\quad \labb 		& \nb	& \mcb 	& \mtb 	& \diffb & \seb	\\%
 	\quad Diff in Diff 	& 		&		&		& \dd 	 & \sedd
 	}%
-	\label{tab:meandiff_mar}
 	\begin{tablenotes}
 	\small
 	 \item Robust Standard errors reported.
-	 \item * p $<$ 0.1, **, p $<$ 0.05 *** p $<$ 0.01
+	 \item * p $<$ 0.1, **, p $<$ 0.05, *** p $<$ 0.01
 	\end{tablenotes}
 	\end{threeparttable}
 }
@@ -262,7 +261,7 @@ On average, participants were moderately risk averse. The mean choice of the wom
 %where do gender norms get cited?
  To measure gender attitudes, five propositions (see Table \ref{tab:genderatt}) were read to all respondents of the gender module. Respondents indicated one a five-point scale whether they fully agreed with proposition A (1), or fully agreed with proposition B (5). I recode the answers so that 5 is always fully agree with the empowered proposition, and 1 is fully agree with the less empowered option. I then sum all the answers to obtain a measure if attitudes. On average, the mean score for men was  \summstat{atthusbtotal}{meanall}. Women's attitudes were comparatively empowered: the mean score for them was \summstat{attwifetotal}{meanall}.
 
-\begin{table}[h]
+\begin{table}[htb]
 \centering
 \caption{Gender Attitudes propositions}
 \label{tab:genderatt}
@@ -297,128 +296,78 @@ First, I compare the number of issues faced by the Treatment and Control groups 
  \citep{Peterson2018,Stark2017,Johnson2010}, whereas here we only consider victimization the past year. A higher incidence is expected, since the sample is non random, drawing mostly from vulnerable rural households. 
 
 
-\begin{figure}[H]
+\begin{figure}[htb]
   \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_overall.png}
   \caption{Comparison of means of issues faced: treatment vs. control.}
   \label{fig:meancompare_overall}
 \end{figure}
 
 \subsection*{Conflict}
-The first dimension over which I create sub-groups is conflict history. I use data collected from an earlier round of the study that collected detailed conflict exposure data. First, I compare respondents who live in households who have suffered loss of (or damage to) property, including agricultural fields, due to conflict. See \ref{fig:meancompare_conf1}. In the non-victimized group (n=\incid{victimproplost0}{n}), the average number of issues was \incid{victimproplost0}{mean0} for the control group, and \incid{victimproplost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost0}{incidence_pct}\% (p = \incid{victimproplost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimproplost1}{n}), the average number of issues was \incid{victimproplost1}{mean0} for the control group, and \incid{victimproplost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost1}{incidence_pct}\% (p = \incid{victimproplost1}{p}).
+The first dimension over which I create sub-groups is conflict history. I use data collected from an earlier round of the study that collected detailed conflict exposure data. First, I compare respondents who live in households who have suffered loss of (or damage to) property, including agricultural fields, due to conflict. See top-left panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{victimproplost0}{n}), the average number of issues was \incid{victimproplost0}{mean0} for the control group, and \incid{victimproplost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost0}{incidence_pct}\% (p = \incid{victimproplost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimproplost1}{n}), the average number of issues was \incid{victimproplost1}{mean0} for the control group, and \incid{victimproplost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost1}{incidence_pct}\% (p = \incid{victimproplost1}{p}).
 
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_conf1.png}
+\begin{figure}[htb]
+  \includegraphics[width=\linewidth]{\figureloc/meancompare_conf.png}
   \caption{Comparison of means of issues faced across conflict exposure.}
-  \label{fig:meancompare_conf1}
+  \label{fig:meancompare_conf}
 \end{figure}
 
-The second conflict indicator I examine, is whether the respondent's household has lost any household members or family as a consequence of the conflict.See \ref{fig:meancompare_conf2}. In the non-victimized group (n=\incid{victimfamlost0}{n}), the average number of issues was \incid{victimfamlost0}{mean0} for the control group, and \incid{victimfamlost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost0}{incidence_pct}\% (p = \incid{victimfamlost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimfamlost1}{n}), the average number of issues was \incid{victimfamlost1}{mean0} for the control group, and \incid{victimfamlost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost1}{incidence_pct}\% (p = \incid{victimfamlost1}{p}).
+The second conflict indicator I examine, is whether the respondent's household has lost any household members or family as a consequence of the conflict.See top-right panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{victimfamlost0}{n}), the average number of issues was \incid{victimfamlost0}{mean0} for the control group, and \incid{victimfamlost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost0}{incidence_pct}\% (p = \incid{victimfamlost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimfamlost1}{n}), the average number of issues was \incid{victimfamlost1}{mean0} for the control group, and \incid{victimfamlost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost1}{incidence_pct}\% (p = \incid{victimfamlost1}{p}).
 
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_conf2.png}
-  \caption{Comparison of means of issues faced across conflict exposure.}
-  \label{fig:meancompare_conf2}
-\end{figure}
+The third conflict indicator I examine, is the number of cases of violence against civilians in a 10km radius in the past month. I split the sample in two, using the median as a cutoff point. See bottom-left panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{acledviolence10d0}{n}), the average number of issues was \incid{acledviolence10d0}{mean0} for the control group, and \incid{acledviolence10d0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d0}{incidence_pct}\% (p = \incid{acledviolence10d0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{acledviolence10d1}{n}), the average number of issues was \incid{acledviolence30d1}{mean0} for the control group, and \incid{acledviolence10d1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d1}{incidence_pct}\% (p = \incid{acledviolence10d1}{p}). Note that the results presented here are robust to using number of battles or number of fatalities rather than the instances of violence against civilians; using 5,15,20, 25 or 30km as a radius, or using a continuous variable, rather than a binary variable.  
 
-
-The third conflict indicator I examine, is the number of cases of violence against civilians in a 10km radius in the past month. I split the sample in two, using the median as a cutoff point. See \ref{fig:meancompare_conf3}. In the non-victimized group (n=\incid{acledviolence10d0}{n}), the average number of issues was \incid{acledviolence10d0}{mean0} for the control group, and \incid{acledviolence10d0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d0}{incidence_pct}\% (p = \incid{acledviolence10d0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{acledviolence10d1}{n}), the average number of issues was \incid{acledviolence30d1}{mean0} for the control group, and \incid{acledviolence10d1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d1}{incidence_pct}\% (p = \incid{acledviolence10d1}{p}). Note that the results presented here are robust to using number of battles or number of fatalities rather than the instances of violence against civilians; using 5,15,20, 25 or 30km as a radius, or using a continuous variable, rather than a binary variable.  
-
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_conf3.png}
-  \caption{Comparison of means of issues faced across conflict exposure.}
-  \label{fig:meancompare_conf3}
-\end{figure}
-
-
-\paragraph{}
 The average number of items reported by the groups created by the conflict indicators explored above is presented in Table \ref{tab:meandiff_conf}, for both treatment and control groups. The Diff columns thus provides the estimate of the incidence in each group. The difference in these differences is then presented in the Diff in Diff row for each variable. This estimate is equal to coefficient $\beta_3$ in equation \ref{eq:interaction} above. The only statistically significant Diff in Diff estimate is for having lost a household or family member due to conflict. Incidence for those woman without such loss is 21\%, for those with such loss it is 52\%. The difference of 31\% is significant a the 10\% level.
 
-\begin{table}[h]
+\begin{table}[htb]
 \caption{Differences in numbers of issued faced in the list experiment, across conflict indicators}
 \label{tab:meandiff_conf}
 \meandifftab{"\tableloc/meandifftab_conf.csv"}
 \end{table}
 
-
-
 \subsection*{Intra-household Dynamics}
-\paragraph{}
-I then create sub-groups based on intra-household dynamics. First, I compare women across the relative status of the partners at the time of marriage. For this, I use the land held by the partners' families at the time of marriage as proxy for status (Figure \ref{fig:meancompare_mar1}). In the group where the wife had more status before the marriage (n=\incid{statpar1}{n}), the average number of issues was \incid{statpar1}{mean0} for the control group, and \incid{statpar1}{mean1} for the treatment group. The difference in means implies a rate of SGBV of \incid{statpar1}{incidence_pct}\% (p-value of a t-test on the means = \incid{statpar1}{p}). In the group where the partners were of equal standing (n=\incid{statpar2}{n}), the average number of issues was \incid{statpar2}{mean0} for the control group, and \incid{statpar2}{mean1} for the treatment group. This implies a rate of SGBV of \incid{statpar2}{incidence_pct} (p = \incid{statpar2}{p}). In the group where the husband had more status (n=\incid{statpar3}{n}), the average number of issues was \incid{statpar3}{mean0} for the control group, and \incid{statpar3}{mean1} for the treatment group. This implies a rate of SGBV of \incid{statpar3}{incidence_pct} (p = \incid{statpar3}{p}).
+I then create sub-groups based on intra-household dynamics. First, I compare women across the relative status of the partners at the time of marriage. For this, I use the land held by the partners' families at the time of marriage as proxy for status (See top-left panel of Figure \ref{fig:meancompare_mar}). In the group where the wife had more status before the marriage (n=\incid{statpar1}{n}), the average number of issues was \incid{statpar1}{mean0} for the control group, and \incid{statpar1}{mean1} for the treatment group. The difference in means implies a rate of SGBV of \incid{statpar1}{incidence_pct}\% (p-value of a t-test on the means = \incid{statpar1}{p}). In the group where the partners were of equal standing (n=\incid{statpar2}{n}), the average number of issues was \incid{statpar2}{mean0} for the control group, and \incid{statpar2}{mean1} for the treatment group. This implies a rate of SGBV of \incid{statpar2}{incidence_pct} (p = \incid{statpar2}{p}). In the group where the husband had more status (n=\incid{statpar3}{n}), the average number of issues was \incid{statpar3}{mean0} for the control group, and \incid{statpar3}{mean1} for the treatment group. This implies a rate of SGBV of \incid{statpar3}{incidence_pct} (p = \incid{statpar3}{p}).
 
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_mar1.png}
+\begin{figure}[htb]
+  \includegraphics[width=\linewidth]{\figureloc/meancompare_mar.png}
   \caption{Comparison of means of issues faced by pre-marriage status.}
-  \label{fig:meancompare_mar1}
+  \label{fig:meancompare_mar}
 \end{figure}
 
-\paragraph{}
-The second intra-household aspect I explore is derived from the results of a bargaining game played with couples. Couples first took a decision individually, and then jointly. I then create three groups, based on whether the joint decision is closer to the husband's decision, to the wife's, or if the distance is equal. See figure \ref{fig:meancompare_mar2}. In the group where the couple decision was closest to the wife's decision (n=\incid{bargresult1}{n}), the average number of issues was \incid{bargresult1}{mean0} for the control group, and \incid{bargresult1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{bargresult1}{incidence_pct}\% (p = \incid{bargresult1}{p}). In the group where the couple decision was equally close to the husband and wife (n=\incid{bargresult2}{n}), the average number of issues was \incid{bargresult2}{mean0} for the control group, and \incid{bargresult2}{mean1} for the treatment group. This implies a rate of SGBV of \incid{bargresult2}{incidence_pct}\% (p = \incid{bargresult2}{p}). In the group where the couple decision was closest to the husband's (n=\incid{bargresult3}{n}), the average number of issues was \incid{bargresult3}{mean0} for the control group, and \incid{bargresult3}{mean1} for the treatment group. This implies a rate of SGBV of \incid{bargresult3}{incidence_pct}\% (p = \incid{bargresult3}{p}).
+The second intra-household aspect I explore is derived from the results of a bargaining game played with couples. Couples first took a decision individually, and then jointly. I then create three groups, based on whether the joint decision is closer to the husband's decision, to the wife's, or if the distance is equal. See top-right panel of figure \ref{fig:meancompare_mar}. In the group where the couple decision was closest to the wife's decision (n=\incid{bargresult1}{n}), the average number of issues was \incid{bargresult1}{mean0} for the control group, and \incid{bargresult1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{bargresult1}{incidence_pct}\% (p = \incid{bargresult1}{p}). In the group where the couple decision was equally close to the husband and wife (n=\incid{bargresult2}{n}), the average number of issues was \incid{bargresult2}{mean0} for the control group, and \incid{bargresult2}{mean1} for the treatment group. This implies a rate of SGBV of \incid{bargresult2}{incidence_pct}\% (p = \incid{bargresult2}{p}). In the group where the couple decision was closest to the husband's (n=\incid{bargresult3}{n}), the average number of issues was \incid{bargresult3}{mean0} for the control group, and \incid{bargresult3}{mean1} for the treatment group. This implies a rate of SGBV of \incid{bargresult3}{incidence_pct}\% (p = \incid{bargresult3}{p}).
 
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_mar2.png}
-  \caption{Comparison of means of issues faced by bargaining result.}
-  \label{fig:meancompare_mar2}
-\end{figure}
+The final intra-household variable I use to compare women, is their relative contribution to the household's cash income (see bottom-right panel of figure \ref{fig:meancompare_mar}). The household questionnaire collected data on all activities of household members, and what the contribution of these activities were to household income. I sum this for all activities for the women in the sample, and compare those who contribute more than 50\% of cash income with those who do not. In the group where the woman does not contribute more than 50\% of cash income (n=\incid{contribcashyn0}{n}), the average number of issues was \incid{contribcashyn0}{mean0} for the control group, and \incid{contribcashyn0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{contribcashyn0}{incidence_pct}\% (p = \incid{contribcashyn0}{p}). In the group where the woman does contribute more than 50\% of cash income (n=\incid{contribcashyn1}{n}), the average number of issues was \incid{contribcashyn1}{mean0} for the control group, and \incid{contribcashyn1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{contribcashyn1}{incidence_pct}\% (p = \incid{contribcashyn1}{p}). 
 
-\paragraph{}
-The final intra-household variable I use to compare women, is their relative contribution to the household's cash income (see figure \ref{fig:meancompare_mar3}). The household questionnaire collected data on all activities of household members, and what the contribution of these activities were to household income. I sum this for all activities for the women in the sample, and compare those who contribute more than 50\% of cash income with those who do not. In the group where the woman does not contribute more than 50\% of cash income (n=\incid{contribcashyn0}{n}), the average number of issues was \incid{contribcashyn0}{mean0} for the control group, and \incid{contribcashyn0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{contribcashyn0}{incidence_pct}\% (p = \incid{contribcashyn0}{p}). In the group where the woman does contribute more than 50\% of cash income (n=\incid{contribcashyn1}{n}), the average number of issues was \incid{contribcashyn1}{mean0} for the control group, and \incid{contribcashyn1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{contribcashyn1}{incidence_pct}\% (p = \incid{contribcashyn1}{p}). 
-
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_mar3.png}
-  \caption{Comparison of means of issues faced across contribution to cash income.}
-  \label{fig:meancompare_mar3}
-\end{figure}
+In Table \ref{tab:meadifftab_mar}, the estimates for incidence displayed graphically above are tabulated, including the diff in diff estimate for difference in incidence of SGBV between the groups created by each variable. In order for the interpretation of the Diff in Diff coefficient to remain the same across variables, the results for the bargaining game and the pre-marriage status were split into two indicator variables: one indicating the woman had more status (with households with equal status and where the husband had more status forming the reference group) and one indicating the husband had more status. The incidence of SGV for women whose husband's family owned more land than their own family is 33 percentage points higher than for other women. When looking at bargaining, women whose husband's choice in the game was closest to the joint decision faced incidence rates that were 57 percentage points higher than other women. Both these findings are significant at the 5\% level. 
 
 
-\paragraph{}
-In Table \ref{tab:meadifftab_mar}, the estimates for incidence displayed graphically above are tabulated, including the diff in diff estimate for difference in incidence of SGBV between the groups created by each variable. In order for the interpretation of the Diff in Diff coefficient to remain the same across variables, the results for the bargaining game and the pre-marriage status were split into two indicator variables: one indicating the woman had more status (with households with equal status and where the husband had more status forming the reference group) and one indicating the husband had more status. The incidence of SGV for women whose husband's family owned more land than their own family is 40\% higher than for other women. When looking at bargaining, women whose husband's choice in the game was closest to the joint decision faced incidence rates that were 57 percentage points higher than other women. Both these findings are significant at the 5\% level. 
-
-
-\begin{table}[h]
+\begin{table}[htb]
 \caption{Differences in numbers of issued faced in the list experiment, across intra-household status}
 \label{tab:meadifftab_mar}
 \meandifftab{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/meandifftab_mar.csv"}
 \end{table}
 
-
-
 \subsection*{Gender Attitudes}
-I then explore the relationship between gender attitudes of both partners, and the incidence of SGBV. The first indicator I consider, is the attitudes of the husband. For this, I recode the answers so that 5 is always fully agree with the empowered proposition, and 1 is fully agree with the less empowered option. I then sum all the answers, and for easy interpretation split the sample by the median answer. In the group where husband's attitudes are less empowered than the median (n=\incid{atthusbtotalbin0}{n}), the average number of issues was \incid{atthusbtotalbin0}{mean0} for the control group, and \incid{atthusbtotalbin0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{atthusbtotalbin0}{incidence_pct}\% (p = \incid{atthusbtotalbin0}{p}). For the group with husband that are more empowered than the median (n=\incid{atthusbtotalbin1}{n}), the average number of issues was \incid{atthusbtotalbin1}{mean0} for the control group, and \incid{atthusbtotalbin1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{atthusbtotalbin1}{incidence_pct}\% (p = \incid{atthusbtotalbin1}{p}).
+I then explore the relationship between gender attitudes of both partners, and the incidence of SGBV. The first indicator I consider, is the attitudes of the husband (left-hand panel of Figure \ref{fig:meancompare_att}. For this, I recode the answers so that 5 is always fully agree with the empowered proposition, and 1 is fully agree with the less empowered option. I then sum all the answers, and for easy interpretation split the sample by the median answer. In the group where husband's attitudes are less empowered than the median (n=\incid{atthusbtotalbin0}{n}), the average number of issues was \incid{atthusbtotalbin0}{mean0} for the control group, and \incid{atthusbtotalbin0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{atthusbtotalbin0}{incidence_pct}\% (p = \incid{atthusbtotalbin0}{p}). For the group with husband that are more empowered than the median (n=\incid{atthusbtotalbin1}{n}), the average number of issues was \incid{atthusbtotalbin1}{mean0} for the control group, and \incid{atthusbtotalbin1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{atthusbtotalbin1}{incidence_pct}\% (p = \incid{atthusbtotalbin1}{p}).
 
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_att1.png}
+\begin{figure}[htb]
+  \includegraphics[width=\linewidth]{\figureloc/meancompare_att.png}
   \caption{Comparison of means of issues faced across Husband's gender attitudes.}
-  \label{fig:meancompare_att1}
+  \label{fig:meancompare_att}
 \end{figure}
 
-The second indicator I consider, is the attitudes of the wife, using the same methods to split the sample as above. In the group where wife's attitudes are less empowered than the median (n=\incid{attwifetotalbin0}{n}), the average number of issues was \incid{attwifetotalbin0}{mean0} for the control group, and \incid{attwifetotalbin0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{attwifetotalbin0}{incidence_pct}\% (p = \incid{attwifetotalbin0}{p}). For the group with husband that are more empowered than the median (n=\incid{attwifetotalbin1}{n}), the average number of issues was \incid{attwifetotalbin1}{mean0} for the control group, and \incid{attwifetotalbin1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{attwifetotalbin1}{incidence_pct}\% (p = \incid{attwifetotalbin1}{p}).
+The second indicator I consider, is the attitudes of the wife, using the same methods to split the sample as above (right-hand panel of Figure \ref{fig:meancompare_att}). In the group where wife's attitudes are less empowered than the median (n=\incid{attwifetotalbin0}{n}), the average number of issues was \incid{attwifetotalbin0}{mean0} for the control group, and \incid{attwifetotalbin0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{attwifetotalbin0}{incidence_pct}\% (p = \incid{attwifetotalbin0}{p}). For the group with husband that are more empowered than the median (n=\incid{attwifetotalbin1}{n}), the average number of issues was \incid{attwifetotalbin1}{mean0} for the control group, and \incid{attwifetotalbin1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{attwifetotalbin1}{incidence_pct}\% (p = \incid{attwifetotalbin1}{p}).
 
-\begin{figure}[H]
-  \includegraphics[width=0.6\linewidth]{\figureloc/meancompare_att2.png}
-  \caption{Comparison of means of issues faced across Wife's gender attitudes.}
-  \label{fig:meancompare_att2}
-\end{figure}
+In Table \ref{tab:meadifftab_att}, the estimates for incidence that were displayed graphically above are tabulated, including the diff in diff estimate for difference in incidence of SGBV between the groups created by each variable. Of note is the large negative coefficient for the diff-in-diff on male empowerment attitudes. However, this coefficient is not statistically significant, possibly due to the relatively small number of men interviewed (see Table \ref{tab:bargsample}). The diff-in-diff estimate for female empowerment attitudes is smaller, and also not statistically significant.
 
 
-\paragraph{}
-In Table \ref{tab:meadifftab_att}, the estimates for incidence displayed graphically above are tabulated, including the diff in diff estimate for difference in incidence of SGBV between the groups created by each variable. None of the estimates for the differences in incidence are statistically significant.
-
-
-\begin{table}[h]
+\begin{table}[htb]
 \caption{Differences in numbers of issued faced in the list experiment, across Gender Attitudes}
 \label{tab:meadifftab_att}
 \meandifftab{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/meandifftab_att.csv"}
 \end{table}
 
-
-
-
-\paragraph{}
 In summary, I find that women who are in a disadvantageous position in their household, either because they are of lower status, or because they have less bargaining power, are more likely to have experienced SGBV. The results with respect to conflict were ambiguous, and I find no suggestion that respondents in poorer household experience SGBV at a higher rate than their peers in richer households. If anything, I find the opposite. There are two large caveats with these findings: (i) they are not causal; (ii) by running separate comparisons, any conclusions are at risk of missing variable bias. While the first one is hard to address using list experiments, it is possible to come to more rigorous estimates of effects than presented so far. 
 
 \subsection*{Regression analysis}
-OKEE: IK DOE HIER NU EVEN NIETS AAN: CONFLICT DOET WEL IETS OF NIET IETS IN HET VOLLEDIGE MODEL. HANGT ECHT VD SPECIFICATIE AF....
-
 In the preceding sections, I examined univariate relations between variables of interest and the incidence of SGBV. However, such analysis may suffer from missing variables and spurious correlations. Here I move to a richer specification, in order to assess the relative impact of each variable. However, to reduce the risk of multi-collinearity, I do not include the full set of variables discussed above. As a proxy for intra-household power dynamics, I use the pre-marriage landholdings of the wife's family compare to those of the husband's. For conflict, I use both the recent violence experience from ACLED, and the historical experience, based on previous rounds of data collection, as the effects of these are different and both of interest. I include livestock owning as the only proxy for assets. In table \ref{tab:results_regression} I display the results of these regressions. In columns 1-4 I rerun the univariate models from above. I find that both intra-household power dynamics(column 1) and historical exposure to violence (column 2) are associated with higher incidence of SGBV. Both these coefficients are significant at the 10\% level. I find no statistically significant relationship between recent violence and SGBV or asset holdings and SGBV.  In column 5, I run a full model, and find that both a position of inferior power within the household, and being in a family that experienced a severe shock during the conflict are associated with significantly higher SGBV incidence.
 
 \newcommand{\coeffget}[3]{\csvreader[filter=\equal{\reg}{#1} \and \equal{\var}{#2}]{\tableloc/regs.csv}{var=\var,reg=\reg,#3=\coeff}{\coeff}}

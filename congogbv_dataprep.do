@@ -355,13 +355,15 @@ la val sameethn yes_no
 
 *status of parents
 ren a_marrnonhh_statpar statpar
-replace statpar = . if statpar > 3
+
+replace statpar = .a if statpar > 3 & !missing(statpar)
+
 la var statpar "Land holdings of families before marriage"
 la def statpar 1 "Wife's had more land" 2 "Equal" 3 "Husband's had more land"
 
-gen wifemoreland = statpar == 1 if !missing(statpar)
+gen wifemoreland = statpar == 1 if statpar != . //!missing(statpar)
 la var wifemoreland "Family wife had more land"
-gen husbmoreland = statpar == 3 if !missing(statpar)
+gen husbmoreland = statpar == 3 if statpar != . //!missing(statpar)
 la var husbmoreland "Family husband had more land"
 la val wifemoreland husbmoreland yes_no
 
@@ -589,6 +591,9 @@ order attwifetotalbin, after(attwifetotal)
 
 la def empowered 0 "Less empowered attidudes than median" 1 "More empowered attidudes than median" 
 la val atthusbtotalbin attwifetotalbin empowered
+
+
+drop if ball5 == .
 
 save "$dataloc\clean\analysis.dta", replace
 

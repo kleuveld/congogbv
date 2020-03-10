@@ -112,12 +112,9 @@ program define balance_table
 	restore
 end
 
-
-
-
 cap prog drop meandiffs
 program meandiffs
-	syntax varlist [using/], treatment(varlist) [by(varlist)] [coeffs(string)] [append]
+	syntax varlist [using/], treatment(varlist) [by(varlist)] [coeffs(string)] [append] [name(passthru)] [`replace']
 	
 	preserve
 	local var `varlist'
@@ -162,11 +159,19 @@ program meandiffs
 		xtitle("`: variable label `by'' ")  ///
 		xlabel(`xlabel') ///
 		xscale(range(-0.5 `xmax'))  ///
-		legend(order(1 "Control" 2 "Treatment" 3 "95% CI"))
+		legend(order(1 "Control" 2 "Treatment" 3 "95% CI")) `name'
 	
 	*export
 	if length(`"`using'"') > 0{
-		graph export `"`using'"', as(png) replace	
+		n di `"`using'"'
+		if regexm(`"`using'"',"\.png$"){
+			graph export `"`using'"', as(png) replace	
+		}
+		if regexm(`"`using'"',"\.gph$"){
+			graph save `"`using'"', replace	
+		}
+		
+		
 	}
 	
 	if length(`"`coeffs'"') > 0 {
@@ -202,7 +207,7 @@ program meandiffs
 		}
 		save `coeffs', replace
 	}
-
+	graph close
 
  	restore
 
