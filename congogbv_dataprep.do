@@ -189,8 +189,11 @@ foreach var of varlist v305 - v317{
 	local counter = `counter' + 1
 }
 
+*remove missings 
+recode att* (97=.)
+
 *recode to ensure higher is more empowered
-recode att*2 att*4  (5=1) (4=2) (2=4) (1=5)
+recode att*2 att*4  (5=1) (4=2) (2=4) (1=5) 
 
 forvalues i = 1/5{
 	local name Husband
@@ -207,21 +210,11 @@ la val att*bin empoweredyn
 lab def genderagree 1 "Strongly Agree with tradional" 2 "Agree with traditional" 3 "Neutral" 4 "Agree with empowered" 5 "Strongly agree with empowered"
 la val att* genderagree
 
-egen atthusbtotal = rowtotal(atthusb?)
+egen atthusbtotal = rowtotal(atthusb?), missing
 la var atthusbtotal "Husband empowerment attitudes"
-su atthusbtotal, d
-gen atthusbtotalbin = atthusbtotal > r(p50) if !missing(atthusbtotal)
-la var atthusbtotalbin "Husband  empowerment attitudes"
 
-egen attwifetotal = rowtotal(attwife?)
+egen attwifetotal = rowtotal(attwife?), missing
 la var attwifetotal "Wife empowerment attitudes"
-
-su atthusbtotal, d
-gen attwifetotalbin = attwifetotal > r(p50) if !missing(attwifetotal)
-la var attwifetotalbin "Wife empowerment attitudes"
-
-la def empowered 0 "Less empowered attidudes than median" 1 "More empowered attidudes than median" 
-la val atthusbtotalbin attwifetotalbin empowered
 
 *aid
 egen aidwomen = anymatch(hh_aid?), values(5)
@@ -266,7 +259,7 @@ keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
 			numballs ball5  list_spouse list_head /// list experiment
 			barg* riskwife riskhusband tinroof aidany aidwomen livestock* ///
 			genderhead marstathead /// 
-			atthusbtotal attwifetotal atthusbtotalbin attwifetotalbin atthusb?bin attwife?bin /// gender attituted
+			atthusbtotal attwifetotal atthusb?bin attwife?bin /// gender attituted
 			risk*present ris*consent riskspouseconsent risk*status
 
 tempfile main 
@@ -517,8 +510,6 @@ keep if  acleddate < int_date & acleddate > int_date - 365
 geodist gpsLatitude gpsLongitude latitude longitude , generate(dist)
 keep if dist <= 30 
 
-
-
 forvalues i = 5(5)25{
 	foreach var in acledbattles acledviolence acledfatalities{
 		gen `var'`i' = `var' * dist <= `i'
@@ -529,24 +520,10 @@ ren (acledbattles acledviolence acledfatalities) (acledbattles30 acledviolence30
 
 collapse (sum) acledbattles* acledviolence* acledfatalities*, by(KEY)
 
-foreach var of varlist acledbattles* acledviolence* acledfatalities* {
-	su `var', d
-	gen `var'd = `var' > r(p50)
-	order `var'd, after(`var')
-}
-
-la def median 0 "Less than median" 1 "More than median"
-la val acled*d median
-
 forvalues i = 5(5)30{
 	la var acledbattles`i' "ACLED: Number of battles"
-	la var acledbattles`i'd "ACLED: Number of battles"
-
 	la var acledviolence`i' "ACLED: Instances of violence against civilians"
-	la var acledviolence`i'd "ACLED: Instances of violence against civilians"
-
 	la var acledfatalities`i' "ACLED: Number of fatalities"
-	la var acledfatalities`i'd "ACLED: Number of fatalities"
 }
 
 tempfile acled 
@@ -579,21 +556,39 @@ foreach var of varlist acledbattles* acledviolence* acledfatalities*{
 }
 
 
+**generate binary vars
+*ACLED
 ds acled*
-local all `r(varlist)'
-
-ds acled*d 
-local binaries `r(varlist)'
-
-
-local nobin: list all - binaries
-di "`nobin'"
-
-foreach var of varlist `nobin' {
-	su `var', d
-	replace `var'd = `var' > r(p50)
+foreach var of varlist `r(varlist)' {
+	su `var' if !missing(numballs) , d 
+	gen `var'd = `var' >= r(p50) if !missing(`var')
 	order `var'd, after(`var')
 }
+
+forvalues i = 5(5)30{
+	la var acledbattles`i'd "ACLED: Number of battles"
+	la var acledviolence`i'd "ACLED: Instances of violence against civilians"
+	la var acledfatalities`i'd "ACLED: Number of fatalities"
+}
+
+la def median 0 "Less than median" 1 "More than median"
+la val acled*d median
+
+
+*empowerment
+su atthusbtotal if !missing(numballs), d
+
+gen atthusbtotalbin = atthusbtotal > r(p50) if !missing(atthusbtotal) 
+la var atthusbtotalbin "Husband  empowerment attitudes"
+order atthusbtotalbin, after(atthusbtotal)
+
+su attwifetotal if !missing(numballs), d
+gen attwifetotalbin = attwifetotal >= r(p50) if !missing(attwifetotal)
+la var attwifetotalbin "Wife empowerment attitudes"
+order attwifetotalbin, after(attwifetotal)
+
+la def empowered 0 "Less empowered attidudes than median" 1 "More empowered attidudes than median" 
+la val atthusbtotalbin attwifetotalbin empowered
 
 save "$dataloc\clean\analysis.dta", replace
 

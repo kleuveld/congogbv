@@ -68,7 +68,7 @@ meandiffs numballs using "$figloc/meancompare_conf2.png", treatment(ball5)  by(v
 meandiffs numballs using "$figloc/meancompare_conf3.png", treatment(ball5)  by(acledviolence10d) coeffs(`diffs') append
 
 
-meandifftab numballs using "$tableloc\meandifftab_conf.csv",by(victimproplost victimfamlost acledviolence10d) treat(ball5)
+meandifftab numballs using "$tableloc\meandifftab_conf.csv",by(victimproplost victimfamlost acledviolence10d) treat(ball5) robust
 
 
 **********************************************
@@ -79,7 +79,7 @@ meandiffs numballs using "$figloc/meancompare_mar1.png", treatment(ball5)  by(st
 meandiffs numballs using "$figloc/meancompare_mar2.png", treatment(ball5)  by(bargresult) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_mar3.png", treatment(ball5)  by(contribcashyn) coeffs(`diffs') append
 
-meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbmoreland barghusbandcloser bargwifecloser contribcashyn) treat(ball5)
+meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbmoreland barghusbandcloser bargwifecloser contribcashyn) treat(ball5) robust
 
 
 **********************************************
@@ -88,7 +88,7 @@ meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbm
 meandiffs numballs using "$figloc/meancompare_att1.png", treatment(ball5)  by(atthusbtotalbin) coeffs(`diffs') append
 meandiffs numballs using "$figloc/meancompare_att2.png", treatment(ball5)  by(attwifetotalbin) coeffs(`diffs') append
 
-meandifftab numballs using "$tableloc\meandifftab_att.csv",by(atthusbtotalbin attwifetotalbin) treat(ball5)
+meandifftab numballs using "$tableloc\meandifftab_att.csv",by(atthusbtotalbin attwifetotalbin) treat(ball5) robust
 
 *export to CSV
 preserve
@@ -132,11 +132,11 @@ use `regs', clear
 format coef stderr pval %9.2f
 export delimited using "$tableloc\regs.csv", datafmt replace
 
-
+/* 
 ***************************
 **Robustness checks**
 *********************
-restore
+
 *choice of acled parameters:
 *civilians
 regfig acledviolence5d acledviolence10d acledviolence15d acledviolence20d acledviolence25d acledviolence30d using "$figloc/regfig_conf_viold.png"
@@ -149,3 +149,4 @@ regfig acledbattles5 acledbattles10 acledbattles15 acledbattles20 acledbattles25
 *fatalities
 regfig acledfatalities5d acledfatalities10d acledfatalities15d acledfatalities20d acledfatalities25d acledfatalities30d using "$figloc/regfig_conf_fatd.png"
 regfig acledfatalities5 acledfatalities10 acledfatalities15 acledfatalities20 acledfatalities25 acledfatalities30 using "$figloc/regfig_conf_fatc.png"
+ */

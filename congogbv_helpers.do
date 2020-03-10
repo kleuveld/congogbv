@@ -350,11 +350,10 @@ end
 
 
 cap prog drop meandifftab
+*creates a table comparing differences in means across groups
 program define meandifftab
 
-
-
-	syntax varlist(max=1) [using/] , by(varlist) treat(varname)
+	syntax varlist(max=1) [using/] , by(varlist) treat(varname) [robust] [vce(passthru)]
 	preserve
 	tempname memhold
 	tempfile coeffs
@@ -371,7 +370,7 @@ program define meandifftab
 
 		*group 0
 		forvalues i=0/1{
-			reg `varlist' `treat' if `var' == `i'
+			reg `varlist' `treat' if `var' == `i', `robust' `vce'
 			matrix table = r(table)
 
 			count if `var' == `i'
@@ -387,7 +386,7 @@ program define meandifftab
 
 
 		*diff-in-diff
-		reg `varlist' c.`treat'##i.`var'
+		reg `varlist' c.`treat'##i.`var', `robust' `vce'
 		matrix table = r(table)
 		scalar dd = table[1,5] //treatmentdummy*groupdummy
 		scalar sedd = table[2,5]
