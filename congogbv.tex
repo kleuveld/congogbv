@@ -125,7 +125,7 @@ Conflict and IPV are not necessarily separate drivers, as the effect of conflict
 
 %Bouta, T., G. Frerks, and I. Bannon (2005) Gender, Conflict and Development. The World Bank, Washington, DC
 %Tia Palermo and Amber Peterman, ‘Undercounting, overcounting and the longevity of flawed estimates: statistics on sexual violence in conflict’, Bulletin of the World Health Organization, no. 89, 2011, pp. 924–5;
-A large problem underlying the analysis of drivers and dynamics of SGBV is the paucity of reliable data. This is exacerbated by the fact that the empirical studies that do exist, contradict each other. While one study finds conflict-related perpetrators are responsible for the majority of cases of SGBV \citep{Johnson2010}, another finds intimate partners as the most common culprits \citep{Peterman2011}. \citet{Stark2017} provide a possible explanation for this discrepancy. In a study where 87 women and girls in South Kivu were interviewed using Audio Assisted Self-Interviews (ACASI) techniques,they find that 14\% of respondents reported having been victim of sexual coercion. Half of these were perpetrated by the respondents' husbands or boyfriends. Crucially, in complementary group discussions, respondents did not bring up intimate partners at all. This points at the difficulties of collecting accurate data about SGBV, and the importance of data collection methodologies. 
+A large problem underlying the analysis of drivers and dynamics of SGBV is the paucity of reliable data \cite{Palermo2011}. This is exacerbated by the fact that the empirical studies that do exist, contradict each other. While one study finds conflict-related perpetrators are responsible for the majority of cases of SGBV \citep{Johnson2010}, another finds intimate partners as the most common culprits \citep{Peterman2011}. \citet{Stark2017} provide a possible explanation for this discrepancy. In a study where 87 women and girls in South Kivu were interviewed using Audio Assisted Self-Interviews (ACASI) techniques,they find that 14\% of respondents reported having been victim of sexual coercion. Half of these were perpetrated by the respondents' husbands or boyfriends. Crucially, in complementary group discussions, respondents did not bring up intimate partners at all. This points at the difficulties of collecting accurate data about SGBV, and the importance of data collection methodologies. 
 
 %Contribution
 %I combine these three items into one research.
@@ -323,7 +323,7 @@ The average number of items reported by the groups created by the conflict indic
 \meandifftab{"\tableloc/meandifftab_conf.csv"}
 \end{table}
 
-\subsection*{Intra-household Dynamics}
+\subsection*{Intra-household bargaining position}
 I then create sub-groups based on intra-household dynamics. First, I compare women across the relative status of the partners at the time of marriage. For this, I use the land held by the partners' families at the time of marriage as proxy for status (See top-left panel of Figure \ref{fig:meancompare_mar}). In the group where the wife had more status before the marriage (n=\incid{statpar1}{n}), the average number of issues was \incid{statpar1}{mean0} for the control group, and \incid{statpar1}{mean1} for the treatment group. The difference in means implies a rate of SGBV of \incid{statpar1}{incidence_pct}\% (p-value of a t-test on the means = \incid{statpar1}{p}). In the group where the partners were of equal standing (n=\incid{statpar2}{n}), the average number of issues was \incid{statpar2}{mean0} for the control group, and \incid{statpar2}{mean1} for the treatment group. This implies a rate of SGBV of \incid{statpar2}{incidence_pct} (p = \incid{statpar2}{p}). In the group where the husband had more status (n=\incid{statpar3}{n}), the average number of issues was \incid{statpar3}{mean0} for the control group, and \incid{statpar3}{mean1} for the treatment group. This implies a rate of SGBV of \incid{statpar3}{incidence_pct} (p = \incid{statpar3}{p}).
 
 \begin{figure}[htb]
@@ -365,10 +365,11 @@ In Table \ref{tab:meadifftab_att}, the estimates for incidence that were display
 \meandifftab{"C:/Users/Koen/Dropbox (Personal)/PhD/Papers/CongoGBV/Tables/meandifftab_att.csv"}
 \end{table}
 
-In summary, I find that women who are in a disadvantageous position in their household, either because they are of lower status, or because they have less bargaining power, are more likely to have experienced SGBV. The results with respect to conflict were ambiguous, and I find no suggestion that respondents in poorer household experience SGBV at a higher rate than their peers in richer households. If anything, I find the opposite. There are two large caveats with these findings: (i) they are not causal; (ii) by running separate comparisons, any conclusions are at risk of missing variable bias. While the first one is hard to address using list experiments, it is possible to come to more rigorous estimates of effects than presented so far. 
 
-\subsection*{Regression analysis}
-In the preceding sections, I examined univariate relations between variables of interest and the incidence of SGBV. However, such analysis may suffer from missing variables and spurious correlations. Here I move to a richer specification, in order to assess the relative impact of each variable. However, to reduce the risk of multi-collinearity, I do not include the full set of variables discussed above. As a proxy for intra-household power dynamics, I use the pre-marriage landholdings of the wife's family compare to those of the husband's. For conflict, I use both the recent violence experience from ACLED, and the historical experience, based on previous rounds of data collection, as the effects of these are different and both of interest. I include livestock owning as the only proxy for assets. In table \ref{tab:results_regression} I display the results of these regressions. In columns 1-4 I rerun the univariate models from above. I find that both intra-household power dynamics(column 1) and historical exposure to violence (column 2) are associated with higher incidence of SGBV. Both these coefficients are significant at the 10\% level. I find no statistically significant relationship between recent violence and SGBV or asset holdings and SGBV.  In column 5, I run a full model, and find that both a position of inferior power within the household, and being in a family that experienced a severe shock during the conflict are associated with significantly higher SGBV incidence.
+\subsection*{Multivariate Regression analysis}
+In the preceding sections, I examined univariate relations between variables of interest and the incidence of SGBV. However, such analysis may suffer from missing variables and spurious correlations. Here I move to a richer specification, in order to assess the relative impact of each variable. I expand equation \ref{eq:interaction} to include indicators for conflict, intra-household bargaining position and empowerment. To reduce the risk of multi-collinearity, I do not include the full set of variables discussed above, but select one indicator for each, guided by the results obtained above. A key criterion for selection is the number of respondents for each indicator. The analysis of list experiments suffers from rapid loss of power due to the indirect nature of the analysis. To mitigate this, indicators that are available for large groups of respondents were selected. For conflict, I include the indicator for household member killed; for intra-household bargaining position a dummy for the husband's family having the most land; and for household bargaining, I use the attitudes of the wife. For these regression, I use the KICT Stata package developed by \citet{Tsai2019}; interpretation of the coefficients is the same as equation \ref{eq:interaction}, but estimation is more efficient.
+
+In table \ref{tab:results_regression} I display the results of these regressions. In columns 1-3 I rerun the univariate models from above. Results are the same as before: both conflict and intra-household bargaining are associated with increased incidence of SGBV. I In column 4 I present the full model. The effect of empowerment attitudes is statistically significant, though smaller than the effect of bargaining position and conflict. Overall, the largest contributor to SGV are intra-household dynamics: the rate of SGBV for women with less pre-marital status is 48 percentage points higher than for other women. 
 
 \newcommand{\coeffget}[3]{\csvreader[filter=\equal{\reg}{#1} \and \equal{\var}{#2}]{\tableloc/regs.csv}{var=\var,reg=\reg,#3=\coeff}{\coeff}}
 %\coeffget{l1}{Delta:husbmoreland}{coef}
@@ -385,33 +386,19 @@ In the preceding sections, I examined univariate relations between variables of 
 %restate the topic and its importance.
 This study provided evidence on the victims of SGBV in Congo. Prevalence of SGBV is high in Congo, but little is known about the victims. To obtain this evidence, I used a list experiment to prevent disclosure bias.This allows me to find correlates of SGBV. I complemented this with a household bargaining game, designed to elicit often unobserved intra-household dynamics.
 
-\paragraph{} 
-If find that women who are in a disadvantaged position within their marriage (as measured either by pre-marital status or a bargaining game) are significantly more likely to be victims of SGBV than their peers.
+The incidence rates I find are very high: 30\% of the women in the sample report having been the victim of SGBV \textit{in the past twelve months}. This high rate is not likely to be nationally, or regionally, representative. The women in the sample were recruited among beneficiaries and potential beneficiaries of programs aimed at assisting the most vulnerable women and households. It is to be expected that incidence rates in this group are higher than for other groups.
 
-\paragraph{} 
-In contrast to popular frames that paint a picture of conflict being the largest determinant of sexual violence (and sexual violence the most important outcome of conflict), I find no relationship between current levels of conflict exposure and SGBV in the past year. I do find evidence that past conflict exposure in the family is related to the incidence of SGBV. This link cannot be explained by direct effects (i.e. women being victimized during attacks by armed groups), so it is more likely that conflict has an indirect effect on SGBV. This lines up with previous literature on the subject, from Liberia and Gaza \cite{Muller2019,Kelly2018}.
+When examining the backgrounds of the victims, I find that they are likely to be married to higher-status men, have low bargaining power, and have been exposed to violent conflict to the extent where they have lost family or household members. When comparing these two effects in one analysis, I find that the effect of intra-household dynamics is larger than the effect of conflict. This contrasts with popular frames where the conflict is seen as the primary driver of SGBV, but is in line with previous literature suggesting that intimate partners are more likely perpetrators of SGBV than members of armed groups \citep[see e.g.][]{Peterman2011}. 
 
-\paragraph{} 
-I find no evidence that women in poor households are more likely to be victims than women in rich households.
+While I find some evidence that victims of violence have less empowered attitudes than other women, this effect is small. This suggests that the focus of interventions aiming to reduce SGBV should be on the attitudes of women, but on their bargaining position in the household.
 
-\paragraph{} 
-These findings correspond to previous literature suggesting that intimate partners are more likely perpetrators of SGBV than members of armed groups \citep[see e.g.][]{Peterman2011}. The implication is that an end to the conflict in Eastern Congo will not bring an end to the problems women face. To reduce the incidence of SGBV, strong efforts to promote female empowerment are needed.
-
-
-
-
-%interpretatie voorbeelden:
-%\cite{Meng2017} first simply present mean differences; they then present a maximum likelihood model. Based on this model, they predict mean differences and present this as their quantity of interest. They have replication files online.
-
-%\cite{Imai2011}: himself admits that the coefficients of the maximum likelihood method are difficult to compare. He therefore generates predicted values of shares of people answering affirmitively to the sensitive item for two subgroups.
-
-%\cite{Bulte2019}: how they do interpret.
+There are two large caveats with these findings: (i) they are not causal; (ii) little analysis could be done on the perpetrators of the violence, as indirect questioning precludes probing into this. More research is needed to  to address these important issues.
 
 
 %bibliography, this is needed for bibtex
 \clearpage 
 \bibliographystyle{chicago}
-%path to .bib file (e.g. automatically exported by mendeley) exclude the file extension!
+%path to .bib file (e.g. automatically exported by mendeley) dot not include the file extension!
 \bibliography{C:/Users/Koen/Dropbox/Literatuur/Mendeley/Bibtex/CongoGBV}
 
 \end{document}

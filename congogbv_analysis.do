@@ -36,20 +36,21 @@ tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace s
 **************************
 
 *add: age & education
-
 balance_table ///
 	agewife agehusband eduwife eduhusband /// demograhpics
 	numballs ///list experiment
-	victimproplost victimfamlost acledviolence10 acledfatalities10 /// conflict
+	victimproplost victimfamlost acledviolence10 /// conflict
 	husbmoreland wifemoreland contribcash contribcashyn riskwife riskhusband barghusbandcloser bargwifecloser  /// bargainin and empowerment
 	atthusbtotal attwifetotal /// gender attitidues 
-	tinroof livestockany ///assets
-	terrfe* /// other
 	if !missing(ball5) using "$tableloc\balance.tex", ///
 	rawcsv treatment(ball5) cluster(vill_id)
 
-reg ball5  husbmoreland wifemoreland riskwife riskhusband barghusbandcloser bargwifecloser victimproplost victimfamlost ///
-contribcashyn contribinkindyn tinroof livestockany terrfe*, vce(cluster vill_id)
+reg ball5 ///
+	victimproplost victimfamlost acledviolence10 /// conflict
+	husbmoreland wifemoreland contribcashyn riskwife riskhusband barghusbandcloser bargwifecloser  /// bargainin and empowerment
+	atthusbtotal attwifetotal /// gender attitidues 
+	, vce(cluster vill_id)
+
 
 **********************************************
 **Mean Comparisons Overall**
@@ -124,13 +125,13 @@ local using using "$tableloc\results_regression.tex"
 tempfile regs //"$tableloc\regs.csv"
 eststo l1: kict ls numballs  husbmoreland, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", replace addlabel(reg,l1)  pval
-eststo l2: kict ls numballs  victimfamlost, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-regsave using "`regs'", append addlabel(reg,l2)  pval
-eststo l3: kict ls numballs  acledviolence10, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-regsave using "`regs'", append addlabel(reg,l3)  pval  
+eststo l2: kict ls numballs  victimfamlost , condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
+regsave using "`regs'"  terrfe_, append addlabel(reg,l2)  pval
+//eststo l3: kict ls numballs  acledviolence10, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
+//regsave using "`regs'", append addlabel(reg,l3)  pval  
 eststo l4: kict ls numballs  attwifetotal, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l4)  pval
-eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence10 attwifetotal, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
+eststo l5: kict ls numballs  husbmoreland victimfamlost /* acledviolence10 */ attwifetotal, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l5)  pval
 
 
