@@ -126,7 +126,7 @@ tempfile regs //"$tableloc\regs.csv"
 eststo l1: kict ls numballs  husbmoreland, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", replace addlabel(reg,l1)  pval
 eststo l2: kict ls numballs  victimfamlost , condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-regsave using "`regs'"  terrfe_, append addlabel(reg,l2)  pval
+regsave using "`regs'" , append addlabel(reg,l2)  pval
 //eststo l3: kict ls numballs  acledviolence10, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 //regsave using "`regs'", append addlabel(reg,l3)  pval  
 eststo l4: kict ls numballs  attwifetotal, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
@@ -137,7 +137,7 @@ regsave using "`regs'", append addlabel(reg,l5)  pval
 
 esttab l? `using', replace ///
 	nomtitles keep(Delta:*)  se label ///
-	starlevels(* 0.10 ** 0.05 *** 0.01)
+	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes
 
 preserve
 use `regs', clear
