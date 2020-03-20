@@ -292,10 +292,11 @@ drop if spousenum > 1
 ren a_age age_spouse
 ren a_etn etn_spouse 
 ren a_school edu_spouse
+ren a_gender gender_spouse
 
 *save only relevant data
 gen linenum = 1
-keep PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts age_spouse etn_spouse edu_spouse
+keep PARENT_KEY linenum a_marrmarr_type1 - a_marrspousegifts age_spouse etn_spouse edu_spouse gender_spouse
 tempfile spouses
 save `spouses'
 
@@ -316,20 +317,21 @@ use "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_
 *merge in spouse data
 merge 1:1 PARENT_KEY linenum using `spouses', update gen(spousemerge) assert(master match_update)
 
-*merge in occupation data 
-merge 1:1 KEY using `occupations', keep(master match) gen(occmerge)
+//*merge in occupation data 
+//merge 1:1 KEY using `occupations', keep(master match) gen(occmerge)
 
 *ids
 ren linenum resp_id
 ren KEY ROSTER_KEY
 ren PARENT_KEY KEY
-replace a_relhead = 1 if resp_id == 1
 
+keep if resp_id == 1
 
 *age, ethn, education
 ren a_age age_head
 ren a_etn etn_head
 ren a_school edu_head
+ren a_gender gender_head
 
 tokenize `""Age" "Etnicicity" "Level of education""'
 foreach var in age etn edu {
@@ -337,16 +339,17 @@ foreach var in age etn edu {
 		gen `var'`partner' = .
 		la var `var'`partner' "`1' of `partner'"
 	}
-	*respondent (woman) is head
-	replace `var'wife = `var'_head if a_relhead == 1
-	replace `var'husband = `var'_spouse if a_relhead == 1
-	
-	*respondent (woman) is spouse
-	replace `var'wife =  `var'_spouse if a_relhead == 2
-	replace `var'husband = `var'_head if a_relhead == 2
-	macro shift
 
+	*respondent (woman) is head
+	replace `var'wife = `var'_head if gender_head == 2
+	replace `var'husband = `var'_spouse if gender_head == 2
+
+	*respondent (woman) is spouse
+	replace `var'wife =  `var'_spouse if gender_head == 1
+	replace `var'husband = `var'_head if gender_head == 1
+	macro shift
 }
+
 
 *sameethiniciy
 gen sameethn = etnwife == etnhusband if !missing(etnwife) & !missing(etnhusband)
@@ -355,9 +358,7 @@ la val sameethn yes_no
 
 *status of parents
 ren a_marrnonhh_statpar statpar
-
 replace statpar = .a if statpar > 3 & !missing(statpar)
-
 la var statpar "Land holdings of families before marriage"
 la def statpar 1 "Wife's had more land" 2 "Equal" 3 "Husband's had more land"
 
@@ -374,13 +375,14 @@ foreach i of numlist 1/3{
 	gen marrhusbprov`i' = .
 	
 	*respondent is head
-	replace marrwiveprov`i' = a_marrheadprov`i' if a_relhead == 1
-	replace marrhusbprov`i' = a_marrspouseprov`i' if a_relhead == 1
+	replace marrwiveprov`i' = a_marrheadprov`i' if gender_head == 2
+	replace marrhusbprov`i' = a_marrspouseprov`i' if gender_head == 2
 
 	*respondent is spouse
-	replace marrwiveprov`i' =   a_marrspouseprov`i' if a_relhead == 2
-	replace marrhusbprov`i' = a_marrheadprov`i' if a_relhead == 2
+	replace marrwiveprov`i' =   a_marrspouseprov`i' if gender_head == 1
+	replace marrhusbprov`i' = a_marrheadprov`i' if gender_head == 1
 }
+
 
 *value
 foreach item in dot gifts{
@@ -389,12 +391,12 @@ foreach item in dot gifts{
 	gen marrwive`item' = .
 
 	*respondent is head
-	replace marrwive`item' =  a_marrhead`item' if a_relhead == 1
-	replace marrhusb`item' =  a_marrspouse`item' if a_relhead == 1
+	replace marrwive`item' =  a_marrhead`item' if gender_head == 2
+	replace marrhusb`item' =  a_marrspouse`item' if gender_head == 2
 
 	*respondent is spouse
-	replace marrwive`item' =  a_marrspouse`item' if a_relhead == 2
-	replace marrhusb`item'=  a_marrhead`item' if a_relhead == 2
+	replace marrwive`item' =  a_marrspouse`item' if gender_head == 1
+	replace marrhusb`item'=  a_marrhead`item' if gender_head == 2
 
 	replace marrhusb`item' = 0 if marrhusb`item' == . 
 	replace marrhusb`item' = . if marrhusb`item' == 98
@@ -403,14 +405,9 @@ foreach item in dot gifts{
 	replace marrwive`item' = . if marrwive`item' == 98
 }
 
-gen head = resp_id == 1
-la var head "Household Head"
-la def L_head 1 "Head" 0 "Spouse"
-
 ren a_marstat marstat 
 la var marstat "Marital Status"
 
-ren a_gender gender
 
 *marriage types
 egen marcohab = anymatch(a_marrmarr_type?), values(1)
@@ -423,6 +420,7 @@ egen martrad = anymatch(a_marrmarr_type?), values(4)
 la var martrad "Marriage: Traditional"
 la val marcohab marcivil marreli martrad yes_no
 
+/* 
 *contribution cash
 la var contribcash "Contribution to cash income"
 
@@ -434,12 +432,14 @@ la val contribcashyn halfhalf
 gen contribinkindyn = contribinkind >= 50 if !missing(contribinkind)
 la var contribinkindyn "Major contribution in-kind-income"
 la val contribinkindyn yes_no
+ */
 
 keep 	resp_id ROSTER_KEY KEY /// IDs
-		agewife agehusband eduwife eduhusband sameethn head gender ///demographics
+		agewife agehusband eduwife eduhusband sameethn  gender* ///demographics
 		marstat marcohab marcivil marreli martrad /// marriage 
 		statpar wifemoreland husbmoreland ///status	
-		contribcash contribinkind contribcashyn contribinkindyn ///contributions	
+		//contribcash contribinkind contribcashyn contribinkindyn ///contributions	
+
 
 tempfile roster
 save `roster'
@@ -535,7 +535,8 @@ save `acled'
 **MERGE AND FINAL CLEAN
 ************************************************
 use `main'
-merge 1:1 KEY resp_id using `roster', keep(master match) gen(rostermerge)
+merge 1:1 KEY using `roster', keep(master match) gen(rostermerge)
+
 replace vill_id = 999 if vill_id == .
 replace grp_id = 999 if grp_id == .
 
@@ -546,8 +547,8 @@ bys vill_id grp_id (hh_id): replace hh_id = 990 +  _n if numballs == .
 merge 1:1 vill_id grp_id hh_id  using `baseline', keep(master match) gen(blmerge)
 merge 1:1 KEY using `acled', keep(master match)  gen(aclmerge)
 
-assert gender == 2 if !missing(numballs)
-drop gender
+//assert gender == 2 if !missing(numballs)
+//drop gender
 
 
 *impute violence 
@@ -593,7 +594,6 @@ la def empowered 0 "Less empowered attidudes than median" 1 "More empowered atti
 la val atthusbtotalbin attwifetotalbin empowered
 
 
-drop if ball5 == .
 
 save "$dataloc\clean\analysis.dta", replace
 

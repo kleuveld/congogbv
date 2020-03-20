@@ -22,6 +22,7 @@
 \setlist{noitemsep} % \setlist{nosep} to reove separation around lists as well
 \usepackage[flushleft]{threeparttable}
 \usepackage{dcolumn}
+\usepackage{lineno, blindtext}
 
 %citation cheat sheet:
 	%\ cite{key}				Jones et al. (1990)
@@ -70,8 +71,6 @@
 
 \begin{document}
 
-
-
 \author{Koen Leuveld}
 
 \affil{Development Economics Group, Wageningen University \\
@@ -90,11 +89,12 @@ koen.leuveld@wur.nl}
 
 \begin{abstract}
 \section*{Abstract}
+The project aims to provide crucial insights into the patterns of gender based violence in Eastern Congo. Of particular interest are covariates of victimization of sexual violence, in order to provide a characterization of victims, as well as identification of drivers of violence
+
 This paper presents data on the incidence of Sexual and Gender Based Violence (SGBV) in South-Kivu province in Eastern Congo. Such data is lacking, due to the difficulties to obtain reliable data. In order to obtain reliable data on this incidence, and to avoid social desirability bias, I conducted a list experiment. I find that both conflict and intra-household dynamics contribute to SGBV, but that intra-household dynamics do so to a greater degree. Furthermore, I find that empowerment norms only somewhat mitigate SGBV. 
 \end{abstract}
 
-
-
+\linenumbers
 %literature to add somewhere:
 %\cite{Saile2013} investigate the correlates of Intimate Partner Violence for a sample of conflict-exposed women in Northern Uganda. They find that while the level of conflict exposure predicts physical violence, sexual violence is more associated with the level of childhood familial violence. This link between current and past experiences of violence suggests that the effect of conflict on violence is deeper than just the direct effect. People traumatized during the conflict (either because they were victims or perpetrators) are more likely to be victimized later on. CHECK OOK NOG DE REFERENTIES VOOR EEN DIEPERE ONDERBOUWING VAN DIT PUNT.
 
@@ -147,21 +147,23 @@ I find mixed evidence for the correlation between victimization of SGBV and vict
 The main source of data for this study is a household survey that was undertaken in 2014 as the endline survey for the evaluation of Dutch development aid in Eastern Congo. This evaluation concerned projects ran by four NGOs in the territories of Kabare, Fizi and Uvira, and the commune of Bagira, all in South Kivu province. The baseline for this evaluation was done in 2012. Half of the respondents were selected from communities that benefited from the projects, the other half were selected from similar households in non-intervention communities. These projects were about agriculture, women's rights and education. Overall, the beneficiaries of the projects vulnerable, mostly rural, households. The sampling procedure outlined here is thus unlikely to have produced a nationally (ore even provincially) representative sample. In total data was collected in 73 communities. In each community, baseline data was collected on 15 households in 2012; however, due to attrition, 2014 data is available for an average of 12 households per community, for a total of 889 households. 
 
 \begin{table}[htb]
-	\centering
-	\caption{Gender module sample make up}
-	\label{tab:bargsample}
-	\begin{tabular}{l c c c c c}
-		\toprule
-		& \multicolumn{5}{c}{Male Respondent} \\
-Female&Consented&Refused&Absent&No Husband&Total \\
+\centering
+\caption{Gender module sample make up}
+\label{tab:bargsample}
+\begin{tabular}{l c c c c c}
+\toprule
+%\input("\tableloc/sample_tabs.tex")
+ & \multicolumn{5}{c}{Husband} \\
+Wife&Consented&Refused&Absent&No Husband&Total \\
+&No.&No.&No.&No.&No. \\
 \hline
 Consented&184&3&253&153&593 \\
 Refused&0&0&0&1&1 \\
 Absent&4&0&0&1&5 \\
 No Wife&282&3&2&3&290 \\
-Total&470&6&255&158&889 \\
+\hline Total&470&6&255&158&889 \\
 \bottomrule
-	\end{tabular}
+\end{tabular}
 \end{table}
 
 
@@ -281,6 +283,21 @@ On average, participants were moderately risk averse. The mean choice of the wom
 \end{table}
 
 
+\subsection*{Sample Selection}
+The women participating in the study are a non-random sub-sample of the sample. In Table \ref{tab:attrition} I present results for logit regressions of sample selection indicators on various co-variates. In column 1, the dependent variable is whether there is a consenting female respondent in the household. In the second, the dependent variable whether there is a consenting male respondent, and the third whether both a consenting male and female respondent are present. 
+
+EXPAND PLEASE
+
+\begin{threeparttable}
+	\caption{Sub-sample Selection (Logit)}\label{tab:attrition}
+	\input{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/attrition.tex"}
+	\begin{tablenotes}
+	\small
+	 \item Standard errors clustered at the village level
+	 \item * p $<$ 0.1, **, p $<$ 0.05, *** p $<$ 0.01
+	\end{tablenotes}
+\end{threeparttable}
+
 
 %some examples on how to interpret list experiments:
 %\cite{Meng2017} run various types of models. Consistently refer to mean difference models, and Maximum Likelihood models
@@ -304,7 +321,9 @@ First, I compare the number of issues faced by the Treatment and Control groups 
 \end{figure}
 
 \subsection*{Conflict}
-The first dimension over which I create sub-groups is conflict history. I use data collected from an earlier round of the study that collected detailed conflict exposure data. First, I compare respondents who live in households who have suffered loss of (or damage to) property, including agricultural fields, due to conflict. See top-left panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{victimproplost0}{n}), the average number of issues was \incid{victimproplost0}{mean0} for the control group, and \incid{victimproplost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost0}{incidence_pct}\% (p = \incid{victimproplost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimproplost1}{n}), the average number of issues was \incid{victimproplost1}{mean0} for the control group, and \incid{victimproplost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost1}{incidence_pct}\% (p = \incid{victimproplost1}{p}).
+The first dimension over which I create sub-groups is conflict history. For this I combine two data sources:  I use data collected from an earlier round of the study that collected detailed conflict exposure data. This data was collected in 2012, and any relation between violent events and SGBV can't be due to direct victimization, whereby women are victimized by members of armed groups during these particular events. I then use more recent ACLED data, which is more likely to be indicative of direct effects.
+
+First, I compare respondents who live in households that indicated in 2012 to have suffered loss of (or damage to) property, including agricultural fields, due to conflict. See top-left panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{victimproplost0}{n}), the average number of issues was \incid{victimproplost0}{mean0} for the control group, and \incid{victimproplost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost0}{incidence_pct}\% (p = \incid{victimproplost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimproplost1}{n}), the average number of issues was \incid{victimproplost1}{mean0} for the control group, and \incid{victimproplost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimproplost1}{incidence_pct}\% (p = \incid{victimproplost1}{p}).
 
 \begin{figure}[htb]
   \includegraphics[width=\linewidth]{\figureloc/meancompare_conf.png}
@@ -312,9 +331,9 @@ The first dimension over which I create sub-groups is conflict history. I use da
   \label{fig:meancompare_conf}
 \end{figure}
 
-The second conflict indicator I examine, is whether the respondent's household has lost any household members or family as a consequence of the conflict.See top-right panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{victimfamlost0}{n}), the average number of issues was \incid{victimfamlost0}{mean0} for the control group, and \incid{victimfamlost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost0}{incidence_pct}\% (p = \incid{victimfamlost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimfamlost1}{n}), the average number of issues was \incid{victimfamlost1}{mean0} for the control group, and \incid{victimfamlost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost1}{incidence_pct}\% (p = \incid{victimfamlost1}{p}).
+The second conflict indicator I examine, is whether the respondent's household indicated in 2012 to have lost any household members or family as a consequence of the conflict. See top-right panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{victimfamlost0}{n}), the average number of issues was \incid{victimfamlost0}{mean0} for the control group, and \incid{victimfamlost0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost0}{incidence_pct}\% (p = \incid{victimfamlost0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{victimfamlost1}{n}), the average number of issues was \incid{victimfamlost1}{mean0} for the control group, and \incid{victimfamlost1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{victimfamlost1}{incidence_pct}\% (p = \incid{victimfamlost1}{p}).
 
-The third conflict indicator I examine, is the number of cases of violence against civilians in a 10km radius in the past month. I split the sample in two, using the median as a cutoff point. See bottom-left panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{acledviolence10d0}{n}), the average number of issues was \incid{acledviolence10d0}{mean0} for the control group, and \incid{acledviolence10d0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d0}{incidence_pct}\% (p = \incid{acledviolence10d0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{acledviolence10d1}{n}), the average number of issues was \incid{acledviolence30d1}{mean0} for the control group, and \incid{acledviolence10d1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d1}{incidence_pct}\% (p = \incid{acledviolence10d1}{p}). Note that the results presented here are robust to using number of battles or number of fatalities rather than the instances of violence against civilians; using 5,15,20, 25 or 30km as a radius, or using a continuous variable, rather than a binary variable.  
+The third conflict indicator I examine, is the number of cases of violence against civilians in ACLED data within a 10km radius during the past twelve months. Here, I split the sample in two, using the median as a cutoff point. See bottom-left panel of \ref{fig:meancompare_conf}. In the non-victimized group (n=\incid{acledviolence10d0}{n}), the average number of issues was \incid{acledviolence10d0}{mean0} for the control group, and \incid{acledviolence10d0}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d0}{incidence_pct}\% (p = \incid{acledviolence10d0}{p}). For the group that has suffered loss of property due to the conflict (n=\incid{acledviolence10d1}{n}), the average number of issues was \incid{acledviolence30d1}{mean0} for the control group, and \incid{acledviolence10d1}{mean1} for the treatment group. This implies a rate of SGBV of \incid{acledviolence10d1}{incidence_pct}\% (p = \incid{acledviolence10d1}{p}). Note that the results presented here are robust to using number of battles or number of fatalities rather than the instances of violence against civilians; using 5,15,20, 25 or 30km as a radius, or using a continuous variable, rather than a binary variable.  
 
 The average number of items reported by the groups created by the conflict indicators explored above is presented in Table \ref{tab:meandiff_conf}, for both treatment and control groups. The Diff columns thus provides the estimate of the incidence in each group. The difference in these differences is then presented in the Diff in Diff row for each variable. This estimate is equal to coefficient $\beta_3$ in equation \ref{eq:interaction} above. The only statistically significant Diff in Diff estimate is for having lost a household or family member due to conflict. Incidence for those woman without such loss is 21\%, for those with such loss it is 52\%. The difference of 31\% is significant a the 10\% level.
 
@@ -368,12 +387,16 @@ In Table \ref{tab:meadifftab_att}, the estimates for incidence that were display
 
 
 \subsection*{Multivariate Regression analysis}
-In the preceding sections, I examined univariate relations between variables of interest and the incidence of SGBV. However, such analysis may suffer from missing variables and spurious correlations. Here I move to a richer specification, in order to assess the relative impact of each variable. I expand equation \ref{eq:interaction} to include indicators for conflict, intra-household bargaining position and empowerment. To reduce the risk of multi-collinearity, I do not include the full set of variables discussed above, but select one indicator for each, guided by the results obtained above. A key criterion for selection is the number of respondents for each indicator. The analysis of list experiments suffers from rapid loss of power due to the indirect nature of the analysis. To mitigate this, indicators that are available for large groups of respondents were selected. For conflict, I include the indicator for household member killed; for intra-household bargaining position a dummy for the husband's family having the most land; and for household bargaining, I use the attitudes of the wife. For these regression, I use the KICT Stata package developed by \citet{Tsai2019}; interpretation of the coefficients is the same as equation \ref{eq:interaction}, but estimation is more efficient.
-
-In table \ref{tab:results_regression} I display the results of these regressions. In columns 1-3 I rerun the univariate models from above. Results are the same as before: both conflict and intra-household bargaining are associated with increased incidence of SGBV. I In column 4 I present the full model. The effect of empowerment attitudes is statistically significant, though smaller than the effect of bargaining position and conflict. Overall, the largest contributor to SGV are intra-household dynamics: the rate of SGBV for women with less pre-marital status is 48 percentage points higher than for other women. 
-
 \newcommand{\coeffget}[3]{\csvreader[filter=\equal{\reg}{#1} \and \equal{\var}{#2}]{\tableloc/regs.csv}{var=\var,reg=\reg,#3=\coeff}{\coeff}}
-%\coeffget{l1}{Delta:husbmoreland}{coef}
+
+
+In the preceding sections, I examined univariate relations between variables of interest and the incidence of SGBV. However, such analysis may suffer from missing variables and spurious correlations. Here I move to a richer specification, in order to assess the relative impact of each variable. I expand equation \ref{eq:interaction} to include indicators for conflict, intra-household bargaining position and empowerment. To reduce the risk of multi-collinearity, I do not include the full set of variables discussed above, but select one indicator for each, guided by the results obtained above. A key criterion for selection is the number of respondents for each indicator. The analysis of list experiments suffers from rapid loss of power due to the indirect nature of the analysis. To mitigate this, indicators that are available for large groups of respondents were selected. For conflict, I include both the indicator for household member killed before 2012 (as an indicator for historic conflict) and violence against civilians from the ACLED data (as an indicator for recent conflict); for intra-household bargaining position a dummy for the husband's family having the most land; and for household bargaining, I use the attitudes of the wife. For these regression, I use the KICT Stata package developed by \citet{Tsai2019}; interpretation of the coefficients is the same as equation \ref{eq:interaction}, but estimation is more efficient.
+
+In table \ref{tab:results_regression} I display the results of these regressions. In columns 1-3 I rerun the univariate models from above. Results are the same as before: both conflict history and intra-household bargaining are associated with increased incidence of SGBV. I In column 4 I present the full model. I find that women in a marriage where their husband's family had more land before the marriage, are \coeffget{l5}{Delta:husbmoreland}{coef_pct} percentage points more likely than other women to be victim of SGBV. Women who live in households that lost a family or household member due to conflict prior to 2012 are \coeffget{l5}{Delta:victimfamlost}{coef_pct} percentage points more likely to be victimized by SGBV than other women. I find no statistically significant relation between empowerment norms, and SGBV or recent conflict and SGBV victimization.
+
+The finding that conflict history is associated with an increase in SGBV, while recent conflict is not, points to the indirect relationship between conflict and SGBV, where conflict may affect SGBV rates not through perpetration by armed groups, but by an increase in IPV.
+
+
 
 \begin{threeparttable}
 	\caption{Multivariate regression Results}\label{tab:results_regression}
@@ -401,7 +424,6 @@ When examining the backgrounds of the victims, I find that they are likely to be
 While I find some evidence that victims of violence have less empowered attitudes than other women, this effect is small. This suggests that the focus of interventions aiming to reduce SGBV should be on the attitudes of women, but on their bargaining position in the household.
 
 There are two large caveats with these findings: (i) they are not causal; (ii) little analysis could be done on the perpetrators of the violence, as indirect questioning precludes probing into this. More research is needed to  to address these important issues.
-
 
 %bibliography, this is needed for bibtex
 \clearpage 

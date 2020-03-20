@@ -20,16 +20,38 @@ global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures //whe
 global gitloc C:\Users\Koen\Documents\GitHub //holds do files
 
 *run helpers
-qui do "$gitloc\congogbv\congogbv_helpers.do" //contains functions used to generate tables and figures.
-qui do "$gitloc\congogbv\congogbv_dataprep.do" //cleans data.
+run "$gitloc\congogbv\congogbv_helpers.do" //contains functions used to generate tables and figures.
+run "$gitloc\congogbv\congogbv_dataprep.do" //cleans data.
 
 *********************************************
 **TABLE 1: Sample overview of bargaining 
 *********************************************
 use "$dataloc\clean\analysis.dta", clear
 
-tab2csv riskwifestatus riskhusbandstatus using "$tableloc/tabs.csv"
-tabout  riskwifestatus  riskhusbandstatus using "$tableloc/tabs.tex",  replace style(tex) format(0c) h3(nil)
+tab2csv riskwifestatus riskhusbandstatus using "$tableloc/sample_tabs.csv"
+
+tabout  riskwifestatus  riskhusbandstatus using "$tableloc/sample_tabs.tex",  replace style(tex) format(0c) // h3(nil)
+
+gen wifeconsent = riskwifestatus == 1 if !missing(riskwifestatus)
+gen husbandconsent = riskhusbandstatus == 1 if !missing(riskhusbandstatus)
+gen coupleconsent = wifeconsent * husbandconsent
+
+tab eduwife riskwifestatus, m
+tab agewife riskwifestatus, m 
+tab agehusband riskwifestatus, m
+
+local using using "$tableloc/attrition.tex"
+
+eststo attrwife, t("Wife"): logit wifeconsent agewife agehusband eduwife eduhusband tinroof livestockcow livestockgoat livestockchicken livestockpigs, vce(cluster vill_id)
+eststo attrhusband, t("Husband"): logit husbandconsent agewife agehusband eduwife eduhusband tinroof livestockcow livestockgoat livestockchicken livestockpigs, vce(cluster vill_id)
+eststo attrcouple, t("Couple"): logit coupleconsent agewife agehusband eduwife eduhusband tinroof livestockcow livestockgoat livestockchicken livestockpigs, vce(cluster vill_id)
+
+esttab attr* `using', replace ///
+	nodepvar se label ///
+	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes eqlabels("" "")
+
+drop if ball5 == .
+
 
 **************************
 **Table 3: Balance Table**
@@ -127,11 +149,11 @@ eststo l1: kict ls numballs  husbmoreland, condition(ball5) nnonkey(4) estimator
 regsave using "`regs'", replace addlabel(reg,l1)  pval
 eststo l2: kict ls numballs  victimfamlost , condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'" , append addlabel(reg,l2)  pval
-//eststo l3: kict ls numballs  acledviolence10, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-//regsave using "`regs'", append addlabel(reg,l3)  pval  
+eststo l3: kict ls numballs  acledviolence10d, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
+regsave using "`regs'", append addlabel(reg,l3)  pval  
 eststo l4: kict ls numballs  attwifetotal, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l4)  pval
-eststo l5: kict ls numballs  husbmoreland victimfamlost /* acledviolence10 */ attwifetotal, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
+eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence10 attwifetotal, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l5)  pval
 
 
@@ -139,9 +161,10 @@ esttab l? `using', replace ///
 	nomtitles keep(Delta:*)  se label ///
 	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes
 
-preserve
 use `regs', clear
+gen coef_pct = coef * 100
 format coef stderr pval %9.2f
+format coef_pct %9.0f
 export delimited using "$tableloc\regs.csv", datafmt replace
 
 /* 
