@@ -138,13 +138,27 @@ This paper contributes to the empirical evidence base on the incidence of SGBV i
 I find mixed evidence for the correlation between victimization of SGBV and victimization of the conflict. I do find a strong correlation between victimization of SGBV and the intra-household bargaining position of women: the result from a bargaining game, and the pre-marriage relative status of the wife and husband. As for gender norms, I find no evidence of correlation between more empowered norms, and lower incidence of SGBV. This early draft of the paper is structured as follows: first I describe the research setting and data. The subsequent section describes my empirical framework, which revolves around the use of a list experiment. I then present the correlates of SGBV that are considered in this paper, followed by a discussion of the results of the analyses. In the concluding remarks, I contextualize the findings and present policy implications.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Background}
+\section*{Background and Data}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %command to retrieve summary statistics from balance.csv
 %include map
 
 \newcommand{\summstat}[2]{\csvreader[filter strcmp={\var}{#1}]{\tableloc/balance.csv}{var=\var,#2=\stat}{\stat}}
-The main source of data for this study is a household survey that was undertaken in 2014 as the endline survey for the evaluation of Dutch development aid in Eastern Congo. This evaluation concerned projects ran by four NGOs in the territories of Kabare, Fizi and Uvira, and the commune of Bagira, all in South Kivu province. The baseline for this evaluation was done in 2012. Half of the respondents were selected from communities that benefited from the projects, the other half were selected from similar households in non-intervention communities. These projects were about agriculture, women's rights and education. Overall, the beneficiaries of the projects vulnerable, mostly rural, households. The sampling procedure outlined here is thus unlikely to have produced a nationally (ore even provincially) representative sample. In total data was collected in 73 communities. In each community, baseline data was collected on 15 households in 2012; however, due to attrition, 2014 data is available for an average of 12 households per community, for a total of 889 households. 
+The main source of data for this study is a household survey that was undertaken in 2014 as the endline survey for the evaluation of Dutch development aid in Eastern Congo. This evaluation concerned projects ran by four NGOs in the territories of Kabare, Fizi and Uvira, and the commune of Bagira, all in South Kivu province. The baseline for this evaluation was done in 2012. Half of the respondents were selected from communities that benefited from the projects, the other half were selected from similar households in non-intervention communities. These projects were about agriculture, women's rights and education. Overall, the beneficiaries of the projects vulnerable, mostly rural, households. In total data was collected in 73 communities. In each community, baseline data was collected on 15 households in 2012; however, due to attrition, 2014 data is available for an average of 12 households per community, for a total of 889 households. 
+
+\begin{threeparttable}
+	\caption{Dempographics for DHS data and sample}\label{tab:dhs_compare}
+	\begin{center}
+	\input{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/dhs_compare.tex"}
+	\begin{tablenotes}
+	\small
+	\item FR stands for Female respodent. For the DHS data, means are provided for female heads of household, or female spouses of household heads.
+	\end{tablenotes}
+	\end{center}
+\end{threeparttable}
+
+The sampling procedure outlined here is thus unlikely to have produced a nationally (ore even provincially) representative sample. In Table \ref{tab:dhs_compare} a comparison across selected demographics between the full study sample (column 3), and the representative sample from the DHS Program (columns 1-2) is presented \cite{DHSCongoReport}. Women in the study sample are older, and less likely to have finished school, than the provincial average in South Kivu.
+
 
 \begin{table}[htb]
 \centering
@@ -166,12 +180,25 @@ No Wife&282&3&2&3&290 \\
 \end{tabular}
 \end{table}
 
-
 %kan ik misschien dat stukje "for convenience" aanpassen?
 The 2014 survey contained a gender module that: (i) collected detailed information on gender attitudes; (ii) contained a list experiment designed to elicit the incidence of SGBV among female respondents; and (iii) contained a risk bargaining game. Where possible, this gender module was administered to a both the head of the household and the spouse of the household head. In the vast majority of the cases, the husband is considered the head, but it was left open to the respondent to indicate the head. Table \ref{tab:bargsample} displays how the sample is built up. In total, there were 889 respondents to the survey. In 593 households, the female respondent (the wife of the household head or the single female head) consented to responding to the gender module. In 1 household, the female respondent refused; in 5, the female respondent was absent during the interview, and in 290 households the head of the household had no wife, and there was thus no female respondent. In 470 households, the male respondent (usually the household head) consented to the module, 6 refused, 255 male respondents were absent, and in 158 households the head of the household was an unmarried woman, meaning that there was no male respondent. For 184 households, we have both husband and wife responding to the module. Efforts to increase this number, by tracking down absent household heads, were constricted by the limited time field teams had in each community, due to the security situation at the time of field work.
 
-%expand this section
 
+\begin{threeparttable}[htb]
+	\caption{Sample selection for the Gender Module}\label{tab:sample_selection}
+	\begin{center}
+	\input{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/attrition.tex"}
+	\begin{tablenotes}
+	\small
+	 \item Standard errors clustered at the village level
+	 \item * p $<$ 0.1, **, p $<$ 0.05, *** p $<$ 0.01
+	\end{tablenotes}
+	\end{center}
+\end{threeparttable}
+
+
+%expand this section
+The selected of respondents to the gender module is unlikely to have been random. In column 4 of Table \ref{tab:dhs_compare} selected demographics for the Female Respondents to the gender module are presented. The respondents are slightly older than the full sample, and considerably older than the provincial average. They are slighly more likely to have completed secondary school than the full sample, but less likely than the provincial average. Table \ref{tab:attrition} presents results from logit models models to find correlations between household characteristics and particiaption in the gender module. The dependent columns of the columns are whether the wife, the husband and the couple participated in the gender module. There are some selection effects: households where a female respondent is present, are less lilely to own livestock. On the contrary, households where the husband participated were more lilely to own several types of livestock. This suggests that care must be taken when applying the findings from this study to the wider population.
 
 \section*{Empirical Strategy}
 %what are they?

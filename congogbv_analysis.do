@@ -28,18 +28,40 @@ run "$gitloc\congogbv\congogbv_dataprep.do" //cleans data.
 *********************************************
 use "$dataloc\clean\analysis.dta", clear
 
+*sample make up
 tab2csv riskwifestatus riskhusbandstatus using "$tableloc/sample_tabs.csv"
-
 tabout  riskwifestatus  riskhusbandstatus using "$tableloc/sample_tabs.tex",  replace style(tex) format(0c) // h3(nil)
 
+
+*********************************************
+**TABLE 2: representativeness of data
+*********************************************
+
+local using using "$tableloc/dhs_compare.tex"
+
+use "$dataloc\clean\dhs.dta", clear
+eststo dhs_nat: estpost su agewife tinroof eduwife_prim eduwife_sec [iweight=wgt]
+eststo dhs_sk: estpost su agewife tinroof eduwife_prim eduwife_sec [iweight=wgt] if province == 11
+
+use "$dataloc\clean\analysis.dta", clear
+eststo sample_all: estpost su agewife tinroof eduwife_prim eduwife_sec
+eststo sample_selected: estpost su agewife tinroof eduwife_prim eduwife_sec if !missing(ball5)
+
+
+esttab dhs_nat dhs_sk sample_all sample_selected `using', cells("mean(fmt(2))") label noobs mtitles("DHS National" "DHS South Kivu" "Full Sample" "List experiment") replace nonumbers
+
+
+
+
+*********************************************
+**TABLE 3: Sample Selection 
+*********************************************
 gen wifeconsent = riskwifestatus == 1 if !missing(riskwifestatus)
 gen husbandconsent = riskhusbandstatus == 1 if !missing(riskhusbandstatus)
 gen coupleconsent = wifeconsent * husbandconsent
 
-tab eduwife riskwifestatus, m
-tab agewife riskwifestatus, m 
-tab agehusband riskwifestatus, m
 
+*sample selected
 local using using "$tableloc/attrition.tex"
 
 eststo attrwife, t("Wife"): logit wifeconsent agewife agehusband eduwife eduhusband tinroof livestockcow livestockgoat livestockchicken livestockpigs, vce(cluster vill_id)
@@ -50,12 +72,13 @@ esttab attr* `using', replace ///
 	nodepvar se label ///
 	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes eqlabels("" "")
 
-drop if ball5 == .
 
 
 **************************
 **Table 3: Balance Table**
 **************************
+use "$dataloc\clean\analysis.dta", clear
+drop if ball5 == .
 
 *add: age & education
 balance_table ///
