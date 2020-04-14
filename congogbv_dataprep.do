@@ -255,7 +255,7 @@ la val tinroof yes_no
 //keep if !missing(numballs)
 
 *keep relevant vars
-keep  KEY 	vill_id grp_id hh_id terrfe_* resp_id /// IDs etc.
+keep  KEY 	vill_id grp_id hh_id territory terrfe_* resp_id /// IDs etc.
 			numballs ball5  list_spouse list_head /// list experiment
 			barg* riskwife riskhusband tinroof aidany aidwomen livestock* ///
 			genderhead marstathead /// 
@@ -456,6 +456,11 @@ save `roster'
 **Baseline Conflict**
 *********************
 use "$dataloc\baseline\HH_Base_sorted.dta" , clear
+
+//append using "$dataloc\baseline\HH_Base_AdS.dta"
+
+//use "$dataloc\baseline\HH_Base_AdS.dta", clear
+ 
 tempfile nosave2
 save `nosave2'
 
