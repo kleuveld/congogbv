@@ -138,7 +138,7 @@ meandiffs numballs, treatment(ball5)  by(bargresult) coeffs(`diffs') append name
 grc1leg  meancompare_mar1 meancompare_mar2 // , position(4) ring(0) 
 graph export "$figloc/meancompare_mar.png", as(png) replace
 
-meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbmoreland barghusbandcloser bargwifecloser) treat(ball5) robust
+meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(husbmoreland wifemoreland barghusbandcloser bargwifecloser) treat(ball5) robust
 
 
 **********************************************
