@@ -27,7 +27,7 @@ run "$gitloc\congogbv\congogbv_dataprep.do" //cleans data.
 **TABLE 1: Sample overview of bargaining 
 *********************************************
 use "$dataloc\clean\analysis.dta", clear
-keep if territory > 2
+//keep if territory > 2
 
 
 *sample make up
@@ -81,7 +81,7 @@ esttab attr* `using', replace ///
 **************************
 use "$dataloc\clean\analysis.dta", clear
 drop if ball5 == .
-keep if territory > 2
+//keep if territory > 2
 
 *add: age & education
 balance_table ///
@@ -135,7 +135,7 @@ meandiffs numballs, treatment(ball5)  by(statpar) coeffs(`diffs') append name(me
 meandiffs numballs, treatment(ball5)  by(bargresult) coeffs(`diffs') append name(meancompare_mar2,replace)
 //meandiffs numballs, treatment(ball5)  by(contribcashyn) coeffs(`diffs') append name(meancompare_mar3,replace)
 
-grc1leg  meancompare_mar1 meancompare_mar2 , position(4) ring(0) 
+grc1leg  meancompare_mar1 meancompare_mar2 // , position(4) ring(0) 
 graph export "$figloc/meancompare_mar.png", as(png) replace
 
 meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(wifemoreland husbmoreland barghusbandcloser bargwifecloser) treat(ball5) robust
@@ -165,31 +165,28 @@ restore
 **********************************************
 **Regression Analysis**
 **********************************************
-
-
-//use "$dataloc\clean\analysis.dta", clear
-
-regfig husbmoreland victimfamlost livestockany using "$figloc/regfig_pool.png", pool
-
 local using using "$tableloc\determinants_regression.tex"
-//use "$dataloc\clean\analysis.dta", clear
-//drop if ball5 == .
+//use if !missing(ball5) using "$dataloc\clean\analysis.dta" , clear
 
-foreach var of varlist husbmoreland victimfamlost acledviolence10 attwifetotal{
-	eststo det_`var': reg `var'  genderhead livestockcow livestockgoat livestockchicken livestockpigs tinroof eduwife_prim eduwife_sec terrfe_3, vce(cluster vill_id)
+local depvars husbmoreland victimfamlost acledviolence10 attwifetotal
+local rh_vars treatment genderhead livestockcow livestockgoat livestockchicken livestockpigs tinroof eduwife_prim eduwife_sec terrfe_*,
+foreach var of varlist `depvars' {
+	local rh_depvars : list depvars - var
+	di  "var: `var'"
+	di "rh_depvars: `rh_depvars'"
+	eststo det_`var': reg `var' `rh_depvars' `rh_vars'   vce(cluster vill_id)
 }
 
 
 esttab det_* `using', replace ///
-	depvars  se label ///
+	depvars  se label order(`depvars' `rh_vars') ///
 	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes
-
 
 
 *determinants of conflict
 local using using "$tableloc\results_regression.tex"
 
-global controls eduwife_sec livestockany terrfe_3
+global controls genderhead eduwife_sec livestockany treatment terrfe_*
 
 tempfile regs //"$tableloc\regs.csv"
 eststo l1: kict ls numballs  husbmoreland $controls, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
@@ -213,37 +210,7 @@ use `regs', clear
 gen coef_pct = coef * 100
 format coef stderr pval %9.2f
 format coef_pct %9.0f
-export delimited using "$tableloc\regs.csv", datafmt replace
+export delimited using "$tableloc/regs.csv", datafmt replace
 
 restore
 
-
-**********************************************
-**Interaction Terms**
-**********************************************
-
-*hier ben ik op zoek naar een interactie tussen conflict en IPV?
-kict ls numballs i.husbmoreland##i.victimfamlost, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-kict ls numballs i.husbmoreland##c.acledviolence10, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-
-
-
-kict ls numballs husbmoreland victimfamlost acledviolence10 husbmoreland#victimfamlost i.husbmoreland#c.acledviolence10, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-/* 
-***************************
-**Robustness checks**
-*********************
-
-*choice of acled parameters:
-*civilians
-regfig acledviolence5d acledviolence10d acledviolence15d acledviolence20d acledviolence25d acledviolence30d using "$figloc/regfig_conf_viold.png"
-regfig acledviolence5 acledviolence10 acledviolence15 acledviolence20 acledviolence25 acledviolence30 using "$figloc/regfig_conf_violc.png"
-
-*battles
-regfig acledbattles5d acledbattles10d acledbattles15d acledbattles20d acledbattles25d acledbattles30d using "$figloc/regfig_conf_battd.png"
-regfig acledbattles5 acledbattles10 acledbattles15 acledbattles20 acledbattles25 acledbattles30 using "$figloc/regfig_conf_battc.png"
-
-*fatalities
-regfig acledfatalities5d acledfatalities10d acledfatalities15d acledfatalities20d acledfatalities25d acledfatalities30d using "$figloc/regfig_conf_fatd.png"
-regfig acledfatalities5 acledfatalities10 acledfatalities15 acledfatalities20 acledfatalities25 acledfatalities30 using "$figloc/regfig_conf_fatc.png"
- */

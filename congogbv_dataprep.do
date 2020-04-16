@@ -60,6 +60,9 @@ replace resp_id = 1 if resp_id == . & numballs != . //chef de menage is always l
 
 
 *territory fe 
+replace territory = 1 if territory == 2
+la def territory_list 1 "Kabare/Bagira",modify
+
 tab territory, gen(terrfe_)
 drop terrfe_1
 
@@ -455,11 +458,23 @@ save `roster'
 *********************
 **Baseline Conflict**
 *********************
+
+use "$dataloc\baseline\HH_Base_AdS.dta", clear
+ 
+keep group_id vill_id group_id hh_id m7_1_1 m7_1_3 m7_1_5
+ren m7_1_5 m7_1_7
+gen m7_1_5 = .
+
+tempfile kab_bag
+save `kab_bag'
+
+
+
 use "$dataloc\baseline\HH_Base_sorted.dta" , clear
 
-//append using "$dataloc\baseline\HH_Base_AdS.dta"
+append using  `kab_bag'
 
-//use "$dataloc\baseline\HH_Base_AdS.dta", clear
+
  
 tempfile nosave2
 save `nosave2'
@@ -473,6 +488,7 @@ la var victimhurt "Conflict: HH member hurt"
 
 gen victimkidnap = m7_1_5 == 1
 la var victimkidnap "Conflict: HH member kidnapped"
+
 gen victimfamlost = m7_1_7 == 1
 la var victimfamlost "Conflict: HH member killed"
 
@@ -606,7 +622,7 @@ la def empowered 0 "Less empowered attidudes than median" 1 "More empowered atti
 la val atthusbtotalbin attwifetotalbin empowered
 
 
-
+merge m:1 vill_id grp_id using "$dataloc\ref\village_list.dta", nogen keep(master match)
 save "$dataloc\clean\analysis.dta", replace
 
 
