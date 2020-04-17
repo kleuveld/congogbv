@@ -354,12 +354,20 @@ foreach var in age etn edu {
 }
 
 
-*
+
 gen eduwife_prim = eduwife>= 2 if !missing(eduwife)
 la var eduwife_prim "FR completed primary education"
 
 gen eduwife_sec = eduwife >= 4 if !missing(eduwife)
 la var eduwife_sec "FR completed secondary education"
+
+
+gen eduhusband_prim = eduhusband>= 2 if !missing(eduhusband)
+la var eduhusband_prim "MR completed primary education"
+
+gen eduhusband_sec = eduhusband >= 4 if !missing(eduhusband)
+la var eduhusband_sec "MR completed secondary education"
+
 
 *sameethiniciy
 gen sameethn = etnwife == etnhusband if !missing(etnwife) & !missing(etnhusband)
@@ -445,7 +453,7 @@ la val contribinkindyn yes_no
  */
 
 keep 	resp_id ROSTER_KEY KEY /// IDs
-		agewife agehusband eduwife eduwife_prim eduwife_sec eduhusband sameethn  gender* ///demographics
+		agewife agehusband eduwife eduwife_prim eduwife_sec eduhusband eduhusband_prim eduhusband_sec sameethn  gender* ///demographics
 		marstat marcohab marcivil marreli martrad /// marriage 
 		statpar wifemoreland husbmoreland ///status	
 		//contribcash contribinkind contribcashyn contribinkindyn ///contributions	

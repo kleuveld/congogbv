@@ -14,10 +14,16 @@ Date: 10/02/2020
 
 set scheme lean1
 
+*set controls
 global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data //holds raw and clean data
 global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables //where tables are put
 global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures //where figures are put
 global gitloc C:\Users\Koen\Documents\GitHub //holds do files
+
+
+
+global allcontrols agewife agehusband genderhead eduwife_prim eduwife_sec eduhusband_prim eduhusband_sec tinroof livestockany terrfe_* treatment
+
 
 *run helpers
 run "$gitloc\congogbv\congogbv_helpers.do" //contains functions used to generate tables and figures.
@@ -66,9 +72,10 @@ gen coupleconsent = wifeconsent * husbandconsent
 *sample selected
 local using using "$tableloc/attrition.tex"
 
-eststo attrwife, t("Wife"): logit wifeconsent agewife agehusband eduwife eduhusband tinroof livestockcow livestockgoat livestockchicken livestockpigs, vce(cluster vill_id)
-eststo attrhusband, t("Husband"): logit husbandconsent agewife agehusband eduwife eduhusband tinroof livestockcow livestockgoat livestockchicken livestockpigs, vce(cluster vill_id)
-eststo attrcouple, t("Couple"): logit coupleconsent agewife agehusband eduwife eduhusband tinroof livestockcow livestockgoat livestockchicken livestockpigs, vce(cluster vill_id)
+
+eststo attrwife, t("Wife"): logit wifeconsent $allcontrols, vce(cluster vill_id)
+eststo attrhusband, t("Husband"): logit husbandconsent $allcontrols, vce(cluster vill_id)
+eststo attrcouple, t("Couple"): logit coupleconsent $allcontrols, vce(cluster vill_id)
 
 esttab attr* `using', replace ///
 	nodepvar se label ///
@@ -169,12 +176,12 @@ local using using "$tableloc\determinants_regression.tex"
 //use if !missing(ball5) using "$dataloc\clean\analysis.dta" , clear
 
 local depvars husbmoreland victimfamlost acledviolence10 attwifetotal
-local rh_vars treatment genderhead livestockcow livestockgoat livestockchicken livestockpigs tinroof eduwife_prim eduwife_sec terrfe_*,
+local rh_vars $allcontrols
 foreach var of varlist `depvars' {
 	local rh_depvars : list depvars - var
 	di  "var: `var'"
 	di "rh_depvars: `rh_depvars'"
-	eststo det_`var': reg `var' `rh_depvars' `rh_vars'   vce(cluster vill_id)
+	eststo det_`var': reg `var' `rh_depvars' `rh_vars',   vce(cluster vill_id)
 }
 
 
@@ -186,7 +193,7 @@ esttab det_* `using', replace ///
 *determinants of conflict
 local using using "$tableloc\results_regression.tex"
 
-global controls genderhead eduwife_sec livestockany treatment terrfe_*
+global controls agewife agehusband genderhead eduwife_sec eduhusband_prim tinroof livestockany terrfe_* treatment
 
 tempfile regs //"$tableloc\regs.csv"
 eststo l1: kict ls numballs  husbmoreland $controls, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
