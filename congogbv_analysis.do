@@ -58,7 +58,7 @@ eststo sample_all: estpost su agewife tinroof eduwife_prim eduwife_sec
 eststo sample_selected: estpost su agewife tinroof eduwife_prim eduwife_sec if !missing(ball5)
 
 
-esttab dhs_nat dhs_sk sample_all sample_selected `using', cells("mean(fmt(2))") label noobs mtitles("DHS National" "DHS South Kivu" "Full Sample" "List experiment") replace nonumbers
+esttab dhs_nat dhs_sk sample_all sample_selected `using', cells("mean(fmt(2))") label noobs mtitles("DHS National" "DHS South Kivu" "Full Sample" "Gender Module") replace nonumbers
 
 
 *********************************************
