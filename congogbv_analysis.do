@@ -92,11 +92,11 @@ drop if ball5 == .
 
 *add: age & education
 balance_table ///
-	agewife agehusband eduwife eduhusband /// demograhpics
 	numballs ///list experiment
 	victimproplost victimfamlost acledviolence10 /// conflict
 	husbmoreland wifemoreland /* contribcash  contribcashyn*/ riskwife riskhusband barghusbandcloser bargwifecloser  /// bargainin and empowerment
-	atthusbtotal attwifetotal /// gender attitidues 
+	atthusbtotal attwifetotal /// gender attitidues ///
+	$allcontrols ///
 	if !missing(ball5) using "$tableloc\balance.tex", ///
 	rawcsv treatment(ball5) cluster(vill_id)
 
@@ -214,7 +214,7 @@ esttab l? `using', replace ///
 
 preserve
 use `regs', clear
-gen coef_pct = coef * 100
+gen coef_pct = abs(coef) * 100
 format coef stderr pval %9.2f
 format coef_pct %9.0f
 export delimited using "$tableloc/regs.csv", datafmt replace

@@ -629,7 +629,6 @@ order attwifetotalbin, after(attwifetotal)
 la def empowered 0 "Less empowered attidudes than median" 1 "More empowered attidudes than median" 
 la val atthusbtotalbin attwifetotalbin empowered
 
-
 merge m:1 vill_id grp_id using "$dataloc\ref\village_list.dta", nogen keep(master match)
 save "$dataloc\clean\analysis.dta", replace
 
