@@ -74,8 +74,10 @@ gen linenum = 1
 ren KEY PARENT_KEY
 merge 1:1 PARENT_KEY linenum using "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", keepusing(a_gender a_marstat) keep(match) nogen
 ren a_gender genderhead
-la var genderhead "Gender of HH Head"
+
+
 ren a_marstat marstathead
+
 
 replace linenum =  hh_grp_gendergender_ep_who 
 merge 1:1 PARENT_KEY linenum using "$dataloc\endline\MFS II Phase B Questionnaire de MénageVersion Terrain-hh_-hhroster.dta", keepusing(a_gender) keep(master match) nogen
@@ -86,11 +88,11 @@ ren  PARENT_KEY KEY
 *bargaining
 gen riskwife = hh_grp_gendergender_eprisk_f if genderspouse == 2
 replace riskwife = hh_grp_gendergender_cdmrisk_cdm if genderhead == 2
-la var riskwife "Bargaining: choice wife"
+la var riskwife "Bargaining: choice Female Respondent"
 
 gen riskhusband = hh_grp_gendergender_cdmrisk_cdm if genderhead == 1
 replace riskhusband = hh_grp_gendergender_eprisk_f if genderspouse == 1
-la var riskhusband "Barganing: choice husband"
+la var riskhusband "Barganing: choice Male Respondent"
 
 ren hh_grp_gendergender_crisk_c riskcouple 
 la var riskcouple "Barganing: choice couple"
@@ -101,13 +103,13 @@ gen barghusbanddiff = riskcouple - riskhusband
 gen barghusbandcloser = abs(bargwifediff) > abs(barghusbanddiff) if !missing(riskcouple)
 gen bargwifecloser = abs(barghusbanddiff) > abs(bargwifediff) if !missing(riskcouple)
 
-la var barghusbandcloser "Bargaining: closer to husband"
-la var bargwifecloser "Bargaining: closer to wife"
+la var barghusbandcloser "Bargaining: closer to MR"
+la var bargwifecloser "Bargaining: closer to FR"
 la val barghusbandcloser bargwifecloser yes_no
 
 gen bargresult = 2
 la var bargresult "Bargaining result"
-la def bargresult 1 "Closest to wife" 2 "Equal distance" 3 "Closest to husband"
+la def bargresult 1 "Closest to FR" 2 "Equal distance" 3 "Closest to MR"
 la val bargresult bargresult
 replace bargresult = 1 if bargwifecloser
 replace bargresult = 3 if barghusbandcloser
@@ -214,10 +216,10 @@ lab def genderagree 1 "Strongly Agree with tradional" 2 "Agree with traditional"
 la val att* genderagree
 
 egen atthusbtotal = rowtotal(atthusb?), missing
-la var atthusbtotal "Husband empowerment attitudes"
+la var atthusbtotal "MR empowerment attitudes"
 
 egen attwifetotal = rowtotal(attwife?), missing
-la var attwifetotal "Wife empowerment attitudes"
+la var attwifetotal "FR empowerment attitudes"
 
 *aid
 egen aidwomen = anymatch(hh_aid?), values(5)
@@ -256,6 +258,12 @@ la val tinroof yes_no
 
 *keep relevant obs
 //keep if !missing(numballs)
+
+*rename genderhead to be selfexplanatory
+recode genderhead (1=0) (2=1)
+la val genderhead yes_no
+la var genderhead "HH Head Female"
+
 
 *keep relevant vars
 keep  KEY 	vill_id grp_id hh_id territory terrfe_* resp_id /// IDs etc.
@@ -338,10 +346,11 @@ ren a_gender gender_head
 
 tokenize `""Age" "Etnicicity" "Level of education""'
 foreach var in age etn edu {
-	foreach partner in wife husband{
-		gen `var'`partner' = .
-		la var `var'`partner' "`1' of `partner'"
-	}
+	gen `var'wife = .
+	la var `var'wife "`1' of FR"
+
+	gen `var'husband = .
+	la var `var'husband "`1' of MR"
 
 	*respondent (woman) is head
 	replace `var'wife = `var'_head if gender_head == 2
@@ -378,12 +387,12 @@ la val sameethn yes_no
 ren a_marrnonhh_statpar statpar
 replace statpar = .a if statpar > 3 & !missing(statpar)
 la var statpar "Land holdings of families before marriage"
-la def statpar 1 "Wife's had more land" 2 "Equal" 3 "Husband's had more land"
+la def statpar 1 "FR's had more land" 2 "Equal" 3 "MR's had more land"
 
 gen wifemoreland = statpar == 1 if statpar != . //!missing(statpar)
-la var wifemoreland "Family wife had more land"
+la var wifemoreland "Family FR had more land"
 gen husbmoreland = statpar == 3 if statpar != . //!missing(statpar)
-la var husbmoreland "Family husband had more land"
+la var husbmoreland "Family MR had more land"
 la val wifemoreland husbmoreland yes_no
 
 *dots and gifts
@@ -489,19 +498,19 @@ save `nosave2'
 
 *victimization
 gen victimproplost = m7_1_1 == 1
-la var victimproplost "Conflict: property lost"
+la var victimproplost "Conflict pre-2012: property lost"
 
 gen victimhurt = m7_1_3 == 1
-la var victimhurt "Conflict: HH member hurt"
+la var victimhurt "Conflict pre-2012: HH member hurt"
 
 gen victimkidnap = m7_1_5 == 1
-la var victimkidnap "Conflict: HH member kidnapped"
+la var victimkidnap "Conflict pre-2012: HH member kidnapped"
 
 gen victimfamlost = m7_1_7 == 1
-la var victimfamlost "Conflict: HH member killed"
+la var victimfamlost "Conflict pre-2012: HH member killed"
 
 gen victimany = m7_1_1 ==1 | m7_1_3 == 1 | m7_1_5 == 1 | m7_1_7 == 1
-la var victimany "Conflict: any"
+la var victimany "Conflict pre-2012: any"
 
 la def yes_no 0 "No" 1 "Yes"
 la val victim* yes_no
@@ -559,9 +568,9 @@ ren (acledbattles acledviolence acledfatalities) (acledbattles30 acledviolence30
 collapse (sum) acledbattles* acledviolence* acledfatalities*, by(KEY)
 
 forvalues i = 5(5)30{
-	la var acledbattles`i' "ACLED: Number of battles"
-	la var acledviolence`i' "ACLED: Instances of violence against civilians"
-	la var acledfatalities`i' "ACLED: Number of fatalities"
+	la var acledbattles`i' "Conflict 2013-2014: Battles"
+	la var acledviolence`i' "Conflict 2013-2014: Viol. against civilians"
+	la var acledfatalities`i' "Conflict 2013-2014: Number of fatalities"
 }
 
 tempfile acled 
@@ -605,9 +614,9 @@ foreach var of varlist `r(varlist)' {
 }
 
 forvalues i = 5(5)30{
-	la var acledbattles`i'd "ACLED: Number of battles"
-	la var acledviolence`i'd "ACLED: Instances of violence against civilians"
-	la var acledfatalities`i'd "ACLED: Number of fatalities"
+	la var acledbattles`i'd "Conflict 2013-2014: Number of battles"
+	la var acledviolence`i'd "Conflict 2013-2014: Instances of violence against civilians"
+	la var acledfatalities`i'd "Conflict 2013-2014: Number of fatalities"
 }
 
 la def median 0 "Less than median" 1 "More than median"

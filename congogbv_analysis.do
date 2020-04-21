@@ -29,68 +29,40 @@ global allcontrols agewife agehusband genderhead eduwife_prim eduwife_sec eduhus
 run "$gitloc\congogbv\congogbv_helpers.do" //contains functions used to generate tables and figures.
 run "$gitloc\congogbv\congogbv_dataprep.do" //cleans data.
 
-*********************************************
-**TABLE 1: Sample overview of bargaining 
-*********************************************
-use "$dataloc\clean\analysis.dta", clear
-//keep if territory > 2
-
-
-*sample make up
-tab2csv riskwifestatus riskhusbandstatus using "$tableloc/sample_tabs.csv"
-tabout  riskwifestatus  riskhusbandstatus using "$tableloc/sample_tabs.tex",  replace style(tex) format(0c) // h3(nil)
-
 
 *********************************************
-**TABLE 2: representativeness of data
+**TABLE 1: Comparison between DHS and my sample
 *********************************************
-
 local using using "$tableloc/dhs_compare.tex"
 
-preserve
 use "$dataloc\clean\dhs.dta", clear
 eststo dhs_nat: estpost su agewife tinroof eduwife_prim eduwife_sec [iweight=wgt]
 eststo dhs_sk: estpost su agewife tinroof eduwife_prim eduwife_sec [iweight=wgt] if province == 11
-restore
 
-//use "$dataloc\clean\analysis.dta", clear
+use "$dataloc\clean\analysis.dta", clear
 eststo sample_all: estpost su agewife tinroof eduwife_prim eduwife_sec
 eststo sample_selected: estpost su agewife tinroof eduwife_prim eduwife_sec if !missing(ball5)
 
 
 esttab dhs_nat dhs_sk sample_all sample_selected `using', cells("mean(fmt(2))") label noobs mtitles("DHS National" "DHS South Kivu" "Full Sample" "Gender Module") replace nonumbers
 
+eststo clear
 
 *********************************************
-**TABLE 3: Sample Selection 
+**Table 2: Gender module sample make up
 *********************************************
-gen wifeconsent = riskwifestatus == 1 if !missing(riskwifestatus)
-gen husbandconsent = riskhusbandstatus == 1 if !missing(riskhusbandstatus)
-gen coupleconsent = wifeconsent * husbandconsent
+use "$dataloc\clean\analysis.dta", clear
 
-
-*sample selected
-local using using "$tableloc/attrition.tex"
-
-
-eststo attrwife, t("Wife"): logit wifeconsent $allcontrols, vce(cluster vill_id)
-eststo attrhusband, t("Husband"): logit husbandconsent $allcontrols, vce(cluster vill_id)
-eststo attrcouple, t("Couple"): logit coupleconsent $allcontrols, vce(cluster vill_id)
-
-esttab attr* `using', replace ///
-	nodepvar se label ///
-	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes eqlabels("" "")
-
-
+*sample make up
+tab2csv riskwifestatus riskhusbandstatus using "$tableloc/sample_tabs.csv"
+tabout  riskwifestatus  riskhusbandstatus using "$tableloc/sample_tabs.tex",  replace style(tex) format(0c) // h3(nil)
 
 **************************
-**Table 3: Balance Table**
+**Table 5: Balance Table**
 **************************
 use "$dataloc\clean\analysis.dta", clear
 drop if ball5 == .
-//keep if territory > 2
 
-*add: age & education
 balance_table ///
 	numballs ///list experiment
 	victimproplost victimfamlost acledviolence10 /// conflict
@@ -100,15 +72,16 @@ balance_table ///
 	if !missing(ball5) using "$tableloc\balance.tex", ///
 	rawcsv treatment(ball5) cluster(vill_id)
 
+/* 
 reg ball5 ///
 	victimproplost victimfamlost acledviolence10 /// conflict
 	husbmoreland wifemoreland /* contribcashyn */ riskwife riskhusband barghusbandcloser bargwifecloser  /// bargainin and empowerment
 	atthusbtotal attwifetotal /// gender attitidues 
 	, vce(cluster vill_id)
-
+ */
 
 **********************************************
-**Mean Comparisons Overall**
+**Figure 1: Mean Comparisons Overall**
 **********************************************
 tempfile diffs
 meandiffs numballs using "$figloc/meancompare_overall.png", treatment(ball5) coeffs(`diffs') //!!!meandiffs fuction is defined in congogbv_helpers.do
@@ -116,7 +89,7 @@ meandiffs numballs using "$figloc/meancompare_overall.png", treatment(ball5) coe
 
 
 **********************************************
-**Mean Comparisons across Conflict**
+**Figure 2: Mean Comparisons across Conflict**
 **********************************************
 graph drop _all
 meandiffs numballs, treatment(ball5)  by(victimproplost) coeffs(`diffs') append name(meancompare_conf1, replace) 
@@ -126,17 +99,24 @@ meandiffs numballs, treatment(ball5)  by(acledviolence10d) coeffs(`diffs') appen
 grc1leg  meancompare_conf1 meancompare_conf2 meancompare_conf3, position(4) ring(0) 
 graph export "$figloc/meancompare_conf.png", as(png) replace
 
-meandifftab numballs using "$tableloc\meandifftab_conf.csv",by(victimproplost victimfamlost acledviolence10d) treat(ball5) robust
-
-
-*conflict by region
+***********************************
+**Table 6: conflict by region
+***********************************
 local using using "$tableloc/conflict_by_terr.tex"
 eststo conflict_comp: estpost tabstat victimproplost victimfamlost acledviolence10, by(territory) statistics(mean sd) columns(statistics) 
 esttab conflict_comp `using', main(mean) aux(sd) nostar unstack nonote label noobs nonumbers replace
 
 
+***********************************
+**Table 7:Mean Comparisons across Conflict
+***********************************
+meandifftab numballs using "$tableloc\meandifftab_conf.csv",by(victimproplost victimfamlost acledviolence10d) treat(ball5) robust
+
+
+
+
 **********************************************
-**Mean Comparisons Marriage**
+**Figure 3: Mean Comparisons Marriage**
 **********************************************
 meandiffs numballs, treatment(ball5)  by(statpar) coeffs(`diffs') append name(meancompare_mar1,replace)
 meandiffs numballs, treatment(ball5)  by(bargresult) coeffs(`diffs') append name(meancompare_mar2,replace)
@@ -145,11 +125,15 @@ meandiffs numballs, treatment(ball5)  by(bargresult) coeffs(`diffs') append name
 grc1leg  meancompare_mar1 meancompare_mar2 // , position(4) ring(0) 
 graph export "$figloc/meancompare_mar.png", as(png) replace
 
+
+**********************************************
+**Table 8: Mean Comparisons Marriage**
+**********************************************
 meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(husbmoreland wifemoreland barghusbandcloser bargwifecloser) treat(ball5) robust
 
 
 **********************************************
-**Mean Comparisons across Gender Attitudes**
+**Figure 4: Mean Comparisons across Gender Attitudes**
 **********************************************
 preserve
 la def lowhigh 0 "Under median" 1 "Over median"
@@ -160,6 +144,11 @@ restore
 grc1leg meancompare_att1 meancompare_att2
 graph export "$figloc/meancompare_att.png", as(png) replace
 
+
+
+**********************************************
+**Table 9: Mean Comparisons across Gender Attitudes**
+**********************************************
 meandifftab numballs using "$tableloc\meandifftab_att.csv",by(atthusbtotalbin attwifetotalbin) treat(ball5) robust
 
 *export to CSV
@@ -168,29 +157,10 @@ use `diffs', clear
 export delimited using "$tableloc\incidence.csv", datafmt replace
 restore
 
-
 **********************************************
-**Regression Analysis**
+**Table 10: Multivariate Regression
 **********************************************
-local using using "$tableloc\determinants_regression.tex"
-//use if !missing(ball5) using "$dataloc\clean\analysis.dta" , clear
 
-local depvars husbmoreland victimfamlost acledviolence10 attwifetotal
-local rh_vars $allcontrols
-foreach var of varlist `depvars' {
-	local rh_depvars : list depvars - var
-	di  "var: `var'"
-	di "rh_depvars: `rh_depvars'"
-	eststo det_`var': reg `var' `rh_depvars' `rh_vars',   vce(cluster vill_id)
-}
-
-
-esttab det_* `using', replace ///
-	depvars  se label order(`depvars' `rh_vars') ///
-	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes
-
-
-*determinants of conflict
 local using using "$tableloc\results_regression.tex"
 
 global controls agewife agehusband genderhead eduwife_sec eduhusband_prim tinroof livestockany terrfe_* treatment
@@ -220,4 +190,47 @@ format coef_pct %9.0f
 export delimited using "$tableloc/regs.csv", datafmt replace
 
 restore
+
+*********************************************
+**TABLE A1: Sample Selection 
+*********************************************
+use "$dataloc\clean\analysis.dta", clear
+
+gen wifeconsent = riskwifestatus == 1 if !missing(riskwifestatus)
+gen husbandconsent = riskhusbandstatus == 1 if !missing(riskhusbandstatus)
+gen coupleconsent = wifeconsent * husbandconsent
+
+
+*sample selected
+local using using "$tableloc/attrition.tex"
+
+
+eststo attrwife, t("Wife"): logit wifeconsent $allcontrols, vce(cluster vill_id)
+eststo attrhusband, t("Husband"): logit husbandconsent $allcontrols, vce(cluster vill_id)
+eststo attrcouple, t("Couple"): logit coupleconsent $allcontrols, vce(cluster vill_id)
+
+esttab attr* `using', replace ///
+	nodepvar se label ///
+	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes eqlabels("" "")
+
+**********************************************
+**Table A2: Determinants**
+**********************************************
+local using using "$tableloc\determinants_regression.tex"
+use if !missing(ball5) using "$dataloc\clean\analysis.dta" , clear
+
+local depvars husbmoreland victimfamlost acledviolence10 attwifetotal
+local rh_vars $allcontrols
+foreach var of varlist `depvars' {
+	local rh_depvars : list depvars - var
+	di  "var: `var'"
+	di "rh_depvars: `rh_depvars'"
+	eststo det_`var': reg `var' `rh_depvars' `rh_vars',   vce(cluster vill_id)
+}
+
+
+esttab det_* `using', replace ///
+	depvars  se label order(`depvars' `rh_vars') ///
+	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes
+
 
