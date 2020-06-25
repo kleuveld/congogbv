@@ -10,7 +10,7 @@ Date: 10/02/2020
 
 set scheme lean1
 
-global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data
+global dataloc X:\Dropbox (Personal)\PhD\Papers\CongoGBV\Data_encrypted //holds raw and clean data
 global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables
 global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures
 global gitloc C:\Users\Koen\Documents\GitHub

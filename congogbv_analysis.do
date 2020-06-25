@@ -15,7 +15,7 @@ Date: 10/02/2020
 set scheme lean1
 
 *set controls
-global dataloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Data //holds raw and clean data
+global dataloc X:\Dropbox (Personal)\PhD\Papers\CongoGBV\Data_encrypted //holds raw and clean data
 global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables //where tables are put
 global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures //where figures are put
 global gitloc C:\Users\Koen\Documents\GitHub //holds do files
