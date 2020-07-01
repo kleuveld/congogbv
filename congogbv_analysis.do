@@ -20,8 +20,6 @@ global tableloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Tables //wh
 global figloc C:\Users\Koen\Dropbox (Personal)\PhD\Papers\CongoGBV\Figures //where figures are put
 global gitloc C:\Users\Koen\Documents\GitHub //holds do files
 
-
-
 global allcontrols agewife agehusband genderhead eduwife_prim eduwife_sec eduhusband_prim eduhusband_sec tinroof livestockany terrfe_* treatment
 
 
@@ -58,7 +56,7 @@ tab2csv riskwifestatus riskhusbandstatus using "$tableloc/sample_tabs.csv"
 tabout  riskwifestatus  riskhusbandstatus using "$tableloc/sample_tabs.tex",  replace style(tex) format(0c) // h3(nil)
 
 **************************
-**Table 5: Balance Table**
+**Table 4: Balance Table**
 **************************
 use "$dataloc\clean\analysis.dta", clear
 drop if ball5 == .
@@ -67,7 +65,6 @@ balance_table ///
 	numballs ///list experiment
 	victimproplost victimfamlost acledviolence10 /// conflict
 	husbmoreland wifemoreland /* contribcash  contribcashyn*/ riskwife riskhusband barghusbandcloser bargwifecloser  /// bargainin and empowerment
-	atthusbtotal attwifetotal /// gender attitidues ///
 	$allcontrols ///
 	if !missing(ball5) using "$tableloc\balance.tex", ///
 	rawcsv treatment(ball5) cluster(vill_id)
@@ -100,7 +97,7 @@ grc1leg  meancompare_conf1 meancompare_conf2 meancompare_conf3, position(4) ring
 graph export "$figloc/meancompare_conf.png", as(png) replace
 
 ***********************************
-**Table 6: conflict by region
+**Table 5: conflict by region
 ***********************************
 local using using "$tableloc/conflict_by_terr.tex"
 eststo conflict_comp: estpost tabstat victimproplost victimfamlost acledviolence10, by(territory) statistics(mean sd) columns(statistics) 
@@ -108,7 +105,7 @@ esttab conflict_comp `using', main(mean) aux(sd) nostar unstack nonote label noo
 
 
 ***********************************
-**Table 7:Mean Comparisons across Conflict
+**Table 6:Mean Comparisons across Conflict
 ***********************************
 meandifftab numballs using "$tableloc\meandifftab_conf.csv",by(victimproplost victimfamlost acledviolence10d) treat(ball5) robust
 
@@ -127,29 +124,10 @@ graph export "$figloc/meancompare_mar.png", as(png) replace
 
 
 **********************************************
-**Table 8: Mean Comparisons Marriage**
+**Table 7: Mean Comparisons Marriage**
 **********************************************
 meandifftab numballs using "$tableloc\meandifftab_mar.csv",by(husbmoreland wifemoreland barghusbandcloser bargwifecloser) treat(ball5) robust
 
-
-**********************************************
-**Figure 4: Mean Comparisons across Gender Attitudes**
-**********************************************
-preserve
-la def lowhigh 0 "Under median" 1 "Over median"
-la val atthusbtotalbin attwifetotalbin lowhigh
-meandiffs numballs, treatment(ball5)  by(atthusbtotalbin) coeffs(`diffs') append name(meancompare_att1, replace)
-meandiffs numballs, treatment(ball5)  by(attwifetotalbin) coeffs(`diffs') append name(meancompare_att2, replace)
-restore
-grc1leg meancompare_att1 meancompare_att2
-graph export "$figloc/meancompare_att.png", as(png) replace
-
-
-
-**********************************************
-**Table 9: Mean Comparisons across Gender Attitudes**
-**********************************************
-meandifftab numballs using "$tableloc\meandifftab_att.csv",by(atthusbtotalbin attwifetotalbin) treat(ball5) robust
 
 *export to CSV
 preserve
@@ -158,7 +136,7 @@ export delimited using "$tableloc\incidence.csv", datafmt replace
 restore
 
 **********************************************
-**Table 10: Multivariate Regression
+**Table 8: Multivariate Regression
 **********************************************
 
 local using using "$tableloc\results_regression.tex"
@@ -172,8 +150,6 @@ eststo l2: kict ls numballs  victimfamlost $controls , condition(ball5) nnonkey(
 regsave using "`regs'" , append addlabel(reg,l2)  pval
 eststo l3: kict ls numballs  acledviolence10 $controls, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l3)  pval  
-eststo l4: kict ls numballs  attwifetotal $controls, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
-regsave using "`regs'", append addlabel(reg,l4)  pval
 eststo l5: kict ls numballs  husbmoreland victimfamlost acledviolence10 attwifetotal $controls, condition(ball5) nnonkey(4) estimator(linear) vce(cluster vill_id)
 regsave using "`regs'", append addlabel(reg,l5)  pval
 
@@ -219,7 +195,7 @@ esttab attr* `using', replace ///
 local using using "$tableloc\determinants_regression.tex"
 use if !missing(ball5) using "$dataloc\clean\analysis.dta" , clear
 
-local depvars husbmoreland victimfamlost acledviolence10 attwifetotal
+local depvars husbmoreland victimfamlost acledviolence10
 local rh_vars $allcontrols
 foreach var of varlist `depvars' {
 	local rh_depvars : list depvars - var
