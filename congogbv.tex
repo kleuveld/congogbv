@@ -1,125 +1,7 @@
-\documentclass[10pt,a4paper,abstract=on]{scrartcl} %scrartcl from KOMA-script uses sans headers and looks less latexy than article
-\usepackage[doublespacing]{setspace}
-%\usepackage[capposition=top]{floatrow} %for notes under pics
-%\usepackage[nomarkers]{endfloat}
-\usepackage{natbib}
-\usepackage[utf8]{inputenc}
-%\usepackage{amsmath}
-%\usepackage{amsfonts}
-%\usepackage{amssymb}
-\usepackage[left=2.5cm,right=2.5cm,top=3cm,bottom=3cm]{geometry}
-\usepackage[pdftex, hidelinks]{hyperref} %disable if using float package
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage[blocks]{authblk} %for affil
-\usepackage{url}
-\usepackage{tabularx}
-%\usepackage{float} %allows the H positioning specifier; conflicts with hyperref
-\usepackage{csvsimple}
-\usepackage[nomessages]{fp}
-\usepackage{xcolor}
-\usepackage{enumitem}
-\setlist{noitemsep} % \setlist{nosep} to reove separation around lists as well
-\usepackage[flushleft]{threeparttable}
-\usepackage{dcolumn}
-\usepackage{lineno, blindtext}
-\usepackage{pdflscape}
+\input{congogbv_preamble}
+\input{congogbv_abstract}
+\input{congogbv_customfunctions}
 
-%citation cheat sheet:
-	%\ cite{key}				Jones et al. (1990)
-	% \citet{key1,key2}			Jones et al. (1990); Ladze (1986)
-	% \citet{key}				Jones et al. (1990)
-	% \citet*{key}				Jones, Baker, and Smith (1990)
-	% \citep{key}				(Jones et al. 1990)
-	% \citep{key1,key2}			(Jones et al. 1990; Ladze 1986)
-	% \citep*{key}				(Jones, Baker, and Smith 1990)
-	% \citep[p.~99]{key}		(Jones et al., 1990, p. 99)
-	% \citep[e.g.][]{key}		(e.g. Jones et al., 1990)
-	% \citep[e.g.][p.~99]{key}	(e.g. Jones et al., 1990, p. 99)
-	% \citeauthor{key}			Jones et al.
-	% \citeauthor*{key}			Jones, Baker, and Smith
-	% \citeyear{key}			1990
-	% \citealt{key} 			Jones et al. 1990
-
-%sizes cheat sheet: https://www.sascha-frank.com/latex-font-size.html
-% \tiny 		
-% \scriptsize 		
-% \footnotesize 		
-% \small 		
-% \normalsize 		
-% \large
-% \Large
-% \LARGE
-% \huge
-% \Huge 
-
-
-%%%%%%%%%%%%%%%%%%
-%%File Locations%%
-%%%%%%%%%%%%%%%%%%
-\newcommand{\figureloc}{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures}
-\newcommand{\tableloc}{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables}
-\newcommand{\bibloc}{C:/Users/Koen/Dropbox/Literatuur/Mendeley/Bibtex/CongoGBV}
-
-%%%%%%%%%%%%%%%%%%%
-%%Custom Commands%%
-%%%%%%%%%%%%%%%%%%%
-
-%get summstats from balance table
-\newcommand{\summstat}[2]{\csvreader[filter strcmp={\var}{#1}]{\tableloc/balance.csv}{var=\var,#2=\stat}{\stat}}
-
-%create table for mean differences
-\csvstyle{meandifftable}{tabular=lccccc,table head= \toprule Variable & N &Control & Treatment & Diff & St. Err. \\\toprule,late after line=\\,table foot=\bottomrule}
-
-\newcommand{\meandifftab}[1]{
-	\begin{threeparttable}
-	\csvreader[meandifftable]{#1}%
-	{n0 = \na, n1= \nb, label0 = \laba, label1 = \labb, varlabel=\var,meancontrol0 = \mca, meantreat0 = \mta ,stardiff0=\diffa, sediff0=\sea, meancontrol1 = \mcb, meantreat1 = \mtb , stardiff1=\diffb, sediff1=\seb, stardd = \dd, sedd=\sedd}%
-	{%
-	\var  	& 		& 		& 		& 		 &		\\ %
-	\quad \laba 		& \na	& \mca 	& \mta 	& \diffa & \sea	\\%
-	\quad \labb 		& \nb	& \mcb 	& \mtb 	& \diffb & \seb	\\%
-	\quad Diff in Diff 	& 		&		&		& \dd 	 & \sedd
-	}%
-	\begin{tablenotes}
-	\small
-	 \item Robust Standard errors reported.
-	 \item * p $<$ 0.1, **, p $<$ 0.05, *** p $<$ 0.01
-	\end{tablenotes}
-	\end{threeparttable}
-}
-
-
-
-%%%%%%%%%%%%
-%%Document%%
-%%%%%%%%%%%%
-
-\begin{document}
-
-\author{Koen Leuveld}
-
-\affil{Development Economics Group, Wageningen University \\
-koen.leuveld@wur.nl}
-
-
-
-\title{Sexual violence, conflict, and female empowerment}
-\subtitle{Exploratory evidence from a list experiment in Eastern DR Congo} %needs scrartcl
-
-\maketitle
-
-\begin{center}
-\textcolor{red}{\Large EARLY DRAFT}
-\end{center}
-
-\linenumbers
-
-\begin{abstract}
-The high incidence rates of Sexual and Gender-based Violence in the Democratic Republic of the Congo presents a large human rights problem. Despite the attention this topic has been given, much is unclear about the drivers of SGBV, as accurate data on the subject is difficult to collect. In this paper,I explore the characteristics of the victims SGBV to uncover the dynamics and potential drivers of SGBV. I focus on conflict and female empowerment. In order to avoid social desirability bias and obtain reliable data on this incidence, I conducted a list experiment. I combine the data from this list experiment with rich data on respondents' households, which allows me to separate conflict into recent conflict and historic conflict; and have detailed information on the position of women within their households.
-
-I find that female victims of SGBV are likely to be married to higher-status men, have low intra-household bargaining power, and have been exposed to violent conflict to the extent where they have lost family or household members before 2012 (two years before the list experiment). These findings coincide with the view of a long-lasting impact of conflict on SGBV rates, mainly through Intimate Partner Violence (IPV). This means that human rights abuses  persist long after the end of conflict. Strong measures to structurally improve the position of women in the household and society as a whole are required to address this.
-\end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Introduction}
@@ -279,13 +161,13 @@ NumIssues_i = \beta_0 + \beta_1 Treatment_i + \beta_2 X_i + \beta_3 Treatment_i 
 
 Where \(X_i\) is an explanatory variable and coefficient \(\beta_3\) gives the estimate for the additional incidence of SGBV associated with a unit increase of \(X\). This can be easily modified to allow for more variables. Again, this is much less efficient than when using direct questioning. By using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), more efficient estimates can be obtained. 
 
-\input{\tableloc/balance.tex}
+\input{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/balance.tex}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Results}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\incid}[2]{\csvreader[filter strcmp={\key}{#1}]{\tableloc/incidence.csv}{key=\key,#2=\inc}{\inc}}
+
 
 \begin{figure}[htb]
   \includegraphics[width=0.6\linewidth]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures/meancompare_overall.png}
@@ -300,7 +182,7 @@ In the full sample, the difference between the group who were presented with onl
 
 \subsection*{Conflict}
 \begin{figure}[htb]
-  \includegraphics[width=\linewidth]{\figureloc/meancompare_conf.png}
+  \includegraphics[width=\linewidth]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures/meancompare_conf.png}
   \caption{Comparison of means of issues faced across conflict exposure.}
   \label{fig:meancompare_conf}
 \end{figure}
@@ -315,7 +197,7 @@ Conflict exposure was high in the sample (see Table \ref{tab:balance}): \summsta
 \centering
 \caption{Conflict exposure by territory }
 \label{tab:conflict_by_terr}
-\input{"\tableloc/conflict_by_terr.tex"}
+\input{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/conflict_by_terr"}
 \end{table}
 
 The results of the sub-group analysis is displayed graphically in Figure \ref{fig:meancompare_conf}. From the top two panels, it can be seen that the difference between treatment and control is greater among conflict-victimized respondents than among non-conflict victimized respondents. The size of these differences is listed in Table \ref{tab:meandiff_conf}. Among those that indicated not having lost property, the difference in number of issues faced between treatment and control is 0.19, implying a SGBV victimization rate of 19\%. The difference between Treatment and Control among respondents who did lose property was 0.38. The difference in the differences between these groups of 0.19 issues (this corresponds to coefficient $\beta_3$ in equation \ref{eq:interaction} above) is not statistically significant. When splitting the sample by households indicating having lost a family or household member to conflict before 2012, the difference-in-difference estimate is 0.37, indicating that incidence of SGBV among respondents who lost family due to conflict is 37 percentage points higher than among those who have not. This effect is significant at the 5\% level. Note that the SGBV could not have happened during the same time as the conflict event(s): the SGBV happened twelve months before the interview in 2014, while the conflict events happened before 2012.
@@ -325,13 +207,13 @@ When looking at more recent exposure to conflict, no clear patterns emerge (see 
 \begin{table}[htb]
 \caption{Differences in numbers of issued faced in the list experiment, across conflict indicators}
 \label{tab:meandiff_conf}
-\meandifftab{"\tableloc/meandifftab_conf.csv"}
+\meandifftab{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/meandifftab_conf.csv"}
 \end{table}
 
 \subsection*{Intra-household bargaining position}
 
 \begin{figure}[htb]
-  \includegraphics[width=\linewidth]{\figureloc/meancompare_mar.png}
+  \includegraphics[width=\linewidth]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Figures/meancompare_mar.png}
   \caption{Comparison of means of issues faced by pre-marriage status.}
   \label{fig:meancompare_mar}
 \end{figure}
@@ -355,8 +237,6 @@ While these results may suggest that IPV is an important driver of SGBV, the fac
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Multivariate Regression analysis}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newcommand{\coeffget}[3]{\csvreader[filter=\equal{\reg}{#1} \and \equal{\var}{#2}]{\tableloc/regs.csv}{var=\var,reg=\reg,#3=\coeff}{\coeff}}
 
 In the preceding sections, I examined univariate relations between variables of interest and the incidence of SGBV. However, such analysis may suffer from omitted variables and spurious correlations. Here I move to a richer specification, in order to prevent such biases, and assess the relative importance of each driver. I expand equation \ref{eq:interaction} to simultaneously include indicators for conflict amd intra-household bargaining position. To reduce the risk of multi-collinearity, I do not include the full set of variables discussed above, but select one indicator for each, guided by the results obtained above. A key criterion for selection is the number of respondents for each indicator. The analysis of list experiments suffers from rapid loss of power due to the indirect nature of the analysis. To mitigate this, indicators that are available for large groups of respondents were selected. For conflict, I include both the indicator for household member killed before 2012 (as an indicator for historic conflict) and violence against civilians from the ACLED data (as an indicator for recent conflict); and for intra-household bargaining position a dummy for the husband's family having the most land. I use the KICT Stata package developed by \citet{Tsai2019} to estimate these models. Interpretation of the coefficients is the same as equation \ref{eq:interaction}, but estimation is more efficient.
 
