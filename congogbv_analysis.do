@@ -206,6 +206,9 @@ foreach var of varlist `depvars' {
 
 
 esttab det_* `using', replace ///
+	mtitles("\specialcell{Family MR\\had more land}" ///
+			"\specialcell{Conflict pre-2012:\\HH member killed}" ///
+			"\specialcell{Conflict 2013-2014:\\Viol. against civilians}") ///
 	depvars  se label order(`depvars' `rh_vars') ///
 	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes
 

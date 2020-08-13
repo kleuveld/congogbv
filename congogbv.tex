@@ -291,35 +291,35 @@ Taken together, these finding imply that human rights violations do not end when
 There are three large caveats with these findings: (i) causal interpretation is difficult due to the cross-sectional nature of the data; (ii) little analysis could be done on the perpetrators of the violence, as indirect questioning precludes probing into this. More research is needed to  to address these important issues; and (iii) I did not  collect data on the victimization of men. More research is needed to address these.
 
 %bibliography, this is needed for bibtex
-\clearpage 
 \bibliographystyle{chicago}
 %path to .bib file (e.g. automatically exported by mendeley) dot not include the file extension!
 \bibliography{C:/Users/Koen/Dropbox/Literatuur/Mendeley/Bibtex/Thesis-CongoGBV}
 
-\clearpage
 \section*{Appendix}
 \setcounter{table}{0}
 \renewcommand{\thetable}{A\arabic{table}}
 
 \begin{threeparttable}[htb]
-	\small
+	\footnotesize
 	\caption{Sample selection for the Gender Module}\label{tab:sample_selection}
 	\begin{center}
 	\input{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/attrition.tex"}
 	\begin{tablenotes}
-	\small
 	 \item Standard errors clustered at the village level
 	 \item * p $<$ 0.1, **, p $<$ 0.05, *** p $<$ 0.01
 	\end{tablenotes}
 	\end{center}
 \end{threeparttable}
 
-\begin{landscape}
+%\begin{landscape}
+
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 
 
 \begin{threeparttable}
 	\caption{Determinants of Violence and Bargaining Power}\label{tab:determinants_regression}
-	\tiny
+	\scriptsize 
 	\centering
 	\input{"C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/determinants_regression.tex"}
 	
@@ -329,5 +329,5 @@ There are three large caveats with these findings: (i) causal interpretation is 
 	 \item * p $<$ 0.1, **, p $<$ 0.05, *** p $<$ 0.01
 	\end{tablenotes}
 \end{threeparttable}
-\end{landscape}
+%\end{landscape}
 \end{document}
