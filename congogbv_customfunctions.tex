@@ -27,3 +27,6 @@
 \newcommand{\coeffget}[3]{\csvreader[filter=\equal{\reg}{#1} \and \equal{\var}{#2}]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/regs.csv}{var=\var,reg=\reg,#3=\coeff}{\coeff}}
 
 \newcommand{\incid}[2]{\csvreader[filter strcmp={\key}{#1}]{C:/Users/Koen/Dropbox/PhD/Papers/CongoGBV/Tables/incidence.csv}{key=\key,#2=\inc}{\inc}}
+
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}

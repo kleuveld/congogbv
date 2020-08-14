@@ -193,8 +193,9 @@ esttab attr* `using', replace ///
 **Table A2: Determinants**
 **********************************************
 local using using "$tableloc\determinants_regression.tex"
-use if !missing(ball5) using "$dataloc\clean\analysis.dta" , clear
 
+use if !missing(ball5) using "$dataloc\clean\analysis.dta" , clear
+eststo clear
 local depvars husbmoreland victimfamlost acledviolence10
 local rh_vars $allcontrols
 foreach var of varlist `depvars' {
@@ -207,9 +208,10 @@ foreach var of varlist `depvars' {
 
 esttab det_* `using', replace ///
 	mtitles("\specialcell{Family MR\\had more land}" ///
+		"\specialcell{Bargaining:\\closer to FR}" ///
 			"\specialcell{Conflict pre-2012:\\HH member killed}" ///
 			"\specialcell{Conflict 2013-2014:\\Viol. against civilians}") ///
-	depvars  se label order(`depvars' `rh_vars') ///
+	depvars  se label order(`depvars' `rh_vars') drop(genderhead) ///
 	starlevels(* 0.10 ** 0.05 *** 0.01) nonotes
 
 
