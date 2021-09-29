@@ -60,7 +60,7 @@ The main source of data for this study is the gender module from a household sur
 \begin{threeparttable}
 	\caption{Comparison of DHS and sample data}\label{tab:dhs_compare}
 	\centering
-	\input{"\dropbox/PhD/Papers/CongoGBV/Tables/dhs_compare.tex"}
+	\input{"\congogbvTables/dhs_compare.tex"}
 	\begin{tablenotes}
 	\small
 	\item FR = Female respondent. DHS = Demographic Health Survey \citep{DHSCongoReport}. For the DHS data, means are provided for household members satisfying the same criteria as FRs from the sample: female heads of household, or female spouses of household heads. 
@@ -167,7 +167,7 @@ NumIssues_i = \beta_0 + \beta_1 Treatment_i + \beta_2 X_i + \beta_3 Treatment_i 
 
 Where \(X_i\) is an explanatory variable and coefficient \(\beta_3\) gives the estimate for the additional incidence of SGBV associated with a unit increase of \(X\). This can be easily modified to allow for more variables. Again, this is much less efficient than when using direct questioning. By using more sophisticated methods proposed by \citet{Imai2011} (and implemented by \cite{Tsai2019} in Stata), more efficient estimates can be obtained. 
 
-\input{\dropbox/PhD/Papers/CongoGBV/Tables/balance.tex}
+\input{\congogbvTables/balance.tex}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,7 +175,7 @@ Where \(X_i\) is an explanatory variable and coefficient \(\beta_3\) gives the e
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}[htb]
-  \includegraphics[width=0.6\linewidth]{\dropbox/PhD/Papers/CongoGBV/Figures/meancompare_overall.png}
+  \includegraphics[width=0.6\linewidth]{\congogbvFigures/meancompare_overall.png}
   \caption{Comparison of means of issues faced: treatment vs. control.}
   \label{fig:meancompare_overall}
 \end{figure}
@@ -188,7 +188,7 @@ In the full sample, the difference between the group who were presented with onl
 %\todo{Erwin 1208: dit is een beetjee onduidelijk. Ik vind het eigenaardig dat je SGBV in 2013-2014 verklaart met conflict in 2011-2012? Misschien moet je het verhaal iets anders opschrijven: (i) we gebruiken de 2012 survey data om iets te zeggen over normen (geweld -> veranderende normen -> SGBV), en (ii) de ACLED data om naar zowel directe en indirecte effecten van geweld te kijken (geweld en SGBV in dezelfde periode). Dit moet denk ik duidelijker worden opgeschreven, en ook worden ingeleid in sectie 1 middels een goede research question.}
 
 \begin{figure}[htb]
-  \includegraphics[width=\linewidth]{\dropbox/PhD/Papers/CongoGBV/Figures/meancompare_conf.png}
+  \includegraphics[width=\linewidth]{\congogbvFigures/meancompare_conf.png}
   \caption{Comparison of means of issues faced across conflict exposure.}
   \label{fig:meancompare_conf}
 \end{figure}
@@ -203,7 +203,7 @@ Conflict exposure was high in the sample (see Table \ref{tab:balance}): \summsta
 \centering
 \caption{Conflict exposure by territory }
 \label{tab:conflict_by_terr}
-\input{"\dropbox/PhD/Papers/CongoGBV/Tables/conflict_by_terr"}
+\input{"\congogbvTables/conflict_by_terr"}
 \end{table}
 
 The results of the sub-group analysis is displayed graphically in Figure \ref{fig:meancompare_conf}. From the top two panels, it can be seen that the difference between treatment and control is greater among conflict-victimized respondents than among non-conflict victimized respondents. The size of these differences is listed in Table \ref{tab:meandiff_conf}. Among those that indicated not having lost property, the difference in number of issues faced between treatment and control is 0.19, implying a SGBV victimization rate of 19\%. The difference between Treatment and Control among respondents who did lose property was 0.38. The difference in the differences between these groups of 0.19 issues (this corresponds to coefficient $\beta_3$ in equation \ref{eq:interaction} above) is not statistically significant. When splitting the sample by households indicating having lost a family or household member to conflict before 2012, the difference-in-difference estimate is 0.37, indicating that incidence of SGBV among respondents who lost family due to conflict is 37 percentage points higher than among those who have not. This effect is significant at the 5\% level. Note that the SGBV could not have happened during the same time as the conflict event(s): the SGBV happened twelve months before the interview in 2014, while the conflict events happened before 2012.
@@ -216,12 +216,12 @@ The fact that conflict before 2012 correlates with SGBV, but recent conflict doe
 \begin{table}[htb]
 \caption{Differences in numbers of issued faced in the list experiment, across conflict indicators}
 \label{tab:meandiff_conf}
-\meandifftab{"\dropbox/PhD/Papers/CongoGBV/Tables/meandifftab_conf.csv"}
+\meandifftab{"\congogbvTables/meandifftab_conf.csv"}
 \end{table}
 
 \subsection*{Intra-household bargaining position}
 \begin{figure}[htb]
-  \includegraphics[width=\linewidth]{\dropbox/PhD/Papers/CongoGBV/Figures/meancompare_mar.png}
+  \includegraphics[width=\linewidth]{\congogbvFigures/meancompare_mar.png}
   \caption{Comparison of means of issues faced by pre-marriage status.}
   \label{fig:meancompare_mar}
 \end{figure}
@@ -238,7 +238,7 @@ While these results may suggest that IPV is an important driver of SGBV, the fac
 \begin{table}[htb]
 \caption{Differences in numbers of issued faced in the list experiment, across intra-household status}
 \label{tab:meadifftab_mar}
-\meandifftab{"\dropbox/PhD/Papers/CongoGBV/Tables/meandifftab_mar.csv"}
+\meandifftab{"\congogbvTables/meandifftab_mar.csv"}
 \end{table}
 
 
@@ -260,7 +260,7 @@ Caution should be taken with this interpretation, as results presented here are 
 	\caption{Multivariate regression Results}\label{tab:results_regression}
 	\centering
 	\scriptsize
-	\input{"\dropbox/PhD/Papers/CongoGBV/Tables/results_regression.tex"}
+	\input{"\congogbvTables/results_regression.tex"}
 	
 	\begin{tablenotes}
 	\small
@@ -286,7 +286,7 @@ There are three large caveats with these findings: (i) causal interpretation is 
 %bibliography, this is needed for bibtex
 \bibliographystyle{chicago}
 %path to .bib file (e.g. automatically exported by mendeley) dot not include the file extension!
-\bibliography{\dropbox/Literatuur/Mendeley/Bibtex/Thesis-CongoGBV}
+\bibliography{\bibtex/Thesis-CongoGBV}
 
 \section*{Appendix}
 \setcounter{table}{0}
@@ -296,7 +296,7 @@ There are three large caveats with these findings: (i) causal interpretation is 
 	\footnotesize
 	\caption{Sample selection for the Gender Module}\label{tab:sample_selection}
 	\begin{center}
-	\input{"\dropbox/PhD/Papers/CongoGBV/Tables/attrition.tex"}
+	\input{"\congogbvTables/attrition.tex"}
 	\begin{tablenotes}
 	 \item Standard errors clustered at the village level
 	 \item * p $<$ 0.1, **, p $<$ 0.05, *** p $<$ 0.01
@@ -311,7 +311,7 @@ B
 	\caption{Determinants of Violence and Bargaining Power}\label{tab:determinants_regression}
 	\scriptsize 
 	\centering
-	\input{"\dropbox/PhD/Papers/CongoGBV/Tables/determinants_regression.tex"}
+	\input{"\congogbvTables/determinants_regression.tex"}
 	
 	\begin{tablenotes}
 	\tiny
