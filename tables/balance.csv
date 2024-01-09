@@ -1,0 +1,23 @@
+var,varlabel,nall,meanall,sdall,n1,mean1,sd1,n0,mean0,sd0,diff,p,meanall_pct,mean1_pct,mean0_pct
+numballs,Number of reported issues,593,2.49,0.94,291,2.65,1.03,302,2.34,0.83,.3016773,.0001295,249,265,234
+victimproplost,Conflict pre-2012: property lost,530,0.77,0.42,264,0.79,0.41,266,0.75,0.43,.0435464,.1436823,77,79,75
+victimfamlost,Conflict pre-2012: HH member killed,530,0.49,0.50,264,0.51,0.50,266,0.48,0.50,.0301321,.4555237,49,51,48
+acledviolence10,Conflict 2013-2014: Viol. against civilians,496,6.73,4.69,239,6.68,4.70,257,6.77,4.69,-.0826,.7269835,673,668,677
+husbmoreland,Family MR had more land,450,0.33,0.47,224,0.33,0.47,226,0.33,0.47,-.0015408,.9681454,33,33,33
+wifemoreland,Family FR had more land,450,0.21,0.41,224,0.22,0.41,226,0.19,0.40,.0240597,.4917386,21,22,19
+riskwife,Bargaining: choice Female Respondent,593,3.58,2.06,291,3.59,2.08,302,3.56,2.05,.0382103,.8135152,358,359,356
+riskhusband,Barganing: choice Male Respondent,184,3.45,2.14,97,3.49,2.12,87,3.40,2.18,.0925465,.7723917,345,349,340
+barghusbandcloser,Bargaining: closer to MR,184,0.40,0.49,97,0.37,0.49,87,0.44,0.50,-.0656476,.2650542,40,37,44
+bargwifecloser,Bargaining: closer to FR,184,0.27,0.44,97,0.32,0.47,87,0.21,0.41,.1126911,.0595826,27,32,21
+agewife,Age of FR,593,41.09,14.01,291,40.49,14.06,302,41.67,13.96,-1.170718,.297701,4109,4049,4167
+agehusband,Age of MR,449,45.67,13.80,224,44.48,13.09,225,46.85,14.40,-2.371191,.0477317,4567,4448,4685
+genderhead,HH Head Female,593,0.26,0.44,291,0.24,0.43,302,0.27,0.45,-.0275369,.4203292,26,24,27
+eduwife_prim,FR completed primary education,593,0.25,0.44,291,0.26,0.44,302,0.25,0.43,.0093876,.81238,25,26,25
+eduwife_sec,FR completed secondary education,593,0.03,0.17,291,0.02,0.13,302,0.04,0.20,-.022553,.1058206,3,2,4
+eduhusband_prim,MR completed primary education,449,0.63,0.48,224,0.63,0.48,225,0.63,0.48,.0072619,.8855115,63,63,63
+eduhusband_sec,MR completed secondary education,449,0.20,0.40,224,0.19,0.39,225,0.20,0.40,-.0080357,.8463085,20,19,20
+tinroof,Household has a tin roof,593,0.61,0.49,291,0.62,0.49,302,0.59,0.49,.0258415,.5529746,61,62,59
+livestockany,Household owns livestock,593,0.49,0.50,291,0.51,0.50,302,0.47,0.50,.034956,.4524483,49,51,47
+terrfe_2,territory==Uvira,593,0.24,0.43,291,0.24,0.43,302,0.23,0.42,.0087617,.7256688,24,24,23
+terrfe_3,territory==Fizi,593,0.63,0.48,291,0.65,0.48,302,0.62,0.49,.0268428,.2986268,63,65,62
+treatment,Project Beneficary,593,0.50,0.50,291,0.49,0.50,302,0.50,0.50,-.0085911,.7092946,50,49,50

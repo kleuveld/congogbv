@@ -1,0 +1,6 @@
+key,riskwifestatus,riskhusbandstatus1,riskhusbandstatus2,riskhusbandstatus3,riskhusbandstatus4,total
+1,Consented,184,3,253,153,593
+2,Refused,0,0,0,1,1
+3,Absent,4,0,0,1,5
+4,No Wife,282,3,2,3,290
+total,,470,6,255,158,889

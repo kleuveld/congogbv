@@ -1,0 +1,4 @@
+var,varlabel,n0,label0,meancontrol0,meantreat0,diff0,sediff0,pdiff0,diff0pct,n1,label1,meancontrol1,meantreat1,diff1,sediff1,pdiff1,diff1pct,dd,sedd,pdd,stardiff0,stardiff1,stardd
+victimproplost,Conflict pre-2012: property lost,122,No,2.28,2.47,0.189,0.200,.3452965,19,408,Yes,2.36,2.73,0.375,0.090,.0000391,38,0.19,0.218,0.394,0.19,0.38***,0.19
+victimfamlost,Conflict pre-2012: HH member killed,269,No,2.35,2.50,0.155,0.116,.1840128,15,261,Yes,2.33,2.85,0.520,0.117,.0000134,52,0.37,0.165,0.027,0.15,0.52***,0.37**
+acledviolence10d,Conflict 2013-2014: Instances of violence against civilians,243,Less than median,2.38,2.68,0.294,0.118,.013444,29,253,More than median,2.33,2.55,0.228,0.122,.0623735,23,-0.07,0.170,0.697,0.29**,0.23*,-0.07

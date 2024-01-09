@@ -1,0 +1,5 @@
+var,varlabel,n0,label0,meancontrol0,meantreat0,diff0,sediff0,pdiff0,diff0pct,n1,label1,meancontrol1,meantreat1,diff1,sediff1,pdiff1,diff1pct,dd,sedd,pdd,stardiff0,stardiff1,stardd
+husbmoreland,Family MR had more land,303,No,2.45,2.61,0.162,0.105,.1244549,16,147,Yes,2.20,2.70,0.496,0.167,.0034074,50,0.33,0.197,0.090,0.16,0.50***,0.33*
+wifemoreland,Family FR had more land,357,No,2.36,2.71,0.352,0.099,.0004092,35,93,Yes,2.39,2.37,-0.019,0.206,.926619,-2,-0.37,0.227,0.103,0.35***,-0.02,-0.37
+barghusbandcloser,Bargaining: closer to MR,110,No,2.55,2.54,-0.010,0.191,.9582276,-1,74,Yes,2.16,2.72,0.564,0.210,.0088784,56,0.57,0.284,0.044,-0.01,0.56***,0.57**
+bargwifecloser,Bargaining: closer to FR,135,No,2.26,2.62,0.360,0.167,.0325764,36,49,Yes,2.83,2.58,-0.253,0.244,.3054617,-25,-0.61,0.294,0.038,0.36**,-0.25,-0.61**
