@@ -1,5 +1,4 @@
 # Specify filepatterns you want git to ignore.
-*.bib
 *.aux
 *.bbl
 *.blg
@@ -8,4 +7,3 @@
 *.pdf
 *.gz
 *.sublime-workspace
-congogbv_paths.tex
