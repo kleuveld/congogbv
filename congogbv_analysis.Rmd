@@ -75,3 +75,89 @@ write_csv(here("tables/table1.csv"))
 
 
 ```
+
+
+## Table 2
+
+I need to add the labels still:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+library(janitor)
+
+cleandata %>% 
+  tabyl(riskwifestatus,riskhusbandstatus) %>%
+  adorn_totals(c("row", "col")) %>%
+  write_csv(here("tables/table2.csv"))
+
+```
+
+## Table 3
+
+Payouts
+
+## Table 4
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+library(table1)
+
+my.render.cont <- function(x) {
+    with(stats.default(x), 
+        sprintf("%0.2f (%0.1f)", MEAN, SD))
+}
+
+descriptive_table <-
+  cleandata %>%
+  select(ball5,numballs) %>%
+  mutate(ball5 = ifelse(!is.na(ball5),ball5,0)) %>%
+  mutate(ball5 = as.factor(ball5)) %>%
+  table1(~ . | ball5, data = . , render.continuous=my.render.cont) %>%
+  as_tibble()
+
+
+extract_label <- function(df,var){
+  attributes(df[,var][[1]])$label 
+}
+
+extract_label(cleandata,"victimproplost")
+
+cleandata %>%
+select(numballs) %>%
+attributes()
+
+cleandata %>%
+
+get_summ_stats <- function(df,label,...){
+
+df %>%
+  filter(!is.na(ball5)) %>%
+  select(...) %>%
+  summarize(across(everything(),
+                   list(N =  ~sum(!is.na(.x)),
+                        mean = ~mean(.x,na.rm=TRUE),
+                        sd = ~sd(.x,na.rm=TRUE)))) %>%
+  pivot_longer(cols = everything(),
+               names_to = c("var",".value"),
+               names_sep="_") %>%
+  select(var, "N_{label}" := N, "mean_{label}" := mean, "sd_{label}" := sd) 
+  #%>%
+  #rowwise() %>%
+  #mutate(label = extract_label(cleandata,var))
+}
+
+get_summ_stats(cleandata,label="all", numballs,victimproplost, victimfamlost, acledviolence10)
+
+
+my_data_frames <- list(all = cleandata,
+                       treat = cleandata %>% filter(ball5 == 1),
+                       control = cleandata %>% filter(ball5 == 0))
+
+imap(my_data_frames,~get_summ_stats(.x,.y,numballs,victimproplost, victimfamlost, acledviolence10)) %>%
+reduce(full_join,by = "var")
+
+
+
+
+
+```
