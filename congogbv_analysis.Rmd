@@ -1,0 +1,77 @@
+---
+title: Data analysis for Sexual violence, conflict, and female empowerment
+author: Koen Leuveld
+output: pdf_document
+#bibliography: literature/references.bib
+
+
+#more info:
+#https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf
+---
+
+# Intro
+
+This rmarkdown file analyses data, and prepares input tables for the paper. These
+input tables do not contain any formatting, just the coefficients. The paper itself
+will do the formatting. This means that the input tables can go on GitHub, even if 
+the raw data itself can't, and GitHub can thus build the paper.
+
+# Load packages and data
+
+For now, I will just use the Stata data as prepared by `congogbv_dataprep.do`:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+library(tidyverse)
+library(haven)
+library(here)
+
+
+cleandata <- read_dta(here("data/clean/analysis.dta"))
+dhs <- read_dta(here("data/clean/dhs.dta"))
+
+```
+
+# Tables
+
+## Table 1
+
+Then I create Table 1. For now it's pivoted compared to the orignal, but that's fine.
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+wgt_mean <- function(data,weights,digits=2){
+   num(sum(data * weights)/sum(weights),digits=digits)
+}
+
+dhs_national <-
+  dhs %>% 
+  summarize(across(.cols = c(agewife,tinroof:eduwife_sec),
+                         .fns  = ~wgt_mean(.x,wgt))) %>%
+  mutate(label = "dhs_national")
+
+dhs_skivu <-
+  dhs %>% 
+  filter(province == 11) %>%
+  summarize(across(.cols = c(agewife,tinroof:eduwife_sec),
+                         .fns  = ~wgt_mean(.x,wgt)))%>%
+  mutate(label = "dhs_skivu")
+
+sample_full <-
+cleandata %>% 
+summarize(across(.cols = c(agewife,tinroof,eduwife_prim,eduwife_sec),
+                .fns = ~mean(.x, na.rm = TRUE) %>% num(digits = 2)))%>%
+  mutate(label = "sample_full")
+
+sample_gendermodule <-
+cleandata %>% 
+  filter(!is.na(ball5)) %>%
+  summarize(across(.cols = c(agewife,tinroof,eduwife_prim,eduwife_sec),
+                  .fns = ~mean(.x, na.rm = TRUE) %>% num(digits = 2)))%>%
+  mutate(label = "sample_gendermodule")
+
+rbind(dhs_national,dhs_skivu,sample_full,sample_gendermodule) %>%
+write_csv(here("tables/table1.csv"))
+
+
+```
