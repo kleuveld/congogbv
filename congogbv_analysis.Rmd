@@ -28,6 +28,13 @@ library(here)
 
 
 cleandata <- read_dta(here("data/clean/analysis.dta"))
+col_labels <- map_chr(cleandata,function(x) coalesce(attributes(x)$label,""))
+
+
+tibble(var = colnames(cleandata),
+       label = col_labels) %>%
+write_csv(here("tables/cleandata_collabels.csv"))
+
 dhs <- read_dta(here("data/clean/dhs.dta"))
 
 ```
@@ -100,61 +107,55 @@ Payouts
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
-library(table1)
-
-my.render.cont <- function(x) {
-    with(stats.default(x), 
-        sprintf("%0.2f (%0.1f)", MEAN, SD))
-}
-
-descriptive_table <-
-  cleandata %>%
-  select(ball5,numballs) %>%
-  mutate(ball5 = ifelse(!is.na(ball5),ball5,0)) %>%
-  mutate(ball5 = as.factor(ball5)) %>%
-  table1(~ . | ball5, data = . , render.continuous=my.render.cont) %>%
-  as_tibble()
-
-
-extract_label <- function(df,var){
-  attributes(df[,var][[1]])$label 
-}
-
-extract_label(cleandata,"victimproplost")
-
-cleandata %>%
-select(numballs) %>%
-attributes()
-
-cleandata %>%
 
 get_summ_stats <- function(df,label,...){
 
-df %>%
-  filter(!is.na(ball5)) %>%
-  select(...) %>%
-  summarize(across(everything(),
-                   list(N =  ~sum(!is.na(.x)),
-                        mean = ~mean(.x,na.rm=TRUE),
-                        sd = ~sd(.x,na.rm=TRUE)))) %>%
-  pivot_longer(cols = everything(),
-               names_to = c("var",".value"),
-               names_sep="_") %>%
-  select(var, "N_{label}" := N, "mean_{label}" := mean, "sd_{label}" := sd) 
-  #%>%
-  #rowwise() %>%
-  #mutate(label = extract_label(cleandata,var))
+  df %>%
+    filter(!is.na(ball5)) %>%
+    select(...) %>%
+    summarize(across(everything(),
+                     list(n =  ~sum(!is.na(.x)),
+                          mean = ~mean(.x,na.rm=TRUE),
+                          sd = ~sd(.x,na.rm=TRUE)))) %>%
+    pivot_longer(cols = everything(),
+                 names_to = c("Variable",".value"),
+                 names_sep="_") %>%
+    mutate(label = label)
 }
 
-get_summ_stats(cleandata,label="all", numballs,victimproplost, victimfamlost, acledviolence10)
+
+my_data_frames <- list(`1. Overall` = cleandata,
+                       `2. Treatment` = cleandata %>% filter(ball5 == 1),
+                       `3. Control` = cleandata %>% filter(ball5 == 0))
+
+my_summstats <- 
+  imap(my_data_frames,~get_summ_stats(.x,.y,numballs,victimproplost, victimfamlost, acledviolence10)) %>%
+  reduce(bind_rows)
+
+write_csv(my_summstats,here("tables/summstats.csv"))
+
+#this goes into the paepr
+library(flextable)
+
+cleandata_collabels_tibble <- read_csv(here("tables/cleandata_collabels.csv"))
+
+cleandata_collabels <- 
+  cleandata_collabels_tibble %>%
+  pull(label) %>%
+  set_names(cleandata_collabels_tibble %>% pull(var))
+
+read_csv(here("tables/summstats.csv")) %>%
+tabulator(rows = "Variable",
+          columns = "label",
+          `N` = as_paragraph(as_chunk(n,digits=0)),
+          `Mean (SD)` =  as_paragraph(as_chunk(fmt_avg_dev(mean, sd, digit2 = 2)))) %>%
+as_flextable() %>%
+labelizor(j = "Variable", labels = cleandata_collabels, part = "all") %>% 
+  fix_border_issues() %>% 
+  autofit()
 
 
-my_data_frames <- list(all = cleandata,
-                       treat = cleandata %>% filter(ball5 == 1),
-                       control = cleandata %>% filter(ball5 == 0))
 
-imap(my_data_frames,~get_summ_stats(.x,.y,numballs,victimproplost, victimfamlost, acledviolence10)) %>%
-reduce(full_join,by = "var")
 
 
 

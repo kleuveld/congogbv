@@ -1,0 +1,121 @@
+var,label
+territory,In which territory/commune are you?
+vill_id,
+grp_id,
+hh_id,
+riskheadconsent,Risk game: head consents
+riskspouseconsent,Risk game: spouse consents
+KEY,
+list_spouse,
+list_head,
+numballs,Number of reported issues
+ball5,Treatment
+resp_id,
+terrfe_2,territory==Uvira
+terrfe_3,territory==Fizi
+genderhead,HH Head Female
+marstathead,What is  the marital status of ${curr_name}?
+riskwife,Bargaining: choice Female Respondent
+riskhusband,Barganing: choice Male Respondent
+bargwifediff,
+barghusbanddiff,
+barghusbandcloser,Bargaining: closer to MR
+bargwifecloser,Bargaining: closer to FR
+bargresult,Bargaining result
+riskheadpresent,Risk game: head present
+riskspousepresent,Risk game: spouse present
+riskhusbandpresent,Risk game: husband present
+riskwifepresent,Risk game: wife present
+riskhusbandconsent,Risk game: husband consents
+riskwifeconsent,Risk game: wife consents
+riskhusbandstatus,Husband
+riskwifestatus,Wife
+atthusb1bin,Husband response to Prop 1
+attwife1bin,Wife response to Prop 1
+atthusb2bin,Husband response to Prop 2
+attwife2bin,Wife response to Prop 2
+atthusb3bin,Husband response to Prop 3
+attwife3bin,Wife response to Prop 3
+atthusb4bin,Husband response to Prop 4
+attwife4bin,Wife response to Prop 4
+atthusb5bin,Husband response to Prop 5
+attwife5bin,Wife response to Prop 5
+atthusbtotal,MR empowerment attitudes
+atthusbtotalbin,Husband  empowerment attitudes
+attwifetotal,FR empowerment attitudes
+attwifetotalbin,Wife empowerment attitudes
+aidwomen,Household was beneficiary of woman's rights project
+aidany,Household was beneficiary of a development project
+livestockcow,Household owns cow(s)
+livestockgoat,Household owns goat(s)
+livestockchicken,Household owns chicken(s)
+livestockpigs,Household owns pigs(s)
+livestockany,Household owns livestock
+tinroof,Household has a tin roof
+gender_head,.2 What is the sex of ${curr_name}?
+marstat,Marital Status
+statpar,Land holdings of families before marriage
+ROSTER_KEY,
+gender_spouse,.2 What is the sex of ${curr_name}?
+agewife,Age of FR
+agehusband,Age of MR
+eduwife,Level of education of FR
+eduhusband,Level of education of MR
+eduwife_prim,FR completed primary education
+eduwife_sec,FR completed secondary education
+eduhusband_prim,MR completed primary education
+eduhusband_sec,MR completed secondary education
+sameethn,Couple same ethnicity
+wifemoreland,Family FR had more land
+husbmoreland,Family MR had more land
+marcohab,Marriage: cohabiting
+marcivil,Marriage: Civil
+marreli,Marriage: Religious
+martrad,Marriage: Traditional
+rostermerge,Matching result from merge
+hh_id_orig,
+victimproplost,Conflict pre-2012: property lost
+victimhurt,Conflict pre-2012: HH member hurt
+victimkidnap,Conflict pre-2012: HH member kidnapped
+victimfamlost,Conflict pre-2012: HH member killed
+victimany,Conflict pre-2012: any
+blmerge,Matching result from merge
+acledbattles30,Conflict 2013-2014: Battles
+acledbattles30d,Conflict 2013-2014: Number of battles
+acledbattles5,Conflict 2013-2014: Battles
+acledbattles5d,Conflict 2013-2014: Number of battles
+acledbattles10,Conflict 2013-2014: Battles
+acledbattles10d,Conflict 2013-2014: Number of battles
+acledbattles15,Conflict 2013-2014: Battles
+acledbattles15d,Conflict 2013-2014: Number of battles
+acledbattles20,Conflict 2013-2014: Battles
+acledbattles20d,Conflict 2013-2014: Number of battles
+acledbattles25,Conflict 2013-2014: Battles
+acledbattles25d,Conflict 2013-2014: Number of battles
+acledviolence30,Conflict 2013-2014: Viol. against civilians
+acledviolence30d,Conflict 2013-2014: Instances of violence against civilians
+acledviolence5,Conflict 2013-2014: Viol. against civilians
+acledviolence5d,Conflict 2013-2014: Instances of violence against civilians
+acledviolence10,Conflict 2013-2014: Viol. against civilians
+acledviolence10d,Conflict 2013-2014: Instances of violence against civilians
+acledviolence15,Conflict 2013-2014: Viol. against civilians
+acledviolence15d,Conflict 2013-2014: Instances of violence against civilians
+acledviolence20,Conflict 2013-2014: Viol. against civilians
+acledviolence20d,Conflict 2013-2014: Instances of violence against civilians
+acledviolence25,Conflict 2013-2014: Viol. against civilians
+acledviolence25d,Conflict 2013-2014: Instances of violence against civilians
+acledfatalities30,Conflict 2013-2014: Number of fatalities
+acledfatalities30d,Conflict 2013-2014: Number of fatalities
+acledfatalities5,Conflict 2013-2014: Number of fatalities
+acledfatalities5d,Conflict 2013-2014: Number of fatalities
+acledfatalities10,Conflict 2013-2014: Number of fatalities
+acledfatalities10d,Conflict 2013-2014: Number of fatalities
+acledfatalities15,Conflict 2013-2014: Number of fatalities
+acledfatalities15d,Conflict 2013-2014: Number of fatalities
+acledfatalities20,Conflict 2013-2014: Number of fatalities
+acledfatalities20d,Conflict 2013-2014: Number of fatalities
+acledfatalities25,Conflict 2013-2014: Number of fatalities
+acledfatalities25d,Conflict 2013-2014: Number of fatalities
+aclmerge,Matching result from merge
+treatment,Project Beneficary
+ngo,Project
