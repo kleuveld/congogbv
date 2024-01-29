@@ -107,57 +107,88 @@ Payouts
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
+library(flextable)
 
-get_summ_stats <- function(df,label,...){
 
-  df %>%
-    filter(!is.na(ball5)) %>%
-    select(...) %>%
+#define function to get summ stats
+get_summ_stats <- function(.df, by = NULL) {
+  
+  #this expands the data frame to include an "overall" treatment condition
+  if (!missing(by)) {
+    .df <- 
+      bind_rows(.df, .df %>% mutate({{ by}} := "Overall")) %>%
+      group_by( {{ by }} )
+  }
+
+  .df %>%
     summarize(across(everything(),
-                     list(n =  ~sum(!is.na(.x)),
-                          mean = ~mean(.x,na.rm=TRUE),
-                          sd = ~sd(.x,na.rm=TRUE)))) %>%
-    pivot_longer(cols = everything(),
-                 names_to = c("Variable",".value"),
-                 names_sep="_") %>%
-    mutate(label = label)
+                       list(n =  ~sum(!is.na(.x)),
+                            nmiss =  ~sum(is.na(.x)),
+                            mean = ~mean(.x,na.rm=TRUE),
+                            sd = ~sd(.x,na.rm=TRUE),
+                            min =  ~min(.x,na.rm=TRUE),
+                            max =  ~max(.x,na.rm=TRUE),
+                            iqr =  ~IQR(.x,na.rm=TRUE)),
+                        .names =  "{.col}-{.fn}"))   %>%
+  pivot_longer(cols = - {{ by }} ,
+               names_to = c("Variable",".value"),
+               names_sep="-") 
+
 }
 
 
-my_data_frames <- list(`1. Overall` = cleandata,
-                       `2. Treatment` = cleandata %>% filter(ball5 == 1),
-                       `3. Control` = cleandata %>% filter(ball5 == 0))
+sample <- 
+  cleandata %>%
+  filter(!is.na(ball5)) %>%
+  mutate(Treatment = ifelse(ball5," Treatment","  Control")) %>%
+  select(Treatment, numballs,victimproplost, victimfamlost, acledviolence10)
 
-my_summstats <- 
-  imap(my_data_frames,~get_summ_stats(.x,.y,numballs,victimproplost, victimfamlost, acledviolence10)) %>%
-  reduce(bind_rows)
 
-write_csv(my_summstats,here("tables/summstats.csv"))
+sample %>%  
+  get_summ_stats(by= Treatment) %>%
+  write_csv(here("tables/summstats.csv"))
 
-#this goes into the paepr
-library(flextable)
 
-cleandata_collabels_tibble <- read_csv(here("tables/cleandata_collabels.csv"))
+#this function returns a string to put in a column of differences
+get_diffs <- function(.df,y,x){
 
-cleandata_collabels <- 
-  cleandata_collabels_tibble %>%
-  pull(label) %>%
-  set_names(cleandata_collabels_tibble %>% pull(var))
+  reg <-  lm(y~ x) %>% broom::tidy()
 
-read_csv(here("tables/summstats.csv")) %>%
-tabulator(rows = "Variable",
-          columns = "label",
-          `N` = as_paragraph(as_chunk(n,digits=0)),
-          `Mean (SD)` =  as_paragraph(as_chunk(fmt_avg_dev(mean, sd, digit2 = 2)))) %>%
-as_flextable() %>%
-labelizor(j = "Variable", labels = cleandata_collabels, part = "all") %>% 
-  fix_border_issues() %>% 
+  coeff = round(reg[2,2],2)
+  p <- reg[2,5]
+
+  stars = case_when(p < 0.001 ~ "***",
+                    p < 0.01 ~ "**",
+                    p < 0.05 ~ "*",
+                    .default = "" )
+
+  paste0(coeff,stars)
+}
+
+
+sample %>%
+  select(-Treatment) %>%
+  summarize(across(everything(),
+                   .fns = function(x) get_diffs(.,.$x,as.factor(sample$Treatment)))) %>%
+  pivot_longer(cols =everything(),
+               names_to = "Variable",
+               values_to="Difference")  %>%
+  write_csv(here("tables/summstats_diffs.csv"))
+
+#to the Rmd
+
+difcol <- read_csv(here("tables/summstats_diffs.csv")) 
+
+read_csv(here("tables/summstats.csv"))  %>%
+  tabulator(rows = "Variable",
+            columns = "Treatment",
+            datasup_last = difcol,
+            `N` = as_paragraph(as_chunk(n,digits=0)),
+            `Mean (SD)` =  as_paragraph(as_chunk(fmt_avg_dev(mean, sd, digit1=2,digit2 = 2)))) %>%
+  as_flextable() %>%
+  labelizor(j = "Variable", labels = cleandata_collabels, part = "all") %>% 
+  fix_border_issues() %>%
   autofit()
-
-
-
-
-
 
 
 
