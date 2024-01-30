@@ -31,9 +31,17 @@ cleandata <- read_dta(here("data/clean/analysis.dta"))
 col_labels <- map_chr(cleandata,function(x) coalesce(attributes(x)$label,""))
 
 
-tibble(var = colnames(cleandata),
+tibble(Variable = colnames(cleandata),
        label = col_labels) %>%
 write_csv(here("tables/cleandata_collabels.csv"))
+
+# to extract:
+# col_labels <-
+#   read_csv(here("tables/cleandata_collabels.csv")) %>%
+#   pull(label) %>%
+#   set_names(read_csv(here("tables/cleandata_collabels.csv")) %>% pull(Variable))
+
+
 
 dhs <- read_dta(here("data/clean/dhs.dta"))
 
@@ -110,12 +118,18 @@ Payouts
 
 
 #define function to get summ stats
-get_summ_stats <- function(.df, by = NULL) {
+get_summ_stats <- function(.df, by = NULL, overall = NULL) {
   
   #this expands the data frame to include an "overall" treatment condition
   if (!missing(by)) {
+
+    if (!is.null(overall)) {
+      .df <- 
+        bind_rows(.df, .df %>% mutate({{ by }} := overall ))
+    }
+
     .df <- 
-      bind_rows(.df, .df %>% mutate({{ by}} := "Overall")) %>%
+      .df %>%
       group_by( {{ by }} )
   }
 
@@ -137,18 +151,6 @@ get_summ_stats <- function(.df, by = NULL) {
 
 }
 
-
-col_labels <- map_chr(cleandata,function(x) coalesce(attributes(x)$label,""))
-
-
-extract_label <- function(x) {
-  coalesce(attributes(x)$label,"")
-} 
-
-cleandata$numballs %>% extract_label()
-
-
-
 sample <- 
   cleandata %>%
   filter(!is.na(ball5)) %>%
@@ -159,7 +161,7 @@ sample <-
 
 
 sample %>%  
-  get_summ_stats(by= Treatment) %>%
+  get_summ_stats(by= Treatment, overall = "Overall") %>%
   write_csv(here("tables/summstats.csv"))
 
 
@@ -190,12 +192,21 @@ sample %>%
   write_csv(here("tables/summstats_diffs.csv"))
 
 #to the Rmd
+
+
 library(flextable)
-numvars <- 4
+
+
+# flextable orders the variables alphabetically, but I want to preserve the order
+# because the variabe order is the same in summstats and difcol, I can just use sequential numbers
+# making sure to do the same with the labels 
+numvars <- read_csv(here("tables/summstats_diffs.csv")) %>% nrow()
+numtreatment <- 3
 
 summstats <- 
   read_csv(here("tables/summstats.csv")) %>%
-  mutate(Variable = str_pad(rep(1:numvars,3),2,pad="0")) 
+  left_join(read_csv(here("tables/cleandata_collabels.csv"))) %>%
+  mutate(Variable = str_pad(rep(1:numvars,numtreatment),2,pad="0")) 
 
 difcol <- 
   read_csv(here("tables/summstats_diffs.csv")) %>%
@@ -216,6 +227,153 @@ summstats %>%
   fix_border_issues() %>%
   autofit()
 
+
+
+```
+
+## Table 5: Conflict Exposure by Territory
+
+
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+create_codebook(cleandata) %>% View()
+
+cleandata %>%
+  select(victimproplost,victimfamlost,acledviolence10, territory) %>%
+  mutate(Territory = case_when(territory == 1 | territory == 2 ~ " Kabare/Bagira",
+                               territory == 3 ~ " Uvira",
+                               territory == 4 ~ " Fizi")) %>%
+  select(-territory) %>%
+  get_summ_stats(by= Territory, overall = "Overall") %>%
+  write_csv(here("tables/violence_by_territory.csv"))
+
+# To Paper
+
+read_csv(here("tables/violence_by_territory.csv")) %>%
+  tabulator(rows = "Variable",
+            columns = "Territory",
+            `Mean (SD)` =  as_paragraph(as_chunk(fmt_avg_dev(mean, sd, digit1=2,digit2 = 2)))) %>%
+  as_flextable() %>%
+  labelizor(j = "Variable", labels = col_labels, part = "all") %>% 
+  fix_border_issues() %>%
+  autofit()
+
+
+
+```
+
+
+## Table 6
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+library(estimatr)
+
+
+
+
+get_means <- function(.df, var){
+.df %>%
+  select(numballs,Treatment,{{ var }})   %>%
+  group_by(Treatment,{{ var }}) %>%
+  summarize(across(numballs, ~mean(.x, na.rm = TRUE))) %>%
+  mutate({{ var }} := as.character(as_factor({{ var }}))) %>%
+  pivot_longer({{ var }},
+               names_to = "var",
+               values_to = "group") %>%
+  filter(!is.na(group)) %>%
+  mutate(stat = " Mean") %>%
+  select(everything(), value = numballs,stat_subgroup = Treatment)
+}
+
+df1 <- get_means(sample,victimproplost)
+
+
+
+
+
+
+get_meandiffs <- function(.df,var){
+  meandiff_regress <- function(.df){
+    .df %>%
+      lm_robust(numballs ~ Treatment, data = .) %>%
+      broom::tidy() %>%
+      filter(term == "Treatment Treatment") %>%
+      select(estimate,std.error,p.value)
+  }
+
+  .df <- 
+    .df %>% 
+    mutate( {{ var }} := as.character(as_factor( {{ var }} ))) 
+
+  splitvector <- .df %>% pull( {{ var }} )
+  
+  .df %>%
+    split(splitvector) %>%
+    map(meandiff_regress) %>%
+    imap(~mutate(.x, group = .y)) %>%
+    reduce(bind_rows) %>% 
+    pivot_longer(!group,
+                 names_to = "stat_subgroup",
+                 values_to = "value") %>%
+    mutate(stat = "Difference in means") %>%
+    mutate(var = rlang::quo_text(enquo(var)))
+
+
+}
+
+
+df2 <- get_meandiffs(sample,victimproplost)
+
+
+meandiff_did <- function(.df,var){
+
+  data <- 
+    .df %>% 
+    select(numballs,Treatment, {{ var }})
+
+  y <- data[[1]]
+  treat <- data[[2]]
+  x <- data[[3]]
+
+  lm_robust(y ~ treat *  x)%>%
+      broom::tidy() %>%
+      filter(term == "treat Treatment:x") %>%
+      select(estimate,std.error,p.value) %>%
+      pivot_longer(everything(),
+                 names_to = "stat_subgroup",
+                 values_to = "value")  %>%
+      mutate(group = "diff in diff",
+             stat = "Difference in means",
+             var = rlang::quo_text(enquo(var)))
+
+}
+
+df3 <- meandiff_did(sample,victimproplost)
+
+bind_rows(df1,df2,df3) %>%
+  tabulator(rows = c("var","group"),
+            columns = c("stat","stat_subgroup"),
+            `Mean` =  as_paragraph(as_chunk(value,digits=2))) %>%
+  as_flextable() %>%
+  labelizor(j = "var", labels = col_labels, part = "all") 
+
+
+
+
+get_mean_diff(sample)
+
+  get_summ_stats(by = c(Treatment,victimproplost))
+
+  
+
+get_string <- function(.df,var){
+  rlang::quo_text(enquo(var))
+}
+
+get_string(cleandata,victimproplost)
 
 
 ```
