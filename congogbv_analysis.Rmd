@@ -107,7 +107,6 @@ Payouts
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
-library(flextable)
 
 
 #define function to get summ stats
@@ -122,7 +121,9 @@ get_summ_stats <- function(.df, by = NULL) {
 
   .df %>%
     summarize(across(everything(),
-                       list(n =  ~sum(!is.na(.x)),
+                       list(
+                            #label = ~coalesce(attributes(.x)$label,""),
+                            n =  ~sum(!is.na(.x)),
                             nmiss =  ~sum(is.na(.x)),
                             mean = ~mean(.x,na.rm=TRUE),
                             sd = ~sd(.x,na.rm=TRUE),
@@ -137,11 +138,24 @@ get_summ_stats <- function(.df, by = NULL) {
 }
 
 
+col_labels <- map_chr(cleandata,function(x) coalesce(attributes(x)$label,""))
+
+
+extract_label <- function(x) {
+  coalesce(attributes(x)$label,"")
+} 
+
+cleandata$numballs %>% extract_label()
+
+
+
 sample <- 
   cleandata %>%
   filter(!is.na(ball5)) %>%
   mutate(Treatment = ifelse(ball5," Treatment","  Control")) %>%
   select(Treatment, numballs,victimproplost, victimfamlost, acledviolence10)
+
+
 
 
 sample %>%  
@@ -176,17 +190,29 @@ sample %>%
   write_csv(here("tables/summstats_diffs.csv"))
 
 #to the Rmd
+library(flextable)
+numvars <- 4
 
-difcol <- read_csv(here("tables/summstats_diffs.csv")) 
+summstats <- 
+  read_csv(here("tables/summstats.csv")) %>%
+  mutate(Variable = str_pad(rep(1:numvars,3),2,pad="0")) 
 
-read_csv(here("tables/summstats.csv"))  %>%
+difcol <- 
+  read_csv(here("tables/summstats_diffs.csv")) %>%
+  mutate(Variable = str_pad(1:numvars,2,pad="0"))
+
+labels <- summstats %>% pull(label) %>% unique()
+names(labels) <- str_pad(1:numvars,2,pad="0")
+
+tab <- 
+summstats %>%
   tabulator(rows = "Variable",
             columns = "Treatment",
             datasup_last = difcol,
             `N` = as_paragraph(as_chunk(n,digits=0)),
             `Mean (SD)` =  as_paragraph(as_chunk(fmt_avg_dev(mean, sd, digit1=2,digit2 = 2)))) %>%
   as_flextable() %>%
-  labelizor(j = "Variable", labels = cleandata_collabels, part = "all") %>% 
+  labelizor(j = "Variable", labels = labels, part = "all") %>% 
   fix_border_issues() %>%
   autofit()
 
