@@ -518,6 +518,24 @@ add_n_to_flextable <- function(x,n,footerrow){
     align(part="footer",align="left")
 }
 
+
+add_scalars <- function(x,label,values){
+
+  row_vector <- vector(mode="character", length = 2 + length(values) * 2)
+
+  row_vector[1] <- label
+  for (i in 1:length(values)) {
+      footercolumn <- 2 + i * 2
+      row_vector[footercolumn] <- values[i]
+  }
+
+  x %>%
+    add_footer_row(top = FALSE, values = row_vector, colwidths = rep(1,ncol_keys(.)))
+
+}
+
+add_footer_row(top = FALSE, values = X, colwidths = rep(1,ncol_keys(.)))
+
 regs <-
   read_csv(here("tables/regression_results.csv"))
 
@@ -541,23 +559,23 @@ regs %>%
                                  as_chunk(value),
                                  as_chunk(ifelse(stat == "std.error" & !is.na(value),")","")))) %>%
   as_flextable() %>%
+  mk_par(j = c(1,2),i = 1, as_paragraph(''), part = "header")  %>%
 
-  #add empty footer with top and bottom row:
-  add_footer_row(top = FALSE, values = rep('',12), colwidths = rep(1,12)) %>%
-  theme_booktabs() %>%
+  add_scalars("N",n) %>%
 
-  #add N's to footer, and align label left, and values center using function
-  add_n_to_flextable(n,1) %>%
   labelizor(j = 1, labels = labels, part = "all") %>%
   labelizor(labels = model_labels, part = "header") %>%  
 
-  #remove text from first two header cells
-  mk_par(j = c(1,2),i = 1, as_paragraph(''), part = "header")  %>%
+  theme_booktabs() %>%
+
+
   
   autofit()
 
 
 
+
+n <- c(449,402,379,449,350)
 
 
 
