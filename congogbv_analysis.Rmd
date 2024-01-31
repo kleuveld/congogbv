@@ -47,6 +47,7 @@ dhs <- read_dta(here("data/clean/dhs.dta"))
 
 ```
 
+
 # Tables
 
 ## Table 1
@@ -267,93 +268,107 @@ read_csv(here("tables/violence_by_territory.csv")) %>%
 
 ## Table 6
 
+This table is quite a bit of work.
+
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
 library(estimatr)
 
 
+mean_diff_table <- function(.df,var){
+  #this runs three functions: 
+  # one to get the means, by each value of var
+  # one to get the differences in means
+  # and one to get the difference in the differences
 
 
-get_means <- function(.df, var){
-.df %>%
-  select(numballs,Treatment,{{ var }})   %>%
-  group_by(Treatment,{{ var }}) %>%
-  summarize(across(numballs, ~mean(.x, na.rm = TRUE))) %>%
-  mutate({{ var }} := as.character(as_factor({{ var }}))) %>%
-  pivot_longer({{ var }},
-               names_to = "var",
-               values_to = "group") %>%
-  filter(!is.na(group)) %>%
-  mutate(stat = " Mean") %>%
-  select(everything(), value = numballs,stat_subgroup = Treatment)
-}
-
-df1 <- get_means(sample,victimproplost)
-
-
-
-
-
-
-get_meandiffs <- function(.df,var){
-  meandiff_regress <- function(.df){
-    .df %>%
-      lm_robust(numballs ~ Treatment, data = .) %>%
-      broom::tidy() %>%
-      filter(term == "Treatment Treatment") %>%
-      select(estimate,std.error,p.value)
+  get_means <- function(.df, var){
+  .df %>%
+    mutate( {{ var }} := as.character(as_factor( {{ var }} ))) %>%
+    select(numballs,Treatment,{{ var }})   %>%
+    group_by(Treatment, {{ var }} ) %>%
+    summarize(across(numballs, ~mean(.x, na.rm = TRUE))) %>%
+    pivot_longer({{ var }},
+                 names_to = "var",
+                 values_to = "group") %>%
+    filter(!is.na(group)) %>%
+    mutate(stat = " Mean") %>%
+    select(everything(), value = numballs,stat_subgroup = Treatment) %>%
+    ungroup()
   }
 
-  .df <- 
-    .df %>% 
-    mutate( {{ var }} := as.character(as_factor( {{ var }} ))) 
+  df1 <- get_means(.df,{{ var }})
 
-  splitvector <- .df %>% pull( {{ var }} )
+
+
+
+  get_meandiffs <- function(.df,var){
+    meandiff_regress <- function(.df){
+      .df %>%
+        lm_robust(numballs ~ Treatment, data = .) %>%
+        broom::tidy() %>%
+        filter(term == "Treatment Treatment") %>%
+        select(estimate,std.error,p.value)
+    }
+
+
+   .df <- 
+      .df %>% 
+      mutate( {{ var }} := as.character(as_factor( {{ var }} ))) 
+
+    splitvector <- .df %>% pull( {{ var }} )
+    
+    .df %>%
+      split(splitvector) %>%
+      map(meandiff_regress) %>%
+      imap(~mutate(.x, group = .y)) %>%
+      reduce(bind_rows) %>% 
+      pivot_longer(!group,
+                   names_to = "stat_subgroup",
+                   values_to = "value") %>%
+      mutate(stat = "Difference in means") %>%
+      mutate(var = rlang::quo_text(enquo(var)))
+
+
+  }
+
+  df2 <- get_meandiffs(.df,{{ var }})
+
+
+  meandiff_did <- function(.df,var){
+    data <- 
+      .df %>% 
+      select(numballs,Treatment, {{ var }})
+
+    y <- data[[1]]
+    treat <- data[[2]]
+    x <- data[[3]]
+
+    lm_robust(y ~ treat *  x)%>%
+        broom::tidy() %>%
+        filter(term == "treat Treatment:x") %>%
+        select(estimate,std.error,p.value) %>%
+        pivot_longer(everything(),
+                   names_to = "stat_subgroup",
+                   values_to = "value")  %>%
+        mutate(group = "diff in diff",
+               stat = "Difference in means",
+               var = rlang::quo_text(enquo(var)))
+
+  }
+
+  df3 <- meandiff_did(.df,{{ var }})
+
+  bind_rows(df1,df2,df3)
   
-  .df %>%
-    split(splitvector) %>%
-    map(meandiff_regress) %>%
-    imap(~mutate(.x, group = .y)) %>%
-    reduce(bind_rows) %>% 
-    pivot_longer(!group,
-                 names_to = "stat_subgroup",
-                 values_to = "value") %>%
-    mutate(stat = "Difference in means") %>%
-    mutate(var = rlang::quo_text(enquo(var)))
-
-
 }
 
+mean_diff_table(sample,victimfamlost) 
 
-df2 <- get_meandiffs(sample,victimproplost)
+meandiff_did(sample,victimproplost)
 
 
-meandiff_did <- function(.df,var){
-
-  data <- 
-    .df %>% 
-    select(numballs,Treatment, {{ var }})
-
-  y <- data[[1]]
-  treat <- data[[2]]
-  x <- data[[3]]
-
-  lm_robust(y ~ treat *  x)%>%
-      broom::tidy() %>%
-      filter(term == "treat Treatment:x") %>%
-      select(estimate,std.error,p.value) %>%
-      pivot_longer(everything(),
-                 names_to = "stat_subgroup",
-                 values_to = "value")  %>%
-      mutate(group = "diff in diff",
-             stat = "Difference in means",
-             var = rlang::quo_text(enquo(var)))
-
-}
-
-df3 <- meandiff_did(sample,victimproplost)
-
-bind_rows(df1,df2,df3) %>%
+mean_diff_table(sample,victimproplost) %>%
   tabulator(rows = c("var","group"),
             columns = c("stat","stat_subgroup"),
             `Mean` =  as_paragraph(as_chunk(value,digits=2))) %>%
@@ -361,19 +376,20 @@ bind_rows(df1,df2,df3) %>%
   labelizor(j = "var", labels = col_labels, part = "all") 
 
 
+# To Paper
 
+c(quos("victimproplost"),quos(victimfamlost)) %>%
+map(~mean_diff_table(sample,!!.x)) %>%
+reduce(bind_rows) %>%
+  tabulator(rows = c("var","group"),
+            columns = c("stat","stat_subgroup"),
+            `Mean` =  as_paragraph(as_chunk(value,digits=2))) %>%
+  as_flextable() %>%
+  mk_par(i = 1, j = c(1,2), as_paragraph(''),part = "header") %>%
+  labelizor(j = "var", labels = col_labels, part = "all") %>%
 
-get_mean_diff(sample)
+  autofit()
 
-  get_summ_stats(by = c(Treatment,victimproplost))
-
-  
-
-get_string <- function(.df,var){
-  rlang::quo_text(enquo(var))
-}
-
-get_string(cleandata,victimproplost)
 
 
 ```
