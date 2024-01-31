@@ -31,6 +31,11 @@ cleandata <- read_dta(here("data/clean/analysis.dta"))
 col_labels <- map_chr(cleandata,function(x) coalesce(attributes(x)$label,""))
 
 
+sample <- 
+  cleandata %>%
+  filter(!is.na(ball5)) %>%
+  mutate(Treatment = ifelse(ball5," Treatment","  Control"))
+
 tibble(Variable = colnames(cleandata),
        label = col_labels) %>%
 write_csv(here("tables/cleandata_collabels.csv"))
@@ -152,16 +157,13 @@ get_summ_stats <- function(.df, by = NULL, overall = NULL) {
 
 }
 
-sample <- 
-  cleandata %>%
-  filter(!is.na(ball5)) %>%
-  mutate(Treatment = ifelse(ball5," Treatment","  Control")) %>%
-  select(Treatment, numballs,victimproplost, victimfamlost, acledviolence10)
+
 
 
 
 
 sample %>%  
+  select(Treatment, numballs,victimproplost, victimfamlost, acledviolence10) %>%
   get_summ_stats(by= Treatment, overall = "Overall") %>%
   write_csv(here("tables/summstats.csv"))
 
@@ -184,7 +186,7 @@ get_diffs <- function(.df,y,x){
 
 
 sample %>%
-  select(-Treatment) %>%
+  select(numballs,victimproplost, victimfamlost, acledviolence10) %>%
   summarize(across(everything(),
                    .fns = function(x) get_diffs(.,.$x,as.factor(sample$Treatment)))) %>%
   pivot_longer(cols =everything(),
@@ -216,7 +218,6 @@ difcol <-
 labels <- summstats %>% pull(label) %>% unique()
 names(labels) <- str_pad(1:numvars,2,pad="0")
 
-tab <- 
 summstats %>%
   tabulator(rows = "Variable",
             columns = "Treatment",
@@ -268,7 +269,13 @@ read_csv(here("tables/violence_by_territory.csv")) %>%
 
 ## Table 6
 
-This table is quite a bit of work.
+The function (`mean_diff_table()`) to create this table is a bit ugly, but i consists of three sub-functions:
+
+- `get_means()` computes the means of treatment and control for each value of a binary...
+- `get_meandiffs()` comutes the differences between the treatment and control for each group using a regression; and,
+- `get_diffindiff()` computes the DiD using a regression.
+
+Each function outputs a data frame in long format: these are bound together to one large one, that can be used by `flextable::tabulator()`.
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
@@ -276,33 +283,29 @@ library(estimatr)
 
 
 mean_diff_table <- function(.df,var){
-  #this runs three functions: 
-  # one to get the means, by each value of var
-  # one to get the differences in means
-  # and one to get the difference in the differences
 
-
+  # this functions gets 4 means: treatment assignment x values of var
+  # it returns a long data frame with one row per mean
   get_means <- function(.df, var){
-  .df %>%
-    mutate( {{ var }} := as.character(as_factor( {{ var }} ))) %>%
-    select(numballs,Treatment,{{ var }})   %>%
-    group_by(Treatment, {{ var }} ) %>%
-    summarize(across(numballs, ~mean(.x, na.rm = TRUE))) %>%
-    pivot_longer({{ var }},
-                 names_to = "var",
-                 values_to = "group") %>%
-    filter(!is.na(group)) %>%
-    mutate(stat = " Mean") %>%
-    select(everything(), value = numballs,stat_subgroup = Treatment) %>%
-    ungroup()
+    .df %>%
+      mutate( {{ var }} := as.character(as_factor( {{ var }} ))) %>%
+      select(numballs,Treatment,{{ var }})   %>%
+      group_by(Treatment, {{ var }} ) %>%
+      summarize(across(numballs, ~mean(.x, na.rm = TRUE))) %>%
+      pivot_longer({{ var }},
+                   names_to = "var",
+                   values_to = "group") %>%
+      filter(!is.na(group)) %>%
+      mutate(stat = " Mean") %>%
+      select(everything(), value = numballs,stat_subgroup = Treatment) %>%
+      ungroup()
   }
 
-  df1 <- get_means(.df,{{ var }})
-
-
-
-
+  # this function computes the differences between treatment and control
+  # for the two groups created by var
+  # it returns a long data frame, with 6 rows: estimate, std.error and p.value for each group
   get_meandiffs <- function(.df,var){
+    #this function computes the actual means and formats the outcome
     meandiff_regress <- function(.df){
       .df %>%
         lm_robust(numballs ~ Treatment, data = .) %>%
@@ -311,11 +314,12 @@ mean_diff_table <- function(.df,var){
         select(estimate,std.error,p.value)
     }
 
-
    .df <- 
       .df %>% 
       mutate( {{ var }} := as.character(as_factor( {{ var }} ))) 
 
+    # I basically split the data frame in two and run the above 
+    # function on both data sets with map.
     splitvector <- .df %>% pull( {{ var }} )
     
     .df %>%
@@ -326,16 +330,13 @@ mean_diff_table <- function(.df,var){
       pivot_longer(!group,
                    names_to = "stat_subgroup",
                    values_to = "value") %>%
-      mutate(stat = "Difference in means") %>%
-      mutate(var = rlang::quo_text(enquo(var)))
-
-
+      mutate(stat = "Difference in means",
+             var = rlang::quo_text(enquo(var)))
   }
 
-  df2 <- get_meandiffs(.df,{{ var }})
-
-
-  meandiff_did <- function(.df,var){
+  # finally: this computes the difference between the two differences.
+  # it ouputs a long data frame with estimate, std.error and p.value
+  get_diffindiff <- function(.df,var){
     data <- 
       .df %>% 
       select(numballs,Treatment, {{ var }})
@@ -344,7 +345,7 @@ mean_diff_table <- function(.df,var){
     treat <- data[[2]]
     x <- data[[3]]
 
-    lm_robust(y ~ treat *  x)%>%
+    lm_robust(y ~ treat *  x) %>%
         broom::tidy() %>%
         filter(term == "treat Treatment:x") %>%
         select(estimate,std.error,p.value) %>%
@@ -354,19 +355,15 @@ mean_diff_table <- function(.df,var){
         mutate(group = "diff in diff",
                stat = "Difference in means",
                var = rlang::quo_text(enquo(var)))
-
   }
 
-  df3 <- meandiff_did(.df,{{ var }})
+  df1 <- get_means(.df,{{ var }})
+  df2 <- get_meandiffs(.df,{{ var }})
+  df3 <- get_diffindiff(.df,{{ var }})
 
   bind_rows(df1,df2,df3)
   
 }
-
-mean_diff_table(sample,victimfamlost) 
-
-meandiff_did(sample,victimproplost)
-
 
 mean_diff_table(sample,victimproplost) %>%
   tabulator(rows = c("var","group"),
@@ -389,6 +386,179 @@ reduce(bind_rows) %>%
   labelizor(j = "var", labels = col_labels, part = "all") %>%
 
   autofit()
+
+
+
+```
+
+
+## Table 6
+
+
+I first define a number of helper varaibles:
+
+- `tidy_ict()` outputs a nice and tidy data frame with coefficients, standard errors etc. from the `ict_reg()` function.
+- `format_stars()` takes a coefficient and p-value and formats it to a coefficient with stars.
+
+I also save my `sample` as a data frame (was a tibble), because `ict_reg()` didn't work on a tibble.
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+install.packages("list")
+
+library(list)
+
+
+#outputs a tidy df for ict_reg
+tidy_ict <- function(reg1){
+    bind_cols(reg1$coef.names, reg1$par.treat, reg1$se.treat, .name_repair = ~ c("term","estimate","std.error")) %>%
+    mutate(statistic = estimate / std.error,
+           df =   reg1$resid.df,
+           p.value = pt(statistic, df, lower.tail = FALSE) * 2)
+  }
+
+#formats stars.
+format_stars <- function(b,p,digits=3){
+  stars = case_when(p < 0.01 ~ "***",
+                    p < 0.05 ~ "**",
+                    p < 0.1 ~ "*",
+                    .default = "" )
+
+  coeff = round(b,digits)
+
+  paste0(coeff,stars)
+}
+
+
+sample_df <- 
+  sample %>%
+  as.data.frame() 
+
+
+```
+
+Then I need to do some convenience things:
+
+- I put all my controls in a vector: I can insert this vector into a formula using `reformulate()`
+- I have five model specification, which only differ in a number of exaplanatory variables. I make a list with the explanatory variables in each specifcation, so that I can loop over this with map.
+
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+
+controls <- c("agewife", "agehusband", "genderhead", "eduwife_sec", "eduhusband_prim", "tinroof", "livestockany", "terrfe_2", "terrfe_3", "treatment")
+
+
+
+#list of model specification, in particular depvars to include with controls
+specs <- list(reg1 = "husbmoreland", 
+              reg2 = "victimfamlost",
+              reg3 = "acledviolence10",
+              reg4 = "attwifetotal",
+              reg5 = c("husbmoreland", "victimfamlost", "acledviolence10", "attwifetotal"))
+
+```
+
+Then comes the good stuff! I loop over the list using `imap()`, where each step returns a nice data frame created by `tidy_ict()`. `imap()`
+can return the name of the list element in the current iteration, which I save in the `model` variable.
+
+Because `tabulator()` makes a mess of orders, I create a column with the order I want, and call it `order`: I prepend the varaibles that
+I want at the top of the table with `01`; the intercept I prepend with `99` so it goes at the bottom. The rest get values in between. 
+I also merge in the variable labels, to that I know which label to put with each item of `order`. 
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+#run all regressions in the specifications
+imap(specs, ~ictreg(reformulate(c(.x,    controls), response="numballs"), treat = "ball5", J = 4, method = "lm", data = sample_df) %>%
+                  tidy_ict() %>% 
+                  mutate(model = .y)) %>%
+  reduce(bind_rows) %>%
+  mutate(b = format_stars(estimate,p.value),
+         std.error = sprintf(std.error, fmt = '%#.3f')) %>%
+  select(model,term,b,std.error) %>%
+  pivot_longer(b:std.error,names_to="stat",values_to="value") %>%
+  mutate(order =case_when(term == "husbmoreland" ~ "01",
+                          term == "victimfamlost" ~ "02",
+                          term == "acledviolence10" ~ "03",
+                          term == "attwifetotal" ~ "04",
+                          term == "(Intercept)" ~ "99",
+                          .default = "90"),
+        order = paste0(order,term)) %>%
+  rename(Variable = term) %>%
+  left_join(read_csv(here("tables/cleandata_collabels.csv"))) %>%
+  mutate(label = ifelse(Variable == "(Intercept)","Constant",label)) %>%
+  write_csv(here("tables/regression_results.csv"))
+
+# I can't find the N in ict_reg output; this finds the number of complete cases for each specification
+map(specs,~sum(complete.cases(sample[,c(.x,controls,"numballs")])))
+
+```
+
+Finally, the below can go into the paper. I have a little helper function which adds a footer row with the Ns to a flextable.
+The Ns itself I input manually here, because I can't be bothered to do it properly.
+
+The `tabulator()` call is quite complex, but it works, and can be expanded reasonably well.
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+add_n_to_flextable <- function(x,n,footerrow){
+
+  for (i in 1:length(n)) {
+      footercolumn <- 2 + i * 2
+      x <- 
+        x %>%
+        mk_par(j = footercolumn,i = footerrow, as_paragraph(as_chunk(n[i],digits=0)), part = "footer") 
+  }
+  x %>%
+    mk_par(j =1, i = 1, as_paragraph('N'), part = "footer") %>%
+    #align(part="footer",align="center") %>%
+    align(part="footer",align="left")
+}
+
+regs <-
+  read_csv(here("tables/regression_results.csv"))
+
+
+n <- c(449,402,379,449,350)
+
+labels <-
+  regs %>%
+  distinct(order,label) %>%
+  pull(label, name = order) 
+
+model_labels <- paste0("(",1:5,")")
+names(model_labels) <- paste0("reg",1:5)
+
+
+regs %>%
+  tabulator(rows = c("order","stat"),
+          columns = c("model"),
+          row_compose = list(stat = as_paragraph("")),
+          `Beta` =  as_paragraph(as_chunk(ifelse(stat == "std.error" & !is.na(value),"(","")),
+                                 as_chunk(value),
+                                 as_chunk(ifelse(stat == "std.error" & !is.na(value),")","")))) %>%
+  as_flextable() %>%
+
+  #add empty footer with top and bottom row:
+  add_footer_row(top = FALSE, values = rep('',12), colwidths = rep(1,12)) %>%
+  theme_booktabs() %>%
+
+  #add N's to footer, and align label left, and values center using function
+  add_n_to_flextable(n,1) %>%
+  labelizor(j = 1, labels = labels, part = "all") %>%
+  labelizor(labels = model_labels, part = "header") %>%  
+
+  #remove text from first two header cells
+  mk_par(j = c(1,2),i = 1, as_paragraph(''), part = "header")  %>%
+  
+  autofit()
+
+
+
+
 
 
 
