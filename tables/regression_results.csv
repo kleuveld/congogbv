@@ -1,127 +1,64 @@
-model,Variable,stat,value,order,label
-reg1,(Intercept),b,-0.162,99(Intercept),Constant
-reg1,(Intercept),std.error,0.445,99(Intercept),Constant
-reg1,husbmoreland,b,0.419**,01husbmoreland,Family MR had more land
-reg1,husbmoreland,std.error,0.204,01husbmoreland,Family MR had more land
-reg1,agewife,b,0.008,90agewife,Age of FR
-reg1,agewife,std.error,0.019,90agewife,Age of FR
-reg1,agehusband,b,-0.012,90agehusband,Age of MR
-reg1,agehusband,std.error,0.019,90agehusband,Age of MR
-reg1,genderhead,b,0.01,90genderhead,HH Head Female
-reg1,genderhead,std.error,0.610,90genderhead,HH Head Female
-reg1,eduwife_sec,b,-1.111,90eduwife_sec,FR completed secondary education
-reg1,eduwife_sec,std.error,0.421,90eduwife_sec,FR completed secondary education
-reg1,eduhusband_prim,b,-0.039,90eduhusband_prim,MR completed primary education
-reg1,eduhusband_prim,std.error,0.184,90eduhusband_prim,MR completed primary education
-reg1,tinroof,b,0.292,90tinroof,Household has a tin roof
-reg1,tinroof,std.error,0.206,90tinroof,Household has a tin roof
-reg1,livestockany,b,-0.045,90livestockany,Household owns livestock
-reg1,livestockany,std.error,0.188,90livestockany,Household owns livestock
-reg1,terrfe_2,b,0.418,90terrfe_2,territory==Uvira
-reg1,terrfe_2,std.error,0.297,90terrfe_2,territory==Uvira
-reg1,terrfe_3,b,0.511*,90terrfe_3,territory==Fizi
-reg1,terrfe_3,std.error,0.282,90terrfe_3,territory==Fizi
-reg1,treatment,b,0.054,90treatment,Project Beneficary
-reg1,treatment,std.error,0.182,90treatment,Project Beneficary
-reg2,(Intercept),b,-0.003,99(Intercept),Constant
-reg2,(Intercept),std.error,0.492,99(Intercept),Constant
-reg2,victimfamlost,b,0.409*,02victimfamlost,Conflict pre-2012: HH member killed
-reg2,victimfamlost,std.error,0.210,02victimfamlost,Conflict pre-2012: HH member killed
-reg2,agewife,b,0.007,90agewife,Age of FR
-reg2,agewife,std.error,0.021,90agewife,Age of FR
-reg2,agehusband,b,-0.009,90agehusband,Age of MR
-reg2,agehusband,std.error,0.021,90agehusband,Age of MR
-reg2,genderhead,b,-0.077,90genderhead,HH Head Female
-reg2,genderhead,std.error,0.804,90genderhead,HH Head Female
-reg2,eduwife_sec,b,-1.347,90eduwife_sec,FR completed secondary education
-reg2,eduwife_sec,std.error,0.459,90eduwife_sec,FR completed secondary education
-reg2,eduhusband_prim,b,-0.066,90eduhusband_prim,MR completed primary education
-reg2,eduhusband_prim,std.error,0.202,90eduhusband_prim,MR completed primary education
-reg2,tinroof,b,0.279,90tinroof,Household has a tin roof
-reg2,tinroof,std.error,0.228,90tinroof,Household has a tin roof
-reg2,livestockany,b,-0.003,90livestockany,Household owns livestock
-reg2,livestockany,std.error,0.204,90livestockany,Household owns livestock
-reg2,terrfe_2,b,0.202,90terrfe_2,territory==Uvira
-reg2,terrfe_2,std.error,0.389,90terrfe_2,territory==Uvira
-reg2,terrfe_3,b,0.232,90terrfe_3,territory==Fizi
-reg2,terrfe_3,std.error,0.395,90terrfe_3,territory==Fizi
-reg2,treatment,b,0.012,90treatment,Project Beneficary
-reg2,treatment,std.error,0.202,90treatment,Project Beneficary
-reg3,(Intercept),b,-0.003,99(Intercept),Constant
-reg3,(Intercept),std.error,0.477,99(Intercept),Constant
-reg3,acledviolence10,b,0.012,03acledviolence10,Conflict 2013-2014: Viol. against civilians
-reg3,acledviolence10,std.error,0.027,03acledviolence10,Conflict 2013-2014: Viol. against civilians
-reg3,agewife,b,0.006,90agewife,Age of FR
-reg3,agewife,std.error,0.023,90agewife,Age of FR
-reg3,agehusband,b,-0.008,90agehusband,Age of MR
-reg3,agehusband,std.error,0.022,90agehusband,Age of MR
-reg3,genderhead,b,0.257,90genderhead,HH Head Female
-reg3,genderhead,std.error,0.584,90genderhead,HH Head Female
-reg3,eduwife_sec,b,-1.034,90eduwife_sec,FR completed secondary education
-reg3,eduwife_sec,std.error,0.432,90eduwife_sec,FR completed secondary education
-reg3,eduhusband_prim,b,-0.193,90eduhusband_prim,MR completed primary education
-reg3,eduhusband_prim,std.error,0.205,90eduhusband_prim,MR completed primary education
-reg3,tinroof,b,0.184,90tinroof,Household has a tin roof
-reg3,tinroof,std.error,0.241,90tinroof,Household has a tin roof
-reg3,livestockany,b,-0.142,90livestockany,Household owns livestock
-reg3,livestockany,std.error,0.207,90livestockany,Household owns livestock
-reg3,terrfe_2,b,0.438,90terrfe_2,territory==Uvira
-reg3,terrfe_2,std.error,0.310,90terrfe_2,territory==Uvira
-reg3,terrfe_3,b,0.504*,90terrfe_3,territory==Fizi
-reg3,terrfe_3,std.error,0.298,90terrfe_3,territory==Fizi
-reg3,treatment,b,0.038,90treatment,Project Beneficary
-reg3,treatment,std.error,0.203,90treatment,Project Beneficary
-reg4,(Intercept),b,0.236,99(Intercept),Constant
-reg4,(Intercept),std.error,0.549,99(Intercept),Constant
-reg4,attwifetotal,b,-0.019,04attwifetotal,FR empowerment attitudes
-reg4,attwifetotal,std.error,0.022,04attwifetotal,FR empowerment attitudes
-reg4,agewife,b,0.007,90agewife,Age of FR
-reg4,agewife,std.error,0.019,90agewife,Age of FR
-reg4,agehusband,b,-0.011,90agehusband,Age of MR
-reg4,agehusband,std.error,0.018,90agehusband,Age of MR
-reg4,genderhead,b,-0.019,90genderhead,HH Head Female
-reg4,genderhead,std.error,0.601,90genderhead,HH Head Female
-reg4,eduwife_sec,b,-1.094,90eduwife_sec,FR completed secondary education
-reg4,eduwife_sec,std.error,0.461,90eduwife_sec,FR completed secondary education
-reg4,eduhusband_prim,b,0.013,90eduhusband_prim,MR completed primary education
-reg4,eduhusband_prim,std.error,0.192,90eduhusband_prim,MR completed primary education
-reg4,tinroof,b,0.277,90tinroof,Household has a tin roof
-reg4,tinroof,std.error,0.208,90tinroof,Household has a tin roof
-reg4,livestockany,b,0.001,90livestockany,Household owns livestock
-reg4,livestockany,std.error,0.188,90livestockany,Household owns livestock
-reg4,terrfe_2,b,0.434,90terrfe_2,territory==Uvira
-reg4,terrfe_2,std.error,0.296,90terrfe_2,territory==Uvira
-reg4,terrfe_3,b,0.532*,90terrfe_3,territory==Fizi
-reg4,terrfe_3,std.error,0.276,90terrfe_3,territory==Fizi
-reg4,treatment,b,0.033,90treatment,Project Beneficary
-reg4,treatment,std.error,0.183,90treatment,Project Beneficary
-reg5,(Intercept),b,-0.111,99(Intercept),Constant
-reg5,(Intercept),std.error,0.649,99(Intercept),Constant
-reg5,husbmoreland,b,0.451*,01husbmoreland,Family MR had more land
-reg5,husbmoreland,std.error,0.232,01husbmoreland,Family MR had more land
-reg5,victimfamlost,b,0.374,02victimfamlost,Conflict pre-2012: HH member killed
-reg5,victimfamlost,std.error,0.235,02victimfamlost,Conflict pre-2012: HH member killed
-reg5,acledviolence10,b,0.015,03acledviolence10,Conflict 2013-2014: Viol. against civilians
-reg5,acledviolence10,std.error,0.027,03acledviolence10,Conflict 2013-2014: Viol. against civilians
-reg5,attwifetotal,b,0,04attwifetotal,FR empowerment attitudes
-reg5,attwifetotal,std.error,0.025,04attwifetotal,FR empowerment attitudes
-reg5,agewife,b,0.011,90agewife,Age of FR
-reg5,agewife,std.error,0.026,90agewife,Age of FR
-reg5,agehusband,b,-0.011,90agehusband,Age of MR
-reg5,agehusband,std.error,0.025,90agehusband,Age of MR
-reg5,genderhead,b,0.421,90genderhead,HH Head Female
-reg5,genderhead,std.error,0.763,90genderhead,HH Head Female
-reg5,eduwife_sec,b,-1.249,90eduwife_sec,FR completed secondary education
-reg5,eduwife_sec,std.error,0.441,90eduwife_sec,FR completed secondary education
-reg5,eduhusband_prim,b,-0.263,90eduhusband_prim,MR completed primary education
-reg5,eduhusband_prim,std.error,0.226,90eduhusband_prim,MR completed primary education
-reg5,tinroof,b,0.214,90tinroof,Household has a tin roof
-reg5,tinroof,std.error,0.256,90tinroof,Household has a tin roof
-reg5,livestockany,b,-0.193,90livestockany,Household owns livestock
-reg5,livestockany,std.error,0.222,90livestockany,Household owns livestock
-reg5,terrfe_2,b,0.205,90terrfe_2,territory==Uvira
-reg5,terrfe_2,std.error,0.414,90terrfe_2,territory==Uvira
-reg5,terrfe_3,b,0.191,90terrfe_3,territory==Fizi
-reg5,terrfe_3,std.error,0.421,90terrfe_3,territory==Fizi
-reg5,treatment,b,0.073,90treatment,Project Beneficary
-reg5,treatment,std.error,0.225,90treatment,Project Beneficary
+model,term,estimate,std.error,p.value,label,order
+reg1,99(Intercept),-0.1624621092642825,0.4454232647804379,1.2845104489314516,Constant,99
+reg1,01husbmoreland,0.41879026457047547,0.2037887810426854,0.04048764911773271,Family MR had more land,01
+reg1,90agewife,0.008434110959953266,0.018807066649493664,0.6540538648679064,Age of FR,90
+reg1,90agehusband,-0.012182249263970957,0.01852733838909509,1.4888027710747254,Age of MR,90
+reg1,90genderhead,0.009509294482983635,0.6099973616320149,0.9875695370583737,HH Head Female,90
+reg1,90eduwife_sec,-1.1109008652572245,0.42057567542387453,1.9914386733597427,FR completed secondary education,90
+reg1,90eduhusband_prim,-0.03904697090151601,0.18374671815842308,1.1681845068366723,MR completed primary education,90
+reg1,90tinroof,0.29199076706230986,0.20634362469690984,0.15778012267238412,Household has a tin roof,90
+reg1,90livestockany,-0.0454830591789417,0.18847676358805301,1.1905758760923635,Household owns livestock,90
+reg1,90terrfe_2,0.41783763796555545,0.29663815864354787,0.15969147321197352,territory==Uvira,90
+reg1,90terrfe_3,0.5112035107477467,0.28203597936866914,0.07060716097828523,territory==Fizi,90
+reg1,90treatment,0.05417924602312864,0.18229718279623236,0.7664568372484175,Project Beneficary,90
+reg2,99(Intercept),-0.002671850734000993,0.4923933942797736,1.004326639065746,Constant,99
+reg2,02victimfamlost,0.4089993767138044,0.2097914125436244,0.051968604928842844,Conflict pre-2012: HH member killed,02
+reg2,90agewife,0.0068404609545665625,0.021459231300041792,0.7500804622202679,Age of FR,90
+reg2,90agehusband,-0.009294988656128463,0.020671889809665743,1.3467750312719455,Age of MR,90
+reg2,90genderhead,-0.07657047645407417,0.8042575997644156,1.075798669157517,HH Head Female,90
+reg2,90eduwife_sec,-1.3471107574494987,0.4586519877550999,1.9964842447664244,FR completed secondary education,90
+reg2,90eduhusband_prim,-0.0655283503338947,0.20212039502276155,1.2540374959577671,MR completed primary education,90
+reg2,90tinroof,0.2790099474498644,0.22828312012901916,0.22238973922860822,Household has a tin roof,90
+reg2,90livestockany,-0.0034163509392179324,0.20428582136777976,1.0133338874496733,Household owns livestock,90
+reg2,90terrfe_2,0.2019966327451762,0.3894816005422825,0.6043226262768657,territory==Uvira,90
+reg2,90terrfe_3,0.23220929912351376,0.3946752701919325,0.5566451826012724,territory==Fizi,90
+reg2,90treatment,0.012097239113445655,0.20213074937382727,0.9523078586081447,Project Beneficary,90
+reg3,99(Intercept),-0.002904735603856047,0.47749255736703194,1.00485033277329,Constant,99
+reg3,03acledviolence10,0.0119951021412735,0.026773734502492298,0.654413840633482,Conflict 2013-2014: Viol. against civilians,03
+reg3,90agewife,0.005625919694357746,0.02271683392435855,0.8045451347854166,Age of FR,90
+reg3,90agehusband,-0.007776879564609979,0.02207918616994224,1.2751227640077039,Age of MR,90
+reg3,90genderhead,0.25718476167882376,0.5836503138750548,0.6597355336140508,HH Head Female,90
+reg3,90eduwife_sec,-1.0336678518572866,0.43181110059503536,1.9828065149887464,FR completed secondary education,90
+reg3,90eduhusband_prim,-0.19293596233627025,0.20456326068704675,1.653759709325108,MR completed primary education,90
+reg3,90tinroof,0.18407289992854342,0.24054446604614865,0.4446404066238995,Household has a tin roof,90
+reg3,90livestockany,-0.1422860888906994,0.20655814246795978,1.5086278642513786,Household owns livestock,90
+reg3,90terrfe_2,0.4381085792462316,0.30951203210788497,0.15780401183059994,territory==Uvira,90
+reg3,90terrfe_3,0.5036828168644983,0.2978299670763619,0.09168088745147726,territory==Fizi,90
+reg3,90treatment,0.038236887644205825,0.20287444187115414,0.8506115149206943,Project Beneficary,90
+reg4,99(Intercept),0.23648736385213687,0.5485826380561655,0.6666229873049913,Constant,99
+reg4,04attwifetotal,-0.019146565136287073,0.022338758515424814,1.608127719561619,FR empowerment attitudes,04
+reg4,90agewife,0.007157852069087695,0.018615186469406995,0.700787769172042,Age of FR,90
+reg4,90agehusband,-0.010950762518476487,0.018289058489884952,1.4503482790249398,Age of MR,90
+reg4,90genderhead,-0.018537337831184636,0.6009065077233192,1.0245955201090773,HH Head Female,90
+reg4,90eduwife_sec,-1.0935642775987602,0.4605598444150658,1.9819804031165895,FR completed secondary education,90
+reg4,90eduhusband_prim,0.013253812345273341,0.19185449813969402,0.9449563422232783,MR completed primary education,90
+reg4,90tinroof,0.27702521051903584,0.20790622696432126,0.18342544946496642,Household has a tin roof,90
+reg4,90livestockany,0.0011298876927912473,0.18816555478160862,0.9952117465392223,Household owns livestock,90
+reg4,90terrfe_2,0.4338131654514937,0.29566937403757965,0.1430547576622099,territory==Uvira,90
+reg4,90terrfe_3,0.5316572966787091,0.2759245449418432,0.05466828495414907,territory==Fizi,90
+reg4,90treatment,0.032633513534508364,0.1833706679334274,0.8588354584432241,Project Beneficary,90
+reg5,99(Intercept),-0.11081719724547592,0.6489650523520881,1.135479508877003,Constant,99
+reg5,01husbmoreland,0.45114155245603205,0.2317911168503419,0.052490322702569585,Family MR had more land,01
+reg5,02victimfamlost,0.37443773221778265,0.23496787312959114,0.11201961552985606,Conflict pre-2012: HH member killed,02
+reg5,03acledviolence10,0.014730238074151856,0.02688447688705196,0.5841365931857007,Conflict 2013-2014: Viol. against civilians,03
+reg5,04attwifetotal,1.0073993106542234e-4,0.024892392712560423,0.9967734783347004,FR empowerment attitudes,04
+reg5,90agewife,0.010982297753966612,0.026303476318197145,0.6765761368715947,Age of FR,90
+reg5,90agehusband,-0.011079433093846609,0.025168818651634985,1.3399139805639453,Age of MR,90
+reg5,90genderhead,0.42111034617042953,0.7627208429660466,0.5812543016804639,HH Head Female,90
+reg5,90eduwife_sec,-1.2487837854812482,0.4408463038769713,1.995091558856293,FR completed secondary education,90
+reg5,90eduhusband_prim,-0.2631167266512786,0.22579718161279527,1.7552260702469367,MR completed primary education,90
+reg5,90tinroof,0.2140411707722961,0.2556088200636988,0.40300514974752044,Household has a tin roof,90
+reg5,90livestockany,-0.19281472220029752,0.22218931582227422,1.613842996243028,Household owns livestock,90
+reg5,90terrfe_2,0.20476584620668237,0.4136433528678414,0.6209187079378838,territory==Uvira,90
+reg5,90terrfe_3,0.19059581748676646,0.42068242011713863,0.6508101137106794,territory==Fizi,90
+reg5,90treatment,0.07315298353316282,0.22502021577151116,0.7453214912586787,Project Beneficary,90

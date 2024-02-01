@@ -1,0 +1,50 @@
+stat_subgroup,estimate,var,group,stat,std.error,p.value
+  Control,2.283582089552239,victimproplost,No,Mean,NA,NA
+  Control,2.35678391959799,victimproplost,Yes,Mean,NA,NA
+ Treatment,2.4727272727272727,victimproplost,No,Mean,NA,NA
+ Treatment,2.7320574162679425,victimproplost,Yes,Mean,NA,NA
+NA,0.1891451831750337,victimproplost,No,Diff,0.1996912839776379,0.3454464889958724
+NA,0.37527349666995224,victimproplost,Yes,Diff,0.09024686410316884,3.914092708350463e-5
+NA,0.1861283134949239,victimproplost,diff in diff,Diff,0.2191371839216096,0.3960624445097377
+  Control,2.3453237410071943,victimfamlost,No,Mean,NA,NA
+  Control,2.3307086614173227,victimfamlost,Yes,Mean,NA,NA
+ Treatment,2.5,victimfamlost,No,Mean,NA,NA
+ Treatment,2.8507462686567164,victimfamlost,Yes,Mean,NA,NA
+NA,0.1546762589928059,victimfamlost,No,Diff,0.1161304946302178,0.18402307130712664
+NA,0.5200376072393941,victimfamlost,Yes,Diff,0.11717399210828677,1.3434024445526877e-5
+NA,0.3653613482465908,victimfamlost,diff in diff,Diff,0.16497283476273253,0.027210145066093528
+  Control,2.384,acledviolence10d,Less than median,Mean,NA,NA
+  Control,2.3257575757575757,acledviolence10d,More than median,Mean,NA,NA
+ Treatment,2.6779661016949152,acledviolence10d,Less than median,Mean,NA,NA
+ Treatment,2.553719008264463,acledviolence10d,More than median,Mean,NA,NA
+NA,0.2939661016949163,acledviolence10d,Less than median,Diff,0.11805565379036036,0.013446958811494922
+NA,0.2279614325068868,acledviolence10d,More than median,Diff,0.12178223316322785,0.062386491676682435
+NA,-0.06600466918803011,acledviolence10d,diff in diff,Diff,0.16961146690625611,0.6973319586728333
+  Control,2.4473684210526314,husbmoreland,No,Mean,NA,NA
+  Control,2.2027027027027026,husbmoreland,Yes,Mean,NA,NA
+ Treatment,2.609271523178808,husbmoreland,No,Mean,NA,NA
+ Treatment,2.6986301369863015,husbmoreland,Yes,Mean,NA,NA
+NA,0.16190310212617662,husbmoreland,No,Diff,0.10508837247356242,0.12445559871962551
+NA,0.4959274342835982,husbmoreland,Yes,Diff,0.16656212740294288,0.0034077407393617812
+NA,0.334024332157424,husbmoreland,diff in diff,Diff,0.19694290622953753,0.09057489810362465
+  Control,2.3626373626373627,wifemoreland,No,Mean,NA,NA
+  Control,2.3863636363636362,wifemoreland,Yes,Mean,NA,NA
+ Treatment,2.7142857142857144,wifemoreland,No,Mean,NA,NA
+ Treatment,2.36734693877551,wifemoreland,Yes,Mean,NA,NA
+NA,0.3516483516483507,wifemoreland,No,Diff,0.09855935699674578,4.092846509911141e-4
+NA,-0.019016697588125568,wifemoreland,Yes,Diff,0.20589183768896485,0.9266130147946805
+NA,-0.3706650492364816,wifemoreland,diff in diff,Diff,0.2282660633527266,0.1051188228303421
+  Control,2.5510204081632653,barghusbandcloser,No,Mean,NA,NA
+  Control,2.1578947368421053,barghusbandcloser,Yes,Mean,NA,NA
+ Treatment,2.540983606557377,barghusbandcloser,No,Mean,NA,NA
+ Treatment,2.7222222222222223,barghusbandcloser,Yes,Mean,NA,NA
+NA,-0.010036801605888119,barghusbandcloser,No,Diff,0.19120517571411352,0.9582333919477661
+NA,0.5643274853801166,barghusbandcloser,Yes,Diff,0.20981036423852673,0.008882174383700677
+NA,0.5743642869860023,barghusbandcloser,diff in diff,Diff,0.28386582774572955,0.04451458820640429
+  Control,2.260869565217391,bargwifecloser,No,Mean,NA,NA
+  Control,2.8333333333333335,bargwifecloser,Yes,Mean,NA,NA
+ Treatment,2.621212121212121,bargwifecloser,No,Mean,NA,NA
+ Treatment,2.5806451612903225,bargwifecloser,Yes,Mean,NA,NA
+NA,0.3603425559947301,bargwifecloser,No,Diff,0.16683735558649057,0.03257794990939355
+NA,-0.25268817204301086,bargwifecloser,Yes,Diff,0.24385631468639185,0.3054028455907476
+NA,-0.6130307280377382,bargwifecloser,diff in diff,Diff,0.29546675858972926,0.03942877219322286
