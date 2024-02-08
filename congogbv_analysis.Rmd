@@ -67,29 +67,30 @@ dhs_national <-
   dhs %>% 
   summarize(across(.cols = c(agewife,tinroof:eduwife_sec),
                          .fns  = ~wgt_mean(.x,wgt))) %>%
-  mutate(label = "dhs_national")
+  mutate(label = "DHS National Mean")
 
 dhs_skivu <-
   dhs %>% 
   filter(province == 11) %>%
   summarize(across(.cols = c(agewife,tinroof:eduwife_sec),
                          .fns  = ~wgt_mean(.x,wgt)))%>%
-  mutate(label = "dhs_skivu")
+  mutate(label = "DHS South Kivu Mean")
 
 sample_full <-
 cleandata %>% 
 summarize(across(.cols = c(agewife,tinroof,eduwife_prim,eduwife_sec),
                 .fns = ~mean(.x, na.rm = TRUE) %>% num(digits = 2)))%>%
-  mutate(label = "sample_full")
+  mutate(label = "Full Sample Mean")
 
 sample_gendermodule <-
 cleandata %>% 
   filter(!is.na(ball5)) %>%
   summarize(across(.cols = c(agewife,tinroof,eduwife_prim,eduwife_sec),
                   .fns = ~mean(.x, na.rm = TRUE) %>% num(digits = 2)))%>%
-  mutate(label = "sample_gendermodule")
+  mutate(label = "Gender Module Mean")
 
 rbind(dhs_national,dhs_skivu,sample_full,sample_gendermodule) %>%
+select(label,everything()) %>%
 write_csv(here("tables/table1.csv"))
 
 

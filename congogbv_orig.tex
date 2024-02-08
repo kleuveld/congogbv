@@ -1,0 +1,1624 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{colortbl}
+\usepackage{hhline}
+\newlength\Oldarrayrulewidth
+\newlength\Oldtabcolsep
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{wrapfig}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Sexual violence, conflict, and female empowerment: Exploratory evidence from a list experiment in Eastern DR Congo},
+  pdfauthor={Koen Leuveld},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Sexual violence, conflict, and female empowerment: Exploratory
+evidence from a list experiment in Eastern DR Congo}
+\author{Koen Leuveld}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Introduction}\label{introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+Over the past decades, tremendous progress has been made worldwide to
+improve the lives of the world's poor. The proportion of people living
+under the poverty line of \$1.25 per day dropped from over half to just
+14\%; gender disparity in primary education has been drastically reduced
+or even eliminated; under-five mortality rates have been halved (United
+Nations 2015). However, such progress has largely bypassed fragile
+states, like the Democratic Republic of the Congo (DRC) (Asadullah and
+Savoia 2018; Samy and Carment 2011). Congolese women in particular face
+economic hardships and human rights violations, including a high rate of
+Sexual and Gender Based Violence (SGBV): estimates of the proportion of
+women who have suffered from this range from 15\% to 40\% (Johnson et
+al. 2010; Peterman, Palermo, and Bredenkamp 2011). Aid workers have
+called the country ``the world's worst place to be a woman or a child'',
+and the UN's Special Representative on Sexual Violence in Conflict,
+Margot Wallström, even called the country the ``rape capital of the
+world'' (Human Rights Watch 2009). The issue of SGBV is of specific
+concern, given its high psychological, social and economic costs (Post
+et al. 2002; Peterson et al. 2018). Consequently, tremendous
+international efforts have been made to implement or support projects to
+assist the victims of SGBV. The 2018 Nobel Peace prize was awarded to
+Dr.~Denis Mukwege, for his work on victims of SGBV at Bukavu's Panzi
+Hospital.
+
+Despite this attention, very little reliable data exists on the topic
+(Palermo and Peterman 2011). Data collection efforts have been hampered
+by the conflicts the country has faced, which have made large-scale data
+collection from representative samples difficult. As a result, most data
+available on the topic is from surveys within clinics and NGOs aimed at
+assisting victims of SGBV, making comparison between victims of SGBV and
+non-victims difficult. These samples are obviously skewed, as they only
+survey women who have already come forward in search for help. Even when
+survey data is available, the sensitive nature of the topic may cause
+respondents to withhold information due their unease in discussing
+sensitive topics with survey field staff.
+
+In this paper, I explore the characteristics of victims of SGBV as well
+as non-victims to study the dynamics and potential drivers of SGBV. I
+classify female survey respondents according to potential risk factors
+for SGBV, and analyse whether these factors are in fact associated with
+the incidence of SGBV. In this way, this paper aims to address the
+question what the drivers of SGBV in Eastern Congo are. Specifically, I
+consider conflict and the position of women in Congolese society as
+potential drivers, and compare their relative contribution.
+
+The conflict that has persisted in the country for the past decades is
+the most often-cited driver of the high rate of SGBV. This is
+particularly true for policy circles, where the framing of SGBV in Congo
+as ``weapon of war'' is popular (Baaz Eriksson and Stern 2013; Kirby
+2015). There is empirical evidence to support this notion. (Johnson et
+al. 2010) carried out a large-scale survey in Eastern Congo to
+investigate incidence and perpetrators of SGBV, and found that the
+majority of sexual violence reported by their respondents was
+conflict-related; of female victims of sexual violence, 74.3\% reported
+the perpetrators to be conflict-related. Likewise, Bartels et al. (2013)
+find that the majority of the victims of SGBV treated at Panzi Hospital
+-- in Bukavu, South Kivu -- indicate that the perpetrators were armed
+groups. It is therefore not surprising that the topic of SGBV in Congo
+has often been analysed within the context of violent conflict (Baaz
+Eriksson and Stern 2013). Conversely, the aspect of the conflict that
+has received the most world-wide media attention has been SGBV
+(Autesserre 2012).
+
+However, this view of the central role of conflict in sexual violence in
+the DRC has come under increasing scrutiny. It has been argued that this
+focus on the relationship between sexual violence and conflict has been
+counter-productive, as it has distracted attention from other pressing
+problems the DRC faces (Autesserre 2012; Hilhorst and Douma 2018; Porter
+2019). Moreover, it risks missing the civilian perpetrators of SGBV.
+There is empirical evidence for this position too. Based on DHS data,
+(Peterman, Palermo, and Bredenkamp 2011) find that rates of Sexual
+Intimate Partner Violence (IPV) are higher than rates of other forms of
+Sexual Violence in Congo.
+
+This increased focus on IPV, rather than conflict, shifts attention from
+conflict to the bargaining position of women in Congolese society and
+households as a driver of SGBV. The bargaining position of a woman is
+the level of autonomy she has, and is determined by things such as her
+outside options; its effect on SGBV is ambiguous (Eswaran and Malhotra
+2011). One the one hand, a woman's welfare may depend on her bargaining
+position: women with more income, and better prospects in case of a
+divorce would thus face less risk of IPV. On the other hand a woman's
+partner may use IPV as an instrument to assert power as a response to
+her increased empowerment. The empirical record reflects this ambiguity.
+(Bhattacharya, Bedi, and Chhachhi 2009) find that increase in
+employment, and the increasing of status of a woman within the household
+reduces violence. Similarly, (Hidrobo, Peterman, and Heise 2016) find
+that cash transfers to women, decrease the risk of violence. However,
+when specifically looking at sexual IPV in the Dominican Republic,
+(Bueno and Henderson 2017) find that an increase in women's (economic)
+empowerment led to an increase in IPV. In Vietnam, (Bulte and Lensink
+2019) find that a project aiming to increase women's income, may have
+led to increased IPV. In Afghanistan, (Gibbs et al. 2020) find no link
+(positive or negative) between economic empowerment and IPV. The link
+between IPV and women's intra-household bargaining position may be
+moderated by local customs, and depend on exactly the type of IPV and
+the type of empowerment under consideration.
+
+These two main drivers of SGBV -- conflict and empowerment -- are not
+necessarily separate, as conflict may affect empowerment on the long
+run. In the short run, conflict may have a direct effect on SGBV through
+perpetration by armed groups, potentially in a strategic manner (Baaz
+Eriksson and Stern 2013; Kirby 2015). This caused the topic to be on the
+international agenda, as a ``weapon of war''. However, in the long run
+there is a more indirect effect as well: conflict causes the breakdown
+of norms, which may have long-lasting effects. For example, (Kelly et
+al. 2018) find that that IPV increased in districts that experienced
+conflict in Liberia, while (Müller and Tranchant 2019) draw similar
+conclusions from data from the Gaza strip. (Saile et al. 2013)
+investigate the correlates of IPV for a sample of conflict-exposed women
+in Northern Uganda. They find that while the level of conflict exposure
+predicts physical violence, sexual violence is more associated with the
+level of childhood familial violence. This link between current and past
+experiences of violence suggests that the effect of conflict on violence
+is deeper than just the direct effect. People traumatized during the
+conflict (either because they were victims or perpetrators) are more
+likely to be victimized later on.
+
+In answering the question what the main drivers of SGBV are, I thus
+consider two main drivers: the position of women in Congolese society
+and conflict. Within conflict, I distinguish between historic conflict
+(here I use pre-2012 data) with long-term, indirect, effects and recent
+conflict (up to one year prior to the interview) with short-term, direct
+effects. I argue that the indirect long-term effects of conflict are
+likely to be related to the position of women, through changing norms,
+while more recent conflict events may not have had an additional impact
+on norms yet. For empowerment, I use a bargaining game, and survey
+questions that determine women's pre-marriage relative status.
+
+This paper contributes to the empirical evidence base on the incidence
+of SGBV in Eastern Congo by drawing on a sample of beneficiaries of
+development assistance projects in South Kivu province, in the Eastern
+DRC. While the selection of respondents was not done to produce a
+representative sample for the province, it does not suffer from the same
+problems that clinic-based surveys have, allowing me to compare victims
+of SGBV with non-victims. Data on SGBV comes from a list experiment, a
+technique which has been gaining popularity as a way to obtain
+information on sensitive topics (see e.g. Sniderman, Tetlock, and Piazza
+1991; Holbrook and Krosnick 2010; Bulte and Lensink 2019; Peterman et
+al. 2018; LaBrie and Earleywine 2000; Corstange 2009). Put briefly, list
+experiments allow group-level analysis of SGBV victimization, without
+individuals revealing their own victimization status. This eliminates
+the need for respondents to withhold information and thus reduces the
+social desirability bias that results (Blair and Imai 2012). Such bias
+may explain the fact that studies on the drivers of SGBV often
+contradict each other. While one study finds conflict-related
+perpetrators are responsible for the majority of cases of SGBV (Johnson
+et al. 2010), another finds intimate partners as the most common
+culprits (Peterman, Palermo, and Bredenkamp 2011). Stark et al. (2017)
+provides an example of how different methodologies can provide different
+answers: when using Audio Assisted Self-Interviews (ACASI) they find
+that intimate partners are the main perpetrators of SBV. However, in
+complementary group discussions, where social desirability bias is
+likely to be present, respondents did not bring up intimate partners at
+all.
+
+I combine list experiments with detailed survey data on the household
+and outcomes from behavioural experiments, which allows for a rich
+characterization of victims of SGBV. Because such a characterization is
+lacking thus far, this data is useful in addressing and preventing SGBV.
+Moreover, while the potential drivers of SGBV mentioned above --
+conflict and empowerment -- have been studied in isolation, this paper
+contributes by analysing these in one framework.
+
+I find high victimization rates in my sample: 30\% of the women report
+SGBV in the past twelve months. These victims are likely to be married
+to higher-status men, have low intra-household bargaining power, and
+have been exposed to violent conflict to the extent where they have lost
+family or household members before 2012 (two years before the list
+experiment). I find no evidence of a link between SGBV and recent
+conflict exposure. These findings are consistent with recent findings in
+the literature that conflict has long-lasting impact on SGBV through
+IPV. This paper is structured as follows: first I describe the research
+setting, the sample, and then the various sources of data. The
+subsequent section describes my empirical framework, which revolves
+around the use of a list experiment. I then present the results of the
+analyses. In the concluding section I contextualize the findings and
+present policy implications.
+
+\section*{Background}\label{background}
+\addcontentsline{toc}{section}{Background}
+
+Congo's 2006 constitution grants equal rights to men and women. In
+practice, however, women hold an inferior position in Congolese society.
+This is reflected in social and economic outcomes. The literacy rates
+among women and girls aged 15-24 is 73.6\% (compared to 91.2\% among men
+and boys of the same age); only 8.5\% of women have completed secondary
+education (compared to 16.2\% of the men); while 67\% of women work,
+only 7.8\% work outside of agriculture or trading and services (MPSMRM,
+MSP, and ICF International 2014). Within the household, women occupy an
+inferior position as well: the husband is the head by law, and marital
+rape is not considered a crime (Kilonzo et al. 2009).
+
+In addition to the difficulties inherent to their inferior position,
+women have faced widespread human rights abuses during the conflicts
+that have swept the country since the mid 1990s. South Kivu (the setting
+for the present study) has been greatly affected by these conflicts. The
+first Congo war started with an invasion by Rwanda and armed groups
+supported by Rwanda to clear perpetrators of the Rwanda genocide from
+the refugee camps in the east of the country, putting the province on
+the front line. Throughout this First Congo War (1996-1997), the Second
+Congo War (1998-2003) and the subsequent fragile peace, ethnic tensions
+have remained high throughout the province, resulting in frequent
+localized bursts of violence (see e.g. Verwijen 2016). While some of the
+human rights abuses during these phases of the conflict occurred during
+large-scale attacks on civilians, often they occurred during ambushes
+while women were conducting their day-to-day tasks (Freedman 2011; Human
+Rights Watch 2002). Women were often assaulted by multiple perpetrators.
+These were not only members of rebel groups, but also the government
+army (Human Rights Watch 2009).
+
+The consequences of (conflict-related) SGBV for the victims have been
+well-researched. It has severe mental and physical health consequences
+(Johnson et al. 2010). However, due to the remote nature and lack of
+resources, victims have difficulty finding professional help, often
+having to travel more than a day to clinics (Harvard Humanitarian
+Initiative 2009; Kohli et al. 2012). The negative consequences persist
+until long after the event, as victims face stigmatization within their
+communities and households (Albutt et al. 2017; Harvard Humanitarian
+Initiative 2009).
+
+The adverse consequences of conflict-related SGBV do not remain limited
+to the direct victims. The violence against women during the conflict
+resulted in a change in norms, where armed groups were no longer the
+main perpetrators of SGBV, but civilians (including intimate partners)
+(Freedman 2011). Risk factors for sexual IPV include partner problematic
+use of alcohol and partner controlling behaviours (Babalola,
+Gill-Bailey, and Dodo 2014). While the Congolese government has made
+attempts to address the situation, such as through the Law on the
+Suppression of Sexual Violence, implementation of these measures has
+been marred by the general lack of resources state authority in the
+country (Steiner et al. 2009).
+
+\section*{Sample}\label{sample}
+\addcontentsline{toc}{section}{Sample}
+
+The main source of data for this study is the gender module from a
+household survey that was undertaken in 2014 as the endline survey for
+the evaluation of Dutch development aid. This evaluation concerned
+projects ran by four NGOs in the territories of Kabare, Fizi and Uvira,
+and the commune of Bagira.\footnote{In the remainder of the paper, I
+  will consider Kabare and Bagira to be one ``territory'', since the
+  selected communities in Kabare and Bagira are located close together,
+  in the peri-urban zone of Bukavu.} The baseline for this evaluation
+was done in 2012. Half of the respondents were selected from communities
+that benefited from the projects, the other half were selected from
+comparable households in non-intervention communities. These projects
+were about agriculture, women's rights and education. Overall, the
+beneficiaries of the projects were vulnerable, mostly rural, households.
+An indicator for being beneficiary to any of these projects is included
+in the full analysis below. In total data was collected in 73
+communities. In each community, baseline data was collected on 15
+households in 2012; however, due to attrition, 2014 data is available
+for an average of 12 households per community, for a total of 889
+households.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{read\_csv}\NormalTok{(}\FunctionTok{here}\NormalTok{(}\StringTok{"tables/table1.csv"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{flextable}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: fonts used in `flextable` are ignored because the `pdflatex` engine is
+## used and not `xelatex` or `lualatex`. You can avoid this warning by using the
+## `set_flextable_defaults(fonts_ignore=TRUE)` command or use a compatible engine
+## by defining `latex_engine: xelatex` in the YAML header of the R Markdown
+## document.
+\end{verbatim}
+
+\global\setlength{\Oldarrayrulewidth}{\arrayrulewidth}
+
+\global\setlength{\Oldtabcolsep}{\tabcolsep}
+
+\setlength{\tabcolsep}{0pt}
+
+\renewcommand*{\arraystretch}{1.5}
+
+
+
+\providecommand{\ascline}[3]{\noalign{\global\arrayrulewidth #1}\arrayrulecolor[HTML]{#2}\cline{#3}}
+
+\begin{longtable}[c]{|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}}
+
+
+
+\ascline{1.5pt}{666666}{1-5}
+
+\multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{agewife}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{tinroof}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{eduwife\_prim}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{eduwife\_sec}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{label}}} \\
+
+\ascline{1.5pt}{666666}{1-5}\endfirsthead 
+
+\ascline{1.5pt}{666666}{1-5}
+
+\multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{agewife}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{tinroof}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{eduwife\_prim}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{eduwife\_sec}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{label}}} \\
+
+\ascline{1.5pt}{666666}{1-5}\endhead
+
+
+
+\multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{31.82608}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.3345647}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.4705190}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.09845465}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{dhs\_national}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{31.08862}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.5968956}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.2929335}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.05500434}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{dhs\_skivu}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{40.57590}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.5846501}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.2491309}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.02433372}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{sample\_full}}} \\
+
+
+
+
+
+\multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{41.09106}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.6053963}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.2529511}}} & \multicolumn{1}{>{\raggedleft}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{0.02866779}}} & \multicolumn{1}{>{\raggedright}m{\dimexpr 0.75in+0\tabcolsep}}{\textcolor[HTML]{000000}{\fontsize{11}{11}\selectfont{sample\_gendermodule}}} \\
+
+\ascline{1.5pt}{666666}{1-5}
+
+
+
+\end{longtable}
+
+
+
+\arrayrulecolor[HTML]{000000}
+
+\global\setlength{\arrayrulewidth}{\Oldarrayrulewidth}
+
+\global\setlength{\tabcolsep}{\Oldtabcolsep}
+
+\renewcommand*{\arraystretch}{1}
+
+The sampling procedure outlined here is thus unlikely to have produced a
+nationally (or even provincially) representative sample. In Table
+\hyperref[tab:dhs_compare]{1}, I present a comparison across selected
+demographics between the full study sample (column 3), and the
+representative sample from the DHS Program (columns 1-2). Women in the
+study sample are older, and less likely to have finished school, than
+the provincial average in South Kivu.
+
+\phantomsection\label{tab:bargsample}
+\begin{longtable}[]{@{}lcllll@{}}
+\caption{Gender module sample make up}\tabularnewline
+\toprule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+& Male Respondent & & & & \\
+Female Respondent & Consented & Refused & Absent & No Husband & Total \\
+& No. & No. & No. & No. & No. \\
+Consented & 184 & 3 & 253 & 153 & 593 \\
+Refused & 0 & 0 & 0 & 1 & 1 \\
+Absent & 4 & 0 & 0 & 1 & 5 \\
+No Wife & 282 & 3 & 2 & 3 & 290 \\
+Total & 470 & 6 & 255 & 158 & 889 \\
+\end{longtable}
+
+Not all households participated fully in the gender module. Where
+possible, it was administered to both the head of the household and
+their spouse, so that there were a Female and a Male Respondent to the
+interview \footnote{In tables, I refer to Male and Female Respondents as
+  MR and FR respectively.}. In the vast majority of the cases, the
+husband is considered the head, but it was left open to the respondents
+to indicate the head. Table \hyperref[tab:bargsample]{2} displays how
+the sample is built up. In total, there were 889 respondents to the
+survey. In 593 households, the Female Respondent (the wife of the
+household head or the female head) consented to responding to the gender
+module. In 1 household, the female respondent refused; in 5, the Female
+Respondent was absent during the interview, and in 290 households the
+head of the household had no wife, and there was thus no Female
+Respondent. In 470 households, the Male Respondent (usually the
+household head) consented to the module, 6 refused, 255 Male Respondents
+were absent, and in 158 households the head of the household was an
+unmarried woman, meaning that there was no Male Respondent. In 184
+households, both husband and wife responded to the module. Efforts to
+increase this number, by tracking down absent household heads, were
+constricted by the limited time field teams had in each community due to
+the security situation at the time of field work. As a consequence of
+this, sample sizes between various analyses are different: analyses
+relying on both partners being present - e.g.~for the bargaining game -
+will have a lower sample size than others.
+
+The selection of respondents to the gender module is unlikely to have
+been random. In column 4 of Table \hyperref[tab:dhs_compare]{1} selected
+demographics for the Female Respondents to the gender module are
+presented. The respondents are slightly older than the full sample, and
+considerably older than the provincial average. They are slightly more
+likely to have completed secondary school than the full sample, but less
+likely than the provincial average. In Table
+\hyperref[tab:sample_selection]{6}, I present results from logit models
+to find correlations between household characteristics and participation
+in the gender module. The dependent columns of the columns are whether
+the wife, the husband and the couple participated in the gender module,
+respectively. There are some selection effects. Households that own tin
+roofs, are more likely to have a Female Respondent. In households that
+own livestock, it was less likely that there was a female respondent to
+the gender module, and more likely to have male respondent. The final
+analysis below will include these as controls.
+
+\section*{Methods}\label{methods}
+\addcontentsline{toc}{section}{Methods}
+
+This paper combines data from the 2014 and 2012 rounds of the survey,
+with ACLED data. The gender module from the 2014 survey is the main
+source of data for this paper. The module was administered separately to
+Male and Female Respondent (with a small part being administered
+jointly). It contained (i) a list experiment designed to elicit the
+incidence of SGBV among Female Respondents; (ii) a risk bargaining game
+to elicit the relative intra-household bargaining position of the Male
+and Female Respondent; and (iii) a set of propositions to collect
+detailed information on gender attitudes. I present the List Experiment,
+and the analysis thereof, in more detail in the Empirical Framework
+below.
+
+\phantomsection\label{tab:bargaining}
+\begin{longtable}[]{@{}lcccc@{}}
+\caption{Bargaining game lotteries}\tabularnewline
+\toprule\noalign{}
+\# & Low & High & Expected & Risk aversion \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\# & Low & High & Expected & Risk aversion \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 4,000 CDF & 4,000 CDF & 4,000 CDF & Extremely risk-averse \\
+2 & 3,600 CDF & 4,800 CDF & 4,200 CDF & Extremely risk-averse \\
+3 & 3,200 CDF & 5,600 CDF & 4,400 CDF & Moderately risk-averse \\
+4 & 2,800 CDF & 6,400 CDF & 4,600 CDF & Moderately risk-averse \\
+5 & 2,400 CDF & 7,200 CDF & 4,800 CDF & Risk-neutral \\
+6 & 1,400 CDF & 8,200 CDF & 4,800 CDF & Risk-loving \\
+\end{longtable}
+
+The risk bargaining game in the gender module was modified from
+(Martinsson, Sutter, and Carlsson 2009). In the game, the respondents
+chose between a set of six risky lotteries, based on (Eckel and Grossman
+2002). The lotteries presented ranged from fairly low-risk ones -- where
+low and high pay-out were nearly equal -- to high-risk one -- where
+there was a large difference between high and low pay-outs (see Table
+\hyperref[tab:bargaining]{3} for details of the lotteries). The Male and
+Female Respondents first chose privately (without knowing their
+partner's choice), and then jointly. By comparing the couple decision
+with the individual decision, I obtain an indicator for bargaining
+power: the closer the couple decision is to the Female Respondent's
+decision -- relative to the Male Respondent's decision -- the higher her
+bargaining power. The difference between the procedure used by
+(Martinsson, Sutter, and Carlsson 2009) and the one here, is that they
+use a risk experiment based on (Holt and Laury 2002); a more complicated
+experiment compared to Eckel and Grossman (2002). This added
+complication may cause some participants to not fully understand the
+procedure, leading to poor results (Dave et al. 2010). Given the low
+numeracy of the subjects, I implemented the simpler of the two
+experiments.
+
+I draw on two sources for conflict data: data from the 2012 round of the
+survey, and ACLED data from 2013-2014. The 2012 data contains detailed
+information of the conflict history of the respondents dating back to
+the start of the First Congo War in 1996. Among other things,
+respondents were asked whether they lost family members, whether they
+lost property, and when these events took place. I use this to construct
+indicators for historic victimization, which may have indirect effects
+on SGBV victimization. Due to time constraints, the 2014 round of the
+survey did not contain a detailed conflict exposure module. In order to
+get more detailed information on recent victimization, complement the
+household-level data with more recent data from the Armed Conflict
+Location \& Event Data Project {[}ACLED; Raleigh et al. (2010){]}. The
+2014 data contains GPS coordinates for all interviewed households. Using
+these coordinates, I can link households to nearby conflict events from
+the ACLED database that took place within the 12 months preceding the
+interview. Because this data then coincides with the window for SGBV
+used here, any direct effects from conflict -- like perpetration of SGBV
+by armed groups -- will be captured by this indicator. However, while
+this data is more recent, it does not capture individual experience;
+only exposure based on the distance from the household to conflict
+events.
+
+\section*{Empirical Strategy}\label{empirical-strategy}
+\addcontentsline{toc}{section}{Empirical Strategy}
+
+A major concern in collecting data on SGBV is reporting bias.
+Respondents are unlikely to be comfortable to truthfully answer
+questions about SGBV. Respondents may want to hide undesirable answers,
+leading to what's called social desirability bias. Not only may this
+lead to an underestimate of the incidence of SGBV, the unwillingness to
+divulge information may be correlated to the identity of the
+perpetrators: people may be more willing to divulge victimization from
+armed groups, than from intimate partners (Stark et al. 2017). This
+non-random nature of non-response would thus lead to an underestimate of
+the incidence of SGBV, and biased estimates for the correlates of SGBV
+when using direct questions. This is why such direct questions are not
+used in list experiments. Instead, interviewers present respondents with
+a list of issues and ask them to indicate the number of issues from the
+list they have faced. By adding the sensitive item to the list of issues
+for half of the respondents (randomly selected), estimates for incidence
+of the sensitive item can be obtained by comparing the mean number of
+issues faced in both groups (hence ``item count technique'' as an
+alternative name for list experiments). The advantage is thus that
+answers are guaranteed to be anonymous: the interviewer (or the data
+analyst) does not know the number of non-sensitive issues the respondent
+faces and so has no way of knowing the answer to sensitive item. This
+anonymity removes the need to hide the answer, and thus the social
+desirability bias.
+
+Over the past decades, list experiments have grown in popularity as a
+way to obtain accurate data on sensitive topics. (Holbrook and Krosnick
+2010) review 48 studies using list experiments, and found that they are
+effective at decreasing social desirability bias. Comparing studies that
+use list experiments with studies that do not, they find that reporting
+rates of sensitive items are higher in studies using list experiments.
+It is therefore not surprising that this approach has been applied to a
+wide range of topics, such as sensitive political opinions (Frye et al.
+2017; Blair, Imai, and Lyall 2014; Meng, Pan, and Yang 2017; Corstange
+2009), over-reporting of voting (Holbrook and Krosnick 2010), risky
+behaviours (LaBrie and Earleywine 2000) and SGBV (Bulte and Lensink
+2019; Peterman et al. 2018).
+
+For the list experiment in this study, the female respondents were
+randomly divided into two groups. This was done by the electronic survey
+software (ODK), based on the randomly assigned ID codes. I follow (Imai
+2011) in calling these groups Treatment and Control. An interviewer told
+each respondent: ``I will read 4 \emph{(or 5)} problems that women can
+experience. These can be sensitive problems. When you've experienced a
+problem in the last year, please drop one of the balls to the ground. I
+will not look at when you drop these balls, and only want to know the
+total number of balls at the end. In the past 12 months, did you
+experience...
+
+\begin{itemize}
+\item
+  Lack of food;
+\item
+  Lack of money;
+\item
+  Theft;
+\item
+  Sterility; and,
+\item
+  Sexual Violence (Treatment group only)''
+\end{itemize}
+
+The interviewer only presented women randomly selected to be in the
+treatment group with the fifth item (Sexual Violence). I selected the
+four control items in such a way that it is unlikely women in the sample
+face none, or all, of the issues. In such cases the interviewer knows
+the respondent's answer to the sensitive issue ("no" if the total number
+of issues is 0, "yes" if the total number is 5). Not all the control
+items are non-sensitive, as the item ``sterility'' is a sensitive item.
+This was done to reduce respondent suspicion when one sensitive items is
+juxtaposed with a number of completely non-sensitive items (see Chuang
+et al. (2019) for a more detailed explanation). After all items were
+read, the interviewer asked the respondent to count the number of balls,
+and report the number. The questionnaire was field tested prior to field
+work to ensure that respondents understood these concepts. All
+interviewers were thoroughly trained in the protocols, and the
+electronic questionnaire was programmed in such a way to ensure
+compliance to the protocol.
+
+A crucial assumption for the list experiment is that the randomization
+ensures that Treatment and Control groups are identical. Table
+\hyperref[tab:balance]{\[tab:balance\]} (Column 7) provides a comparison
+of the two groups within the sample. The treatment and control group are
+not perfectly balanced across some of the variables. However, an F-test
+on the differences between treatment and control being jointly equal to
+zero fails to reject the null-hypothesis that they are equal (p=0.20).
+This suggests that the differences found are due to chance, rather than
+any bias in the randomization procedure.
+
+While the indirect nature of list experiments prevents reporting bias,
+this does come at a cost of efficiency in statistical analysis. The
+incidence is easily computed by subtracting the mean of issues faced in
+the control group from the mean number of issues in the treatment group.
+This means that sample sizes have to be far larger for list experiments
+than for direct questions.
+
+In a regression framework, the incidence would be estimated as follows
+(Holbrook and Krosnick 2010):
+
+\[\label{eq:basic}
+NumIssues_i = \beta_0 + \beta_1 Treatment_i + \epsilon_i\]
+
+Where \(NumIssues_i\) is the number of issues experienced by respondent
+\(i\), and \(Treatment_i\) is her treatment assignment. Coefficient
+\(\beta_1\) yields the estimate for the incidence. To find correlates of
+SGBV, equation \hyperref[eq:basic]{\[eq:basic\]} can be augmented using
+interaction terms as follows: \[\label{eq:interaction}
+NumIssues_i = \beta_0 + \beta_1 Treatment_i + \beta_2 X_i + \beta_3 Treatment_i X_i + \epsilon_i\]
+
+Where \(X_i\) is an explanatory variable and coefficient \(\beta_3\)
+gives the estimate for the additional incidence of SGBV associated with
+a unit increase of \(X\). This can be easily modified to allow for more
+variables. Again, this is much less efficient than when using direct
+questioning. By using more sophisticated methods proposed by Imai (2011)
+(and implemented by (Tsai 2019) in Stata), more efficient estimates can
+be obtained.
+
+lCCCCCCC
+
+\&(1)\&(2)\&(3)\&(4)\&(5)\&(6)\&(7) \&\&\&\&(4)-(6)
+\&N\&Mean\&N\&Mean\&N\&Mean\& Number of reported
+issues\&593\&2.49\&291\&2.65\&302\&2.34\&0.30***
+\&\&(0.94)\&\&(1.03)\&\&(0.83)\& Conflict pre-2012: property
+lost\&530\&0.77\&264\&0.79\&266\&0.75\&0.04
+\&\&(0.42)\&\&(0.41)\&\&(0.43)\& Conflict pre-2012: HH member
+killed\&530\&0.49\&264\&0.51\&266\&0.48\&0.03
+\&\&(0.50)\&\&(0.50)\&\&(0.50)\& Conflict 2013--2014: Viol. against
+civilians\&496\&6.73\&239\&6.68\&257\&6.77\&--0.08
+\&\&(4.69)\&\&(4.70)\&\&(4.69)\& Family MR had more
+land\&450\&0.33\&224\&0.33\&226\&0.33\&--0.00
+\&\&(0.47)\&\&(0.47)\&\&(0.47)\& Family FR had more
+land\&450\&0.21\&224\&0.22\&226\&0.19\&0.02
+\&\&(0.41)\&\&(0.41)\&\&(0.40)\& Bargaining: choice Female
+Respondent\&593\&3.58\&291\&3.59\&302\&3.56\&0.04
+\&\&(2.06)\&\&(2.08)\&\&(2.05)\& Barganing: choice Male
+Respondent\&184\&3.45\&97\&3.49\&87\&3.40\&0.09
+\&\&(2.14)\&\&(2.12)\&\&(2.18)\& Bargaining: closer to
+MR\&184\&0.40\&97\&0.37\&87\&0.44\&--0.07
+\&\&(0.49)\&\&(0.49)\&\&(0.50)\& Bargaining: closer to
+FR\&184\&0.27\&97\&0.32\&87\&0.21\&0.11*
+\&\&(0.44)\&\&(0.47)\&\&(0.41)\& Age of
+FR\&593\&41.09\&291\&40.49\&302\&41.67\&--1.17
+\&\&(14.01)\&\&(14.06)\&\&(13.96)\& Age of
+MR\&449\&45.67\&224\&44.48\&225\&46.85\&--2.37**
+\&\&(13.80)\&\&(13.09)\&\&(14.40)\& HH Head
+Female\&593\&0.26\&291\&0.24\&302\&0.27\&--0.03
+\&\&(0.44)\&\&(0.43)\&\&(0.45)\& FR completed primary
+education\&593\&0.25\&291\&0.26\&302\&0.25\&0.01
+\&\&(0.44)\&\&(0.44)\&\&(0.43)\& FR completed secondary
+education\&593\&0.03\&291\&0.02\&302\&0.04\&--0.02
+\&\&(0.17)\&\&(0.13)\&\&(0.20)\& MR completed primary
+education\&449\&0.63\&224\&0.63\&225\&0.63\&0.01
+\&\&(0.48)\&\&(0.48)\&\&(0.48)\& MR completed secondary
+education\&449\&0.20\&224\&0.19\&225\&0.20\&--0.01
+\&\&(0.40)\&\&(0.39)\&\&(0.40)\& Household has a tin
+roof\&593\&0.61\&291\&0.62\&302\&0.59\&0.03
+\&\&(0.49)\&\&(0.49)\&\&(0.49)\& Household owns
+livestock\&593\&0.49\&291\&0.51\&302\&0.47\&0.03
+\&\&(0.50)\&\&(0.50)\&\&(0.50)\&
+territory==Uvira\&593\&0.24\&291\&0.24\&302\&0.23\&0.01
+\&\&(0.43)\&\&(0.43)\&\&(0.42)\&
+territory==Fizi\&593\&0.63\&291\&0.65\&302\&0.62\&0.03
+\&\&(0.48)\&\&(0.48)\&\&(0.49)\& Project
+Beneficary\&593\&0.50\&291\&0.49\&302\&0.50\&--0.01
+\&\&(0.50)\&\&(0.50)\&\&(0.50)\&
+
+FR = Female Respondent; MR = Male Respondent; Standard Deviations in
+parentheses; *p \(<\) 0.1,**p \(<\) 0.05,***p \(<\) 0.01
+
+\section*{Results}\label{results}
+\addcontentsline{toc}{section}{Results}
+
+Comparison of means of issues faced: treatment vs. control.
+
+In this section, I will first compare the results of the list experiment
+in the whole sample, then in different sub-groups. I then present
+results from a full multivariate regression that aims to minimize
+potential bias caused by confounding variables.
+
+In the full sample, the difference between the group who were presented
+with only four issues (the Control group) and the group who were
+presented four issues plus SGBV (the Treatment group) is the estimate of
+the incidence of SGBV. The average number of issues reported by the
+control group is , while the number if issues reported by the treatment
+group is (see Figure \hyperref[fig:meancompare_overall]{1}). The
+difference of implies that the incidence of SGBV is \% in this sample.
+The p-value for a t-test on this difference is . This estimate appears
+substantially higher than previous estimates. These previous estimates
+(e.g. Peterson et al. 2018; Stark et al. 2017; Johnson et al. 2010)
+arrive at a similar rate of victimization, but over the life of the
+respondent, whereas here we only consider victimization the past twelve
+months. A higher incidence is expected, since the sample is non random,
+drawing mostly from vulnerable rural households.
+
+\subsection*{Conflict}\label{conflict}
+\addcontentsline{toc}{subsection}{Conflict}
+
+Comparison of means of issues faced across conflict exposure.
+
+With respect to conflict, I distinguish between recent conflict (as
+indicated by ACLED events that happened within the 12 months before the
+list experiment) and historic conflict (1996-2012). Historic conflict
+can only have had an indirect effect on SGBV, e.g.~through changed
+norms, as the list experiment only covers SGBV events within the past 12
+months. Recent conflict can have a direct effect through perpetration
+during the conflict event.
+
+I first analyse victimization patterns by comparing sub-groups of the
+respondents, based on one variable at a time. A full, multivariate
+analysis will follow. With respect to conflict, I consider three ways of
+splitting the sample in sub-groups: (i) respondents who live in
+households that indicated (or not) in 2012 to have suffered loss of (or
+damage to) property, including agricultural fields, due to conflict;
+(ii) whether the respondent's household indicated in 2012 to have lost
+any household members or family as a consequence of the conflict (or
+not); and (iii) whether number of instances of violence against
+civilians in ACLED data within a 10km radius during the past twelve
+months was higher than the number of instances for the median household
+(nor not) \footnote{The results presented here are robust to using
+  number of battles or number of fatalities rather than the instances of
+  violence against civilians; using 5,15,20, 25 or 30km as a radius; and
+  using a continuous variable, rather than a binary variable.}.
+
+Conflict exposure was high in the sample (see Table
+\hyperref[tab:balance]{\[tab:balance\]}): \% of the respondents reported
+having lost property due to conflict between 1996 and 2012. \% of the
+respondents reported the loss of a family or household member. Again,
+conflict exposure was high, even when limiting the time-span to one year
+prior to the data collection. The mean number of violent conflicts
+within a 10km radius was . This exposure differs across the territories
+(Table \hyperref[tab:conflict_by_terr]{4}). While respondents in all
+territories were greatly affected by conflict prior to 2012, those in
+Fizi were hit harder. In the 12 months before the survey however, Uvira
+was in the midst in an outbreak of violence, related to conflicts
+surrounding the succession of traditional rulers in the chefferies of
+Bafuliiro and Plaine de la Ruzizi. In fact, weeks before data collection
+in 2014 took place, 30 civilians were killed in Mutarule, a village in
+the Plaine, but not in my sample. This difference in recent and historic
+conflict patterns means that households with conflict exposure pre-2012
+are not more likely to be victimized in 2013-2014 (see also Table
+\hyperref[tab:determinants_regression]{\[tab:determinants_regression\]}).
+Associations between pre-2012 violence and SGBV will thus not be the
+result of re-targeting of the same households.
+
+\phantomsection\label{tab:conflict_by_terr}
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{verbatim}
+                                             Kabare/Bagira    Uvira     Fizi      Total
+\end{verbatim}
+
+Conflict pre-2012: property lost 0.440 0.700 0.847 0.770 (0.501) (0.460)
+(0.360) (0.421) Conflict pre-2012: HH member killed 0.120 0.393 0.588
+0.492 (0.328) (0.490) (0.493) (0.500) Conflict 2013-2014: Viol. against
+civilians 7.289 10.05 4.892 6.726 (1.797) (2.752) (5.052) (4.689)
+--------------------------------------------- --------------- ---------
+--------- ---------
+
+: Conflict exposure by territory
+
+The results of the sub-group analysis is displayed graphically in Figure
+\hyperref[fig:meancompare_conf]{2}. From the top two panels, it can be
+seen that the difference between treatment and control is greater among
+conflict-victimized respondents than among non-conflict victimized
+respondents. The size of these differences is listed in Table
+\hyperref[tab:meandiff_conf]{\[tab:meandiff_conf\]}. Among those that
+indicated not having lost property, the difference in number of issues
+faced between treatment and control is 0.19, implying a SGBV
+victimization rate of 19\%. The difference between Treatment and Control
+among respondents who did lose property was 0.38. The difference in the
+differences between these groups of 0.19 issues (this corresponds to
+coefficient \(\beta_3\) in equation
+\hyperref[eq:interaction]{\[eq:interaction\]} above) is not
+statistically significant. When splitting the sample by households
+indicating having lost a family or household member to conflict before
+2012, the difference-in-difference estimate is 0.37, indicating that
+incidence of SGBV among respondents who lost family due to conflict is
+37 percentage points higher than among those who have not. This effect
+is significant at the 5\% level. Note that the SGBV could not have
+happened during the same time as the conflict event(s): the SGBV
+happened twelve months before the interview in 2014, while the conflict
+events happened before 2012.
+
+When looking at more recent exposure to conflict, no clear patterns
+emerge (see bottom panel of Figure \hyperref[fig:meancompare_conf]{2}).
+SGBV incidence among women who have more instances of violence near them
+than the median is 7 percentage points lower than women who do not
+(bottom row of Table
+\hyperref[tab:meandiff_conf]{\[tab:meandiff_conf\]}). However, this is
+not statistically significant. I thus find no evidence of large-scale
+direct perpetration of SGBV by armed groups in the one year before data
+collection, but also no evidence of indirect effects of recent conflict.
+
+The fact that conflict before 2012 correlates with SGBV, but recent
+conflict does not, points at a more complex relationship between
+conflict and SGBV than a simple direct effect due to perpetration by
+armed groups. It is more likely that violence has an indirect effect
+through changed norms. The fact that recent conflict seems not to have
+an indirect effect either, may mean that this change of norms takes
+time, or that the nature of recent conflict is different from historic
+conflict.
+
+n0 = , n1= , label0 = , label1 = , varlabel=,meancontrol0 = , meantreat0
+= ,stardiff0=, sediff0=, meancontrol1 = , meantreat1 = , stardiff1=,
+sediff1=, stardd = , sedd= \& \& \& \& \&\\
+\& \& \& \& \&\\
+\& \& \& \& \&\\
+Diff in Diff \& \& \& \& \&
+
+Robust Standard errors reported.
+
+p \(<\) 0.1, **, p \(<\) 0.05, *** p \(<\) 0.01
+
+\subsection*{Intra-household bargaining
+position}\label{intra-household-bargaining-position}
+\addcontentsline{toc}{subsection}{Intra-household bargaining position}
+
+\begin{figure}
+\centering
+\includegraphics{figures/meancompare_mar.eps}
+\caption{Comparison of means of issues faced by pre-marriage
+status.}\label{fig:meancompare_mar}
+\end{figure}
+
+I then create sub-groups based on the intra-household bargaining
+position of the respondents. I compare women across two variables.
+First, I compare women across the relative status of the partners at the
+time of marriage, by using family land-holdings as a proxy for status.
+The 2014 survey contained a section on the marriage of the (spouse of
+the) household head. In this section, respondents were asked whose
+family owned more land, prior to the marriage: the wife's, the
+husband's, or whether they had equal land. This choice of proxy was made
+in consultation with local partners (including NGOs and universities),
+and based on the importance of agriculture in the area. In \% of the
+cases, the husband's family had more land, in \% of the cases the wife's
+family did. Note that only households responded to this question, as
+some refused to give a definite answer (Table
+\hyperref[tab:balance]{\[tab:balance\]}).
+
+The second intra-household aspect I explore is derived from the results
+of the bargaining game played with couples during the 2014 survey. I
+create three groups, based on whether the joint decision is closer to
+the husband's decision, to the wife's, or if the distance is equal. The
+mean choice of the Female Respondents in the sample was ; the Male
+Respondents were slightly more risk-averse: their mean choice was . In
+\% of the cases, the couple decision was closest to the Male
+Respondent's choice. In \% it was closer to the Female Respondent's.
+Note that the size of the sample here is smaller than for the other
+variables presented, as it was not always possible to have both the Male
+and Female Respondent present at the same time for the interview.
+
+Figure \hyperref[fig:meancompare_mar]{3} displays the results from the
+sub-group analysis. Overall, the difference between treatment and
+control is larger for the sub-groups of respondents with a worse
+intra-household bargaining position, indicating that the incidence of
+SGBV is higher among these respondents. As suggested by the large size
+of the 95\% confidence intervals, some of these sub-groups are small. In
+Table \hyperref[tab:meadifftab_mar]{\[tab:meadifftab_mar\]}, these
+differences are tabulated, including the sizes of the sub-groups.
+However, the variable definitions are slightly different, due to the
+difficulties in interpreting difference-in-differences between three
+sub-groups. For each variable, two comparisons are tabulated: one,
+comparing households where the female respondents had the better
+bargaining position with the two other sub-groups, and one comparing
+households where the male respondent had the better bargaining position
+with the two other sub-groups. Female respondent in households where the
+family of the husband had the most land prior to marriage were victims
+of SGBV in 50\% of the cases, while 16\% of the other respondents were.
+The difference of 33 percentage points is statistically significant at
+the 10\% level. In the other comparison for the same variable, the
+difference is even larger, but not statistically significant; perhaps
+due to the low number of women with more pre-marital status than their
+husbands. The differences when split by results from the bargaining game
+are larger still: 57 or 61 percentage points, depending on the groups
+used.
+
+While these results may suggest that IPV is an important driver of SGBV,
+the fact that I have no information on perpetrators means that this is
+not certain.
+
+n0 = , n1= , label0 = , label1 = , varlabel=,meancontrol0 = , meantreat0
+= ,stardiff0=, sediff0=, meancontrol1 = , meantreat1 = , stardiff1=,
+sediff1=, stardd = , sedd= \& \& \& \& \&\\
+\& \& \& \& \&\\
+\& \& \& \& \&\\
+Diff in Diff \& \& \& \& \&
+
+Robust Standard errors reported.
+
+p \(<\) 0.1, **, p \(<\) 0.05, *** p \(<\) 0.01
+
+\subsection*{Multivariate Regression
+analysis}\label{multivariate-regression-analysis}
+\addcontentsline{toc}{subsection}{Multivariate Regression analysis}
+
+In the preceding sections, I examined univariate relations between
+variables of interest and the incidence of SGBV. However, such analysis
+may suffer from omitted variables and spurious correlations. Here I move
+to a richer specification, in order to prevent such biases, and assess
+the relative importance of each driver. I expand equation
+\hyperref[eq:interaction]{\[eq:interaction\]} to simultaneously include
+indicators for conflict and intra-household bargaining position. To
+reduce the risk of multi-collinearity, I do not include the full set of
+variables discussed above, but select one indicator for each, guided by
+the results obtained above. A key criterion for selection is the number
+of respondents for each indicator. The analysis of list experiments
+suffers from rapid loss of power due to the indirect nature of the
+analysis. To mitigate this, indicators that are available for large
+groups of respondents were selected. For conflict, I include both the
+indicator for household member killed before 2012 (as an indicator for
+historic conflict) and violence against civilians from the ACLED data
+(as an indicator for recent conflict); and for intra-household
+bargaining position a dummy for the husband's family having the most
+land. I use the KICT Stata package developed by Tsai (2019) to estimate
+these models. Interpretation of the coefficients is the same as equation
+\hyperref[eq:interaction]{\[eq:interaction\]}, but estimation is more
+efficient.
+
+In order to reduce missing variable bias, I include a set of controls
+that likely (co-) determine SGBV and the right-hand side variables
+listed above. A full analysis of these determinants is provided in the
+Appendix, Table
+\hyperref[tab:determinants_regression]{\[tab:determinants_regression\]}.
+In addition, I include variables that determine sample selection, as
+displayed in Table \hyperref[tab:sample_selection]{6}. In particular, I
+include the age of the Female Respondent; indicators for the education
+of the Male and Female respondents; asset holdings of the household,
+including livestock and a tin roof; territory dummies; and an indicator
+for being in the treatment group of any of the projects under evaluation
+for the survey.
+
+In Table \hyperref[tab:results_regression]{5} I display the results of
+these regressions. In columns 1-3 I rerun the univariate models from
+above. Results are the same as before: both conflict history and
+intra-household bargaining are associated with increased incidence of
+SGBV. I In column 4 I present the full model. I find that women in a
+marriage where their husband's family had more land before the marriage,
+are percentage points more likely than other women to be victim of SGBV.
+Note that the pre-marriage status of women within the household is
+uncorrelated to conflict (see Table
+\hyperref[tab:determinants_regression]{\[tab:determinants_regression\]}).
+Women who live in households that lost a family or household member due
+to conflict prior to 2012 are percentage points more likely to be
+victimized by SGBV than other women. Of note is also the negative
+associated of the Female Respondent having a secondary education: in
+this linear model, women with secondary education are percentage points
+less likely to be victimized. The fact that the absolute value of this
+coefficient is higher than 1 is due to the fact that linear models do
+not constrain predictions of probabilities between 0 and 1.
+
+The finding that conflict history is associated with an increase in
+SGBV, while recent conflict is not, points to the indirect relationship
+between conflict and SGBV, where conflict may affect SGBV rates not
+through perpetration by armed groups, but by an increase in IPV. The
+notion that IPV is a major driver of SGBV is reinforced by the fact that
+both intra-household bargaining position and secondary education are
+negatively associated with SGBV. This suggests that the position of
+women is important in protecting them from human rights violations.
+
+Caution should be taken with this interpretation, as results presented
+here are not necessarily causal: women with higher education may differ
+from other women in non-observable ways, and face lower victimization
+because of that, rather than education. Furthermore, no data exists on
+the perpetrators of the violence. The method of a list experiment does
+not allow for follow-up questions to victimized women, as the
+interviewer cannot know who to ask these follow up questions to.
+
+\phantomsection\label{tab:results_regression}
+\begin{longtable}[]{@{}lcccc@{}}
+\caption{Multivariate regression Results}\tabularnewline
+\toprule\noalign{}
+& \(1\) & \(2\) & \(3\) & \(4\) \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+& \(1\) & \(2\) & \(3\) & \(4\) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Family MR had more land & 0.419** & & & 0.451* \\
+& (0.204) & & & (0.240) \\
+Conflict pre-2012: HH member killed & & 0.409** & & 0.374** \\
+& & (0.182) & & (0.179) \\
+Conflict 2013-2014: Viol. against civilians & & & 0.0120 & 0.0147 \\
+& & & (0.0224) & (0.0230) \\
+FR empowerment attitudes & & & & 0.000101 \\
+& & & & (0.0199) \\
+Age of FR & 0.00843 & 0.00684 & 0.00563 & 0.0110 \\
+& (0.0161) & (0.0182) & (0.0186) & (0.0207) \\
+Age of MR & -0.0122 & -0.00929 & -0.00778 & -0.0111 \\
+& (0.0149) & (0.0162) & (0.0174) & (0.0189) \\
+HH Head Female & 0.00951 & -0.0766 & 0.257 & 0.421 \\
+& (0.445) & (0.525) & (0.318) & (0.410) \\
+FR completed secondary education & -1.111*** & -1.347*** & -1.034*** &
+-1.249*** \\
+& (0.320) & (0.351) & (0.336) & (0.332) \\
+MR completed primary education & -0.0390 & -0.0655 & -0.193 & -0.263 \\
+& (0.166) & (0.178) & (0.181) & (0.177) \\
+Household has a tin roof & 0.292 & 0.279 & 0.184 & 0.214 \\
+& (0.203) & (0.221) & (0.234) & (0.233) \\
+Household owns livestock & -0.0455 & -0.00342 & -0.142 & -0.193 \\
+& (0.160) & (0.181) & (0.177) & (0.186) \\
+territory==Uvira & 0.418 & 0.202 & 0.438 & 0.205 \\
+& (0.264) & (0.342) & (0.288) & (0.360) \\
+territory==Fizi & 0.511* & 0.232 & 0.504* & 0.191 \\
+& (0.292) & (0.365) & (0.302) & (0.379) \\
+Project Beneficary & 0.0542 & 0.0121 & 0.0382 & 0.0732 \\
+& (0.163) & (0.177) & (0.157) & (0.167) \\
+Constant & -0.162 & -0.00267 & -0.00290 & -0.111 \\
+& (0.483) & (0.506) & (0.491) & (0.614) \\
+Observations & 449 & 402 & 379 & 350 \\
+\end{longtable}
+
+FR = Male Respondent; MR = Female Respondent
+
+Standard errors clustered at the village level; * p \(<\) 0.1, **, p
+\(<\) 0.05, *** p \(<\) 0.01
+
+\section*{Conclusion}\label{conclusion}
+\addcontentsline{toc}{section}{Conclusion}
+
+In this paper, I analysed the results from a list experiment, in order
+to identify potential drivers of SGBV in Eastern Congo. Prevalence of
+SGBV is high in Congo, however little is known about the victims, and
+the drivers of victimization. In order to address this, I combined the
+results from the list experiment with rich data, including a household
+survey, a bargaining game, and conflict data.
+
+The incidence rates I find are very high: 30\% of the women in the
+sample report having been the victim of SGBV in the past twelve months.
+Most data collected on lifetime victimization arrives at similar rates,
+suggesting that this estimate for a one-year window is high. The rate
+found here may thus not be nationally, or regionally, representative.
+This is likely due to the fact that women in the sample were recruited
+among beneficiaries and potential beneficiaries of programs aimed at
+assisting the most vulnerable women and households. It is to be expected
+that incidence rates in this group are higher than for other groups. In
+fact, I find that secondary schooling rates among women in my sample is
+lower than the national or provincial average, and that incidence of
+SGBV among women who have attended secondary school are significantly
+lower than among other women.
+
+When examining the backgrounds of the victims, I find that they are
+likely to be married to higher-status men, have low intra-household
+bargaining power, and have been exposed to violent conflict to the
+extent where they have lost family or household members before 2012 (two
+years before the list experiment). When comparing these effects in one
+analysis, I find that the effect of intra-household dynamics is larger
+than the effect of conflict. This contrasts with popular frames where
+the conflict is seen as the primary driver of SGBV, but is in line with
+previous literature suggesting that intimate partners are more likely
+perpetrators of SGBV than members of armed groups (see e.g. Peterman,
+Palermo, and Bredenkamp 2011).
+
+Taken together, these finding imply that human rights violations do not
+end when the conflict ends. The disruption of social norms may cause
+women (and perhaps men, but the present data set does not cover them) to
+suffer from violence long after the last shot has been fired. A focus of
+rape as a ``weapon of war'' may thus be too narrow to address these
+violations. This is not to say there direct perpetration of SGBV by
+armed forces is not a problem in Congo. There is ample proof that
+large-scale violations have been committed by armed forces, especially
+historically. The conflict has undergone changes throughout the years,
+and with it the kinds of human rights violations perpetrated. The
+massacre in Mutarule in the weeks before data collections did see 30
+innocent civilians murdered, but there are no reports of rape.
+Furthermore, focusing efforts to assist women on the victims from such
+attacks risks missing women victimized in their homes, far away from any
+fighting. Structural changes encouraging women's education and tangibly
+raising their status are needed to protect these women as well.
+
+There are three large caveats with these findings: (i) causal
+interpretation is difficult due to the cross-sectional nature of the
+data; (ii) little analysis could be done on the perpetrators of the
+violence, as indirect questioning precludes probing into this. More
+research is needed to to address these important issues; and (iii) I did
+not collect data on the victimization of men. More research is needed to
+address these.
+
+\section*{Appendix}\label{appendix}
+\addcontentsline{toc}{section}{Appendix}
+
+\phantomsection\label{tab:sample_selection}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.4321}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1852}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1728}}
+  >{\centering\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1852}}@{}}
+\caption{Sample selection for the Gender Module}\tabularnewline
+\toprule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+& \(1\) Wife & \(2\) Husband & \(3\) Couple \\
+Age of FR & -0.0305** (0.0126) 0.0199* (0.0118) 0.171 (0.689) 0.120
+(0.224) 0.484 (0.587) -0.0233 (0.189) 0.228 (0.213) 0.307* (0.181)
+-0.564*** (0.204) -0.215 (0.297) -0.0496 (0.263) 0.490** (0.195) 0.726*
+(0.430) 717 & 0.0244** (0.0112) -0.00864 (0.0110) -1.142* (0.602) -0.197
+(0.245) -0.285 (0.399) 0.226 (0.218) -0.208 (0.215) 0.0468 (0.171)
+0.695*** (0.189) 1.165*** (0.261) 0.312 (0.217) -0.450** (0.182) -0.700
+(0.434) 717 & -0.0124 (0.0127) 0.0176 (0.0130) \\
+\end{longtable}
+
+Standard errors clustered at the village level
+
+p \(<\) 0.1, **, p \(<\) 0.05, *** p \(<\) 0.01
+
+l*3c \&\&\&\\
+\&\&\&\\
+Family MR had more land\& \& 0.0756 \& 0.679\\
+\& \& (0.0554) \& (0.476)\\
+Conflict pre-2012: HH member killed\& 0.0799 \& \& -1.494***\\
+\& (0.0588) \& \& (0.476)\\
+Conflict 2013-2014: Viol. against civilians\& 0.00885 \& -0.0184***\&\\
+\& (0.00627) \& (0.00477) \&\\
+Age of FR \& -0.00431 \& 0.00219 \& -0.0264\\
+\& (0.00602) \& (0.00448) \& (0.0349)\\
+Age of MR \& 0.00355 \& -0.00146 \& 0.0281\\
+\& (0.00435) \& (0.00390) \& (0.0320)\\
+FR completed primary education\& 0.0542 \& -0.109 \& -0.0536\\
+\& (0.0695) \& (0.0656) \& (0.672)\\
+FR completed secondary education\& -0.0147 \& 0.474***\& 0.602\\
+\& (0.129) \& (0.147) \& (1.417)\\
+MR completed primary education\& 0.0834 \& 0.0314 \& -0.347\\
+\& (0.0612) \& (0.0622) \& (0.512)\\
+MR completed secondary education\& -0.0523 \& 0.0408 \& 0.239\\
+\& (0.0703) \& (0.0764) \& (0.603)\\
+Household has a tin roof\& -0.0267 \& -0.114** \& 0.563\\
+\& (0.0537) \& (0.0509) \& (0.539)\\
+Household owns livestock\& 0.114** \& 0.0536 \& -0.235\\
+\& (0.0554) \& (0.0526) \& (0.490)\\
+territory==Uvira \& -0.0556 \& 0.295***\& 3.566***\\
+\& (0.0589) \& (0.0904) \& (1.104)\\
+territory==Fizi \& -0.0166 \& 0.404***\& -1.069\\
+\& (0.0560) \& (0.0763) \& (1.487)\\
+Project Beneficary \& -0.0854* \& 0.0492 \& 0.198\\
+\& (0.0461) \& (0.0450) \& (1.136)\\
+Constant \& 0.212 \& 0.247** \& 6.599***\\
+\& (0.133) \& (0.106) \& (1.420)\\
+Observations \& 350 \& 350 \& 350\\
+
+Standard errors clustered at the village level
+
+p \(<\) 0.1, **, p \(<\) 0.05, *** p \(<\) 0.01
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-Albutt2017}
+Albutt, Katherine, Jocelyn Kelly, Justin Kabanga, and Michael VanRooyen.
+2017. {``Stigmatisation and Rejection of Survivors of Sexual Violence in
+Eastern {Democratic Republic} of the {Congo}.''} \emph{Disasters} 41
+(2): 211--27. \url{https://doi.org/10.1111/disa.12202}.
+
+\bibitem[\citeproctext]{ref-Asadullah2018}
+Asadullah, M. Niaz, and Antonio Savoia. 2018. {``Poverty Reduction
+During 1990{\textendash}2013: {Did} Millennium Development Goals
+Adoption and State Capacity Matter?''} \emph{World Development} 105:
+70--82. \url{https://doi.org/10.1016/j.worlddev.2017.12.010}.
+
+\bibitem[\citeproctext]{ref-Autesserre2012a}
+Autesserre, Séverine. 2012. {``Dangerous Tales: {Dominant} Narratives on
+the {Congo} and Their Unintended Consequences.''} \emph{African Affairs}
+111 (443): 202--22. \url{https://doi.org/10.1093/afraf/adr080}.
+
+\bibitem[\citeproctext]{ref-Baaz2013}
+Baaz Eriksson, Maria, and Maria Stern. 2013. \emph{Sexual Violence as a
+Weapon of War? {Perceptions}, Prescriptions, Problems in the {Congo} and
+Beyond}. {London, UK}: {Zed Books}.
+
+\bibitem[\citeproctext]{ref-Babalola2014}
+Babalola, Stella, Amrita Gill-Bailey, and Mathurin Dodo. 2014.
+{``Prevalence and {Correlates} of {Experience} of {Physical} and {Sexual
+Intimate Partner Violence} Among {Men} and {Women} in {Eastern DRC}.''}
+\emph{Universal Journal of Public Health} 2 (1): 25--33.
+\url{https://doi.org/10.13189/ujph.2014.020104}.
+
+\bibitem[\citeproctext]{ref-Bartels2013}
+Bartels, Susan, Jocelyn Kelly, Jennifer Scott, Jennifer Leaning, Denis
+Mukwege, Nina Joyce, and Michael VanRooyen. 2013. {``Militarized {Sexual
+Violence} in {South Kivu}, {Democratic Republic} of {Congo}.''}
+\emph{Journal of Interpersonal Violence} 28 (2): 340--58.
+\url{https://doi.org/10.1177/0886260512454742}.
+
+\bibitem[\citeproctext]{ref-Bhattacharya}
+Bhattacharya, Manasi, Arjun S. Bedi, and Amrita Chhachhi. 2009.
+{``Marital {Violence} and {Women}'s {Employment} and {Property Status
+Evcidence} from {North Indian Villages}.''} {IZA}.
+\url{https://doi.org/10.1139/p87-134}.
+
+\bibitem[\citeproctext]{ref-Blair2012}
+Blair, Graeme, and Kosuke Imai. 2012. {``Statistical {Analysis} of {List
+Experiments}.''} \emph{Political Analysis} 20 (1): 47--77.
+\url{https://doi.org/10.1093/pan/mpr048}.
+
+\bibitem[\citeproctext]{ref-Blair2014}
+Blair, Graeme, Kosuke Imai, and Jason Lyall. 2014. {``Comparing and
+Combining List and Endorsement Experiments: {Evidence} from
+{Afghanistan}.''} \emph{American Journal of Political Science} 58 (4):
+1043--63. \url{https://doi.org/10.1111/ajps.12086}.
+
+\bibitem[\citeproctext]{ref-Bueno2017}
+Bueno, Cruz Caridad, and Errol A Henderson. 2017. {``Bargaining or
+{Backlash} ? {Evidence} on {Intimate Partner Violence} from the
+{Dominican Republic}.''} \emph{Feminist Economics} 23 (4): 90--116.
+\url{https://doi.org/10.1080/13545701.2017.1292360}.
+
+\bibitem[\citeproctext]{ref-Bulte2019}
+Bulte, Erwin H., and Robert Lensink. 2019. {``Women's Empowerment and
+Domestic Abuse: {Experimental} Evidence from {Vietnam}.''}
+\emph{European Economic Review}.
+\url{https://doi.org/10.1016/j.euroecorev.2019.03.003}.
+
+\bibitem[\citeproctext]{ref-Chuang2019}
+Chuang, Erica, Pascaline Dupas, Elise Huillery, and Juliette Seban.
+2019. {``Sex, {Lies} and {Measurement}.''}
+
+\bibitem[\citeproctext]{ref-Corstange2009}
+Corstange, Daniel. 2009. {``Sensitive Questions, Truthful Answers?
+{Modeling} the List Experiment with {LISTIT}.''} \emph{Political
+Analysis} 17 (1): 45--63. \url{https://doi.org/10.1093/pan/mpn013}.
+
+\bibitem[\citeproctext]{ref-Dave2010a}
+Dave, Chetan, Catherine C. Eckel, Cathleen A. Johnson, and Christian
+Rojas. 2010. {``Eliciting Risk Preferences: {When} Is Simple Better?''}
+\emph{Journal of Risk and Uncertainty} 41 (3): 219--43.
+\url{https://doi.org/10.1007/s11166-010-9103-z}.
+
+\bibitem[\citeproctext]{ref-Eckel2002}
+Eckel, Catherine C., and Philip J. Grossman. 2002. {``Sex Differences
+and Statistical Stereotyping in Attitudes Toward Financial Risk.''}
+\emph{Evolution and Human Behavior} 23 (4): 281--95.
+\url{https://doi.org/10.1016/S1090-5138(02)00097-1}.
+
+\bibitem[\citeproctext]{ref-Eswaran2011}
+Eswaran, Mukesh, and Nisha Malhotra. 2011. {``Domestic Violence and
+Women 's Autonomy in Developing Countries : Theory and Evidence.''}
+\emph{Canadian Journal of Economics} 44 (4): 1222--63.
+\url{https://doi.org/10.1111/j.1540-5982.2011.01673.x}.
+
+\bibitem[\citeproctext]{ref-Freedman2011}
+Freedman, Jane. 2011. {``Explaining Sexual Violence and Gender
+Inequalities in the {DRC}.''} \emph{Peace Review} 23 (2): 170--75.
+\url{https://doi.org/10.1080/10402659.2011.571601}.
+
+\bibitem[\citeproctext]{ref-Frye2017}
+Frye, Timothy, Scott Gehlbach, Kyle L. Marquardt, and Ora John Reuter.
+2017. {``Is {Putin}'s Popularity Real?''} \emph{Post-Soviet Affairs} 33
+(1): 1--15. \url{https://doi.org/10.1080/1060586X.2016.1144334}.
+
+\bibitem[\citeproctext]{ref-Gibbs2020}
+Gibbs, Andrew, Julienne Corboz, Esnat Chirwa, Carron Mann, Fazal Karim,
+Mohammed Shafiq, Anna Mecagni, Charlotte Maxwell-Jones, Eva Noble, and
+Rachel Jewkes. 2020. {``The Impacts of Combined Social and Economic
+Empowerment Training on Intimate Partner Violence, Depression, Gender
+Norms and Livelihoods Among Women: {An} Individually Randomised
+Controlled Trial and Qualitative Study in {Afghanistan}.''} \emph{BMJ
+Global Health} 5 (3): 1--17.
+\url{https://doi.org/10.1136/bmjgh-2019-001946}.
+
+\bibitem[\citeproctext]{ref-HarvardHumanitarianInitiative2009}
+Harvard Humanitarian Initiative. 2009. {``Characterizing {Sexual
+Violence} in the {Democratic Republic} of the {Congo}: {Profiles} of
+{Violence}, {Community Responses}, and {Implications} for the
+{Protection} of {Women},''} 1--64.
+
+\bibitem[\citeproctext]{ref-Hidrobo2016}
+Hidrobo, Melissa, Amber Peterman, and Lori Heise. 2016. {``The Effect of
+Cash, Vouchers, and Food Transfers on Intimate Partner Violence:
+{Evidence} from a Randomized Experiment in {Northern Ecuador}.''}
+\emph{American Economic Journal: Applied Economics} 8 (3): 284--303.
+\url{https://doi.org/10.1257/app.20150048}.
+
+\bibitem[\citeproctext]{ref-Hilhorst2018}
+Hilhorst, Dorothea, and Nynke Douma. 2018. {``Beyond the Hype? {The}
+Response to Sexual Violence in the {Democratic Republic} of the {Congo}
+in 2011 and 2014.''} \emph{Disasters} 42 (S1): S79--98.
+\url{https://doi.org/10.1111/disa.12270}.
+
+\bibitem[\citeproctext]{ref-Holbrook2010}
+Holbrook, Allyson L., and Jon A. Krosnick. 2010. {``Social Desirability
+Bias in Voter Turnout Reports: {Tests} Using the Item Count
+Technique.''} \emph{Public Opinion Quarterly} 74 (1): 37--67.
+\url{https://doi.org/10.1093/poq/nfp065}.
+
+\bibitem[\citeproctext]{ref-Holt2002}
+Holt, Charles A, and Susan K Laury. 2002. {``Risk {Aversion} and
+{Incentive Effects}.''} \emph{American Economic Review} 92 (5):
+1644--55.
+
+\bibitem[\citeproctext]{ref-HRW2002}
+Human Rights Watch. 2002. {``The War Within the War : Sexual Violence
+Against Women and Girls in {Eastern Congo}.''}
+
+\bibitem[\citeproctext]{ref-HumanRightsWatch2009}
+---------. 2009. \emph{Soldiers Who Rape, Commanders Who Condone:
+{Sexual} Violence and Military Reform Int He {Democratic Republic} of
+{Congo}}. \emph{Human Rights Watch Report 1-56432-510-5}. {New York}:
+{Human Rights Watch}.
+
+\bibitem[\citeproctext]{ref-Imai2011}
+Imai, Kosuke. 2011. {``Multivariate Regression Analysis for the Item
+Count Technique.''} \emph{Journal of the American Statistical
+Association} 106 (494): 407--16.
+\url{https://doi.org/10.1198/jasa.2011.ap10415}.
+
+\bibitem[\citeproctext]{ref-Johnson2010}
+Johnson, Kirsten, Jennifer Scott, Bigy Rughita, Michael Kisielewski,
+Jana Asher, Ricardo Ong, and Lynn Lawry. 2010. {``Association of {Sexual
+Violence} and {Human Rights Violations With Physical} and {Mental
+Health} in {Territories} of the {Eastern Democratic Republic} of the
+{Congo}.''} \emph{JAMA} 304 (5): 553--62.
+\url{https://doi.org/10.1001/jama.2010.1086}.
+
+\bibitem[\citeproctext]{ref-Kelly2018}
+Kelly, Jocelyn, Elizabeth Colantuoni, Courtland Robinson, and Michele R.
+Decker. 2018. {``From the Battlefield to the Bedroom: {A} Multilevel
+Analysis of the Links Between Political Conflict and Intimate Partner
+Violence in {Liberia}.''} \emph{BMJ Global Health} 3 (2): 1--11.
+\url{https://doi.org/10.1136/bmjgh-2017-000668}.
+
+\bibitem[\citeproctext]{ref-Kilonzo2009}
+Kilonzo, Nduku, Njoki Ndung'u, Nerida Nthamburi, Caroline Ajema, Miriam
+Taegtmeyer, Sally Theobald, and Rachel Tolhurst. 2009. {``Sexual
+Violence Legislation in Sub-{Saharan Africa}: The Need for Strengthened
+Medico-Legal Linkages.''} \emph{Reproductive Health Matters} 17 (34):
+10--19. \url{https://doi.org/10.1016/S0968-8080(09)34485-7}.
+
+\bibitem[\citeproctext]{ref-Kirby2015}
+Kirby, Paul. 2015. {``Ending Sexual Violence in Conflict: {The
+Preventing Sexual Violence Initiative} and Its Critics.''}
+\emph{International Affairs} 91 (3): 457--72.
+\url{https://doi.org/10.1111/1468-2346.12283}.
+
+\bibitem[\citeproctext]{ref-Kohli2012}
+Kohli, Anjalee, Maphie Tosha Makambo, Paul Ramazani, Isaya Zahiga, Biki
+Mbika, Octave Safari, Richard Bachunguye, Janvier Mirindi, and Nancy
+Glass. 2012. {``A {Congolese} Community-Based Health Program for
+Survivors of Sexual Violence.''} \emph{Conflict and Health} 6 (1): 1--9.
+\url{https://doi.org/10.1186/1752-1505-6-6}.
+
+\bibitem[\citeproctext]{ref-LaBrie2000}
+LaBrie, Joseph W., and Mitchell Earleywine. 2000. {``Sexual Risk
+Behaviors and Alcohol: {Higher} Base Rates Revealed Using the
+Unmatched-Count Technique.''} \emph{Journal of Sex Research} 37 (4):
+321--26. \url{https://doi.org/10.1080/00224490009552054}.
+
+\bibitem[\citeproctext]{ref-Martinsson2009}
+Martinsson, Peter, Matthias Sutter, and Fredrik Carlsson. 2009.
+{``Household {Decision Making} and the {Influence} of {Spouses} '
+{Income} , {Education} , and {Communist Party Membership} : {A Field
+Experiment} in {Rural China}.''} {IZA}.
+
+\bibitem[\citeproctext]{ref-Meng2017}
+Meng, Tianguang, Jennifer Pan, and Ping Yang. 2017. {``Conditional
+{Receptivity} to {Citizen Participation}: {Evidence From} a {Survey
+Experiment} in {China}.''} \emph{Comparative Political Studies} 50 (4):
+399--433. \url{https://doi.org/10.1177/0010414014556212}.
+
+\bibitem[\citeproctext]{ref-DHSCongoReport}
+MPSMRM, MSP, and ICF International. 2014. {``R{é}publique
+{D{é}mocratique} Du {Congo Enqu{ê}te D{é}mographique} Et de {Sant{é}}
+({EDS-RDC}) 2013-2014.''} {Minist{è}re du Plan et Suivi de la Mise en
+{œ}uvre de la R{é}volution de la Modernit{é}}.
+\url{https://doi.org/10.1787/aeo-2014-24-fr}.
+
+\bibitem[\citeproctext]{ref-Muller2019}
+Müller, Catherine, and Jean Pierre Tranchant. 2019. {``Domestic
+{Violence} and {Humanitarian Crises}: {Evidence} from the 2014 {Israeli
+Military Operation} in {Gaza}.''} \emph{Violence Against Women} 25 (12):
+1391--1416. \url{https://doi.org/10.1177/1077801218818377}.
+
+\bibitem[\citeproctext]{ref-Palermo2011}
+Palermo, Tia, and Amber Peterman. 2011. {``Undercounting, Overcounting
+and the Longevity of Flawed Estimates: {Statistics} on Sexual Violence
+in Conflict.''} \emph{Bulletin of the World Health Organization} 89
+(12): 924--25. \url{https://doi.org/10.2471/BLT.11.089888}.
+
+\bibitem[\citeproctext]{ref-Peterman2011}
+Peterman, Amber, Tia Palermo, and Caryn Bredenkamp. 2011. {``Estimates
+and Determinants of Sexual Violence Against Women in the {Democratic
+Republic} of {Congo}.''} \emph{American Journal of Public Health} 101
+(6): 1060--67. \url{https://doi.org/10.2105/AJPH.2010.300070}.
+
+\bibitem[\citeproctext]{ref-Peterman2018}
+Peterman, Amber, Tia Palermo, Sudhanshu Handa, and David Seidenfeld.
+2018. {``List Randomization for Soliciting Experience of Intimate
+Partner Violence: {Application} to the Evaluation of {Zambia}'s
+Unconditional Child Grant Program.''} \emph{Health Economics (United
+Kingdom)} 27 (3): 622--28. \url{https://doi.org/10.1002/hec.3588}.
+
+\bibitem[\citeproctext]{ref-Peterson2018}
+Peterson, Cora, Yang Liu, Marcie-jo Kresnow, Curtis Florence, Melissa T.
+Merrick, Sarah DeGue, and Colby N. Lokey. 2018. {``Short-Term {Lost
+Productivity} Per {Victim}: {Intimate Partner Violence}, {Sexual
+Violence}, or {Stalking}.''} \emph{American Journal of Preventive
+Medicine} 55 (1): 106--10.
+\url{https://doi.org/10.1016/J.AMEPRE.2018.03.007}.
+
+\bibitem[\citeproctext]{ref-Porter2019}
+Porter, Holly. 2019. {``Moral {Spaces} and {Sexual Transgression}:
+{Understanding Rape} in {War} and {Post Conflict}.''} \emph{Development
+and Change} 50 (4): 1009--32. \url{https://doi.org/10.1111/dech.12499}.
+
+\bibitem[\citeproctext]{ref-Post2002}
+Post, Lori A., Nancy J. Mezey, Christopher Maxwell, and Wilma Novalés
+Wibert. 2002. {``The {Rape Tax}: {Tangible} and {Intangible Costs} of
+{Sexual Violence}.''} \emph{Journal of Interpersonal Violence} 17 (7):
+773--82. \url{https://doi.org/10.1177/0886260502017007005}.
+
+\bibitem[\citeproctext]{ref-Raleigh2010}
+Raleigh, Clionadh, Andrew Linke, Håvard Hegre, and Joakim Karlsen. 2010.
+{``Introducing {ACLED}: {An} Armed Conflict Location and Event
+Dataset.''} \emph{Journal of Peace Research} 47 (5): 651--60.
+\url{https://doi.org/10.1177/0022343310378914}.
+
+\bibitem[\citeproctext]{ref-Saile2013}
+Saile, Regina, Frank Neuner, Verena Ertl, and Claudia Catani. 2013.
+{``Prevalence and Predictors of Partner Violence Against Women in the
+Aftermath of War: {A} Survey Among Couples in {Northern Uganda}.''}
+\emph{Social Science and Medicine} 86: 17--25.
+\url{https://doi.org/10.1016/j.socscimed.2013.02.046}.
+
+\bibitem[\citeproctext]{ref-Samy2011}
+Samy, Yiagadeesen, and David Carment. 2011. {``The {Millenium
+Development Goals} and {Fragile States}: {Focusing} on {What Really
+Matters}.''} \emph{The Fletcher Forum of World Affairs} 35 (1): 91--108.
+
+\bibitem[\citeproctext]{ref-Sniderman1991}
+Sniderman, Paul M., Philip E. Tetlock, and Thomas Piazza. 1991.
+{``Codebook for the 1991 {Race} and {Politics Survey}.''} {Berkeley}:
+{University of California}.
+
+\bibitem[\citeproctext]{ref-Stark2017}
+Stark, Lindsay, Marni Sommer, Kathryn Davis, Khudejha Asghar, Asham
+Assazenew Baysa, Gizman Abdela, Sophie Tanner, and Kathryn Falb. 2017.
+{``Disclosure Bias for Group Versus Individual Reporting of Violence
+Amongst Conflict-Affected Adolescent Girls in {DRC} and {Ethiopia}.''}
+\emph{PLoS ONE} 12 (4): 1--12.
+\url{https://doi.org/10.1371/journal.pone.0174741}.
+
+\bibitem[\citeproctext]{ref-Steiner2009}
+Steiner, Birthe, Marie T Benner, Egbert Sondorp, K Peter Schmitz, Ursula
+Mesmer, and Sandrine Rosenberger. 2009. {``Sexual Violence in the
+Protracted Conflict of {DRC} Programming for Rape Survivors in {South
+Kivu}.''} \emph{Conflict and Health} 3 (1): 1--9.
+\url{https://doi.org/10.1186/1752-1505-3-3}.
+
+\bibitem[\citeproctext]{ref-Tsai2019}
+Tsai, Chi-lin. 2019. {``Statistical Analysis of the Item-Count Technique
+Using {Stata}.''} \emph{The Stata Journal} 19 (2): 390--434.
+\url{https://doi.org/10.1177/1536867X19854018}.
+
+\bibitem[\citeproctext]{ref-UnitedNations2015}
+United Nations. 2015. {``The {Millennium Development Goals Report}.''}
+\emph{United Nations}, 72. \url{https://doi.org/978-92-1-101320-7}.
+
+\bibitem[\citeproctext]{ref-Verwijen2016}
+Verwijen, Judith. 2016. \emph{A {Microcosm} of {Militarization}:
+{Conflict}, {Governance} and {Armed Mobilization} in {Uvira},
+{South-Kivu}}. {Nairobi, Kenya}: {Rift Valley Institute/Usalama
+Project}. \url{https://doi.org/10.13140/RG.2.1.2995.9283}.
+
+\end{CSLReferences}
+
+\end{document}
