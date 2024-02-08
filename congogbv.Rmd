@@ -16,7 +16,7 @@ bibliography: congogbv.bib
 library(tidyverse)
 library(flextable)
 set_flextable_defaults(fonts_ignore=TRUE)
-
+library(officer)
 library(here)
 
 # to extract:
@@ -28,6 +28,16 @@ varlabels <-
 
 knitr::opts_chunk$set(ft.latex.float = "float",eval=TRUE, include = TRUE, echo=FALSE, warning=TRUE, error=TRUE, message=FALSE)
 #knitr::opts_chunk$set(ft.keepnext = TRUE)
+
+#helper function
+FitFlextableToPage <- function(ft, pgwidth = 6){
+
+  ft_out <- ft %>% autofit()
+
+  ft_out <- width(ft_out, width = dim(ft_out)$widths*pgwidth /(flextable_dim(ft_out)$widths))
+  return(ft_out)
+}
+
 
 ```
 
@@ -287,9 +297,6 @@ households.
 
 
 ```{r table1}
-
-
-library(officer)
 
 read_csv(here("tables/table1.csv")) %>% 
   flextable() %>%
@@ -558,16 +565,25 @@ than for direct questions.
 In a regression framework, the incidence would be estimated as follows
 [@Holbrook2010]:
 
-$$\label{eq:basic}
-NumIssues_i = \beta_0 + \beta_1 Treatment_i + \epsilon_i$$
+
+\begin{equation} 
+NumIssues_i = \beta_0 + \beta_1 Treatment_i + \epsilon_i
+(\#eq:basic)
+\end{equation}
 
 Where $NumIssues_i$ is the number of issues experienced by respondent
 $i$, and $Treatment_i$ is her treatment assignment. Coefficient
 $\beta_1$ yields the estimate for the incidence. To find correlates of
-SGBV, equation [\[eq:basic\]](#eq:basic){reference-type="ref"
-reference="eq:basic"} can be augmented using interaction terms as
-follows: $$\label{eq:interaction}
-NumIssues_i = \beta_0 + \beta_1 Treatment_i + \beta_2 X_i + \beta_3 Treatment_i X_i + \epsilon_i$$
+SGBV, equation \@ref{eq:basic} can be augmented using interaction terms as
+follows:
+
+<!--
+\begin{equation} 
+
+NumIssues_i = \beta_0 + \beta_1 Treatment_i + \beta_2 X_i + \beta_3 Treatment_i X_i + \epsilon_i
+(\#eq:interaction)
+
+\end{equation}
 
 Where $X_i$ is an explanatory variable and coefficient $\beta_3$ gives
 the estimate for the additional incidence of SGBV associated with a unit
@@ -576,50 +592,63 @@ variables. Again, this is much less efficient than when using direct
 questioning. By using more sophisticated methods proposed by @Imai2011
 (and implemented by [@Tsai2019] in Stata), more efficient estimates can
 be obtained.
+ -->
+```{r table4summstats}
 
-::: tabularx
-lCCCCCCC
+# flextable orders the variables alphabetically, but I want to preserve the order
+# because the variabe order is the same in summstats and difcol, I can just use sequential numbers
+# making sure to do the same with the labels 
 
-&(1)&(2)&(3)&(4)&(5)&(6)&(7) &&&&(4)-(6) &N&Mean&N&Mean&N&Mean& Number
-of reported issues&593&2.49&291&2.65&302&2.34&0.30\*\*\*
-&&(0.94)&&(1.03)&&(0.83)& Conflict pre-2012: property
-lost&530&0.77&264&0.79&266&0.75&0.04 &&(0.42)&&(0.41)&&(0.43)& Conflict
-pre-2012: HH member killed&530&0.49&264&0.51&266&0.48&0.03
-&&(0.50)&&(0.50)&&(0.50)& Conflict 2013--2014: Viol. against
-civilians&496&6.73&239&6.68&257&6.77&--0.08 &&(4.69)&&(4.70)&&(4.69)&
-Family MR had more land&450&0.33&224&0.33&226&0.33&--0.00
-&&(0.47)&&(0.47)&&(0.47)& Family FR had more
-land&450&0.21&224&0.22&226&0.19&0.02 &&(0.41)&&(0.41)&&(0.40)&
-Bargaining: choice Female Respondent&593&3.58&291&3.59&302&3.56&0.04
-&&(2.06)&&(2.08)&&(2.05)& Barganing: choice Male
-Respondent&184&3.45&97&3.49&87&3.40&0.09 &&(2.14)&&(2.12)&&(2.18)&
-Bargaining: closer to MR&184&0.40&97&0.37&87&0.44&--0.07
-&&(0.49)&&(0.49)&&(0.50)& Bargaining: closer to
-FR&184&0.27&97&0.32&87&0.21&0.11\* &&(0.44)&&(0.47)&&(0.41)& Age of
-FR&593&41.09&291&40.49&302&41.67&--1.17 &&(14.01)&&(14.06)&&(13.96)& Age
-of MR&449&45.67&224&44.48&225&46.85&--2.37\*\*
-&&(13.80)&&(13.09)&&(14.40)& HH Head
-Female&593&0.26&291&0.24&302&0.27&--0.03 &&(0.44)&&(0.43)&&(0.45)& FR
-completed primary education&593&0.25&291&0.26&302&0.25&0.01
-&&(0.44)&&(0.44)&&(0.43)& FR completed secondary
-education&593&0.03&291&0.02&302&0.04&--0.02 &&(0.17)&&(0.13)&&(0.20)& MR
-completed primary education&449&0.63&224&0.63&225&0.63&0.01
-&&(0.48)&&(0.48)&&(0.48)& MR completed secondary
-education&449&0.20&224&0.19&225&0.20&--0.01 &&(0.40)&&(0.39)&&(0.40)&
-Household has a tin roof&593&0.61&291&0.62&302&0.59&0.03
-&&(0.49)&&(0.49)&&(0.49)& Household owns
-livestock&593&0.49&291&0.51&302&0.47&0.03 &&(0.50)&&(0.50)&&(0.50)&
-territory==Uvira&593&0.24&291&0.24&302&0.23&0.01
-&&(0.43)&&(0.43)&&(0.42)&
-territory==Fizi&593&0.63&291&0.65&302&0.62&0.03
-&&(0.48)&&(0.48)&&(0.49)& Project
-Beneficary&593&0.50&291&0.49&302&0.50&--0.01 &&(0.50)&&(0.50)&&(0.50)&
-:::
+numvars <- read_csv(here("tables/summstats_diffs.csv")) %>% nrow()
+numtreatment <- 3
 
-::: flushleft
-FR = Female Respondent; MR = Male Respondent; Standard Deviations in
-parentheses; \*p $<$ 0.1,\*\*p $<$ 0.05,\*\*\*p $<$ 0.01
-:::
+summstats <- 
+  read_csv(here("tables/summstats.csv")) %>%
+  left_join(read_csv(here("tables/cleandata_collabels.csv"))) %>%
+  mutate(Treatment = ifelse(Treatment != "Overall",paste0(" ",Treatment),Treatment)) %>%
+  mutate(Variable = str_pad(rep(1:numvars,numtreatment),2,pad="0")) 
+
+difcol <- 
+  read_csv(here("tables/summstats_diffs.csv")) %>%
+  mutate(Variable = str_pad(1:numvars,2,pad="0"))
+
+labels <- summstats %>% pull(label) %>% unique()
+names(labels) <- str_pad(1:numvars,2,pad="0")
+
+summstats %>%
+  tabulator(rows = "Variable",
+            columns = "Treatment",
+            datasup_last = difcol,
+            `N` = as_paragraph(as_chunk(n,digits=0)),
+            `Mean` = as_paragraph(as_chunk(mean,digits=2)),
+            `SD` = as_paragraph(as_chunk(sd,digits=2)))%>%
+            #`Mean \n (SD)` =  as_paragraph(as_chunk(mean,digits=2,),as_chunk("\n("),as_chunk(sd,digits=2),")")) %>%
+  as_flextable() %>%
+  labelizor(j = "Variable", labels = labels, part = "all") %>% 
+
+
+
+  valign(j = 3:12, valign = "top", part = "header") %>%
+
+  set_caption(caption = "Descriptive statistics by treatment assignment", 
+              style = "Table Caption", 
+              autonum = run_autonum(seq_id = "tab", bkm = "summstats")) %>%
+  fontsize(size = 8, part = "all") %>%
+  fix_border_issues() %>%
+
+  padding(padding = 0,part = "all") %>%
+  autofit() %>%
+  FitFlextableToPage() 
+
+  #for whatever reason, the table footer won't render nicely; i hope i can get to it later
+
+  # add_footer_lines(values = "*p < 0.1,**p < 0.05,***p < 0.01", top = FALSE) %>%
+  # fontsize(size = 3, part = "footer") %>%
+  # autofit() %>%
+  # FitFlextableToPage() 
+
+```
+
 
 # Results {#results .unnumbered}
 
