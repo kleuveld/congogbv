@@ -10,7 +10,8 @@ latex_engine: xelatex
 This rmarkdown file analyses data, and prepares input tables for the paper. These
 input tables do not contain any formatting, just the coefficients. The paper itself
 will do the formatting. This means that the input tables can go on GitHub, even if 
-the raw data itself can't, and GitHub can thus build the paper.
+the raw data itself can't, and GitHub can thus build the paper. This guarantees that
+anyone can see my coefficents and build my paper.
 
 # Load packages and data
 
@@ -21,8 +22,9 @@ For now, I will just use the Stata data as prepared by `congogbv_dataprep.do`:
 library(tidyverse)
 library(haven)
 library(here)
+library(estimatr)
+library(list)
 
-library(flextable)
 set_flextable_defaults(fonts_ignore=TRUE)
 
 cleandata <- read_dta(here("data/clean/analysis.dta"))
@@ -67,29 +69,30 @@ dhs_national <-
   dhs %>% 
   summarize(across(.cols = c(agewife,tinroof:eduwife_sec),
                          .fns  = ~wgt_mean(.x,wgt))) %>%
-  mutate(label = "dhs_national")
+  mutate(label = "DHS National Mean")
 
 dhs_skivu <-
   dhs %>% 
   filter(province == 11) %>%
   summarize(across(.cols = c(agewife,tinroof:eduwife_sec),
                          .fns  = ~wgt_mean(.x,wgt)))%>%
-  mutate(label = "dhs_skivu")
+  mutate(label = "DHS South Kivu Mean")
 
 sample_full <-
 cleandata %>% 
 summarize(across(.cols = c(agewife,tinroof,eduwife_prim,eduwife_sec),
                 .fns = ~mean(.x, na.rm = TRUE) %>% num(digits = 2)))%>%
-  mutate(label = "sample_full")
+  mutate(label = "Full Sample Mean")
 
 sample_gendermodule <-
 cleandata %>% 
   filter(!is.na(ball5)) %>%
   summarize(across(.cols = c(agewife,tinroof,eduwife_prim,eduwife_sec),
                   .fns = ~mean(.x, na.rm = TRUE) %>% num(digits = 2)))%>%
-  mutate(label = "sample_gendermodule")
+  mutate(label = "Gender Module Mean")
 
 rbind(dhs_national,dhs_skivu,sample_full,sample_gendermodule) %>%
+select(label,everything()) %>%
 write_csv(here("tables/table1.csv"))
 
 
@@ -98,7 +101,7 @@ write_csv(here("tables/table1.csv"))
 
 ## Table 2
 
-I need to add the labels still:
+This is a simple table that can be done with `tabyl()` from the `janitor` package.
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
@@ -113,11 +116,12 @@ cleandata %>%
 
 ## Table 3
 
-Payouts.
+This table simply contains payouts. These are defined in `table3.csv`
 
 ## Table 4
 
-First I compute means and sds by by group, using a custom function.
+First I compute means and sds by by group, using a custom function. I create a virtual
+"overall" group by simply duplicating the dataset.
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
@@ -169,7 +173,7 @@ sample %>%
 
 ```
 
-
+Then, I compute the difference between the groups:
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
@@ -206,64 +210,9 @@ sample %>%
 
 ```
 
-In the paper, it will look like this:
-
-I use a function I found on [StackOverflow](https://stackoverflow.com/questions/57175351/flextable-autofit-in-a-rmarkdown-to-word-doc-causes-table-to-go-outside-page-mar) to
-fit the table to the page:
-
-```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
-
-library(flextable)
-
-FitFlextableToPage <- function(ft, pgwidth = 6){
-
-  ft_out <- ft %>% autofit()
-
-  ft_out <- width(ft_out, width = dim(ft_out)$widths*pgwidth /(flextable_dim(ft_out)$widths))
-  return(ft_out)
-}
-
-
-# flextable orders the variables alphabetically, but I want to preserve the order
-# because the variabe order is the same in summstats and difcol, I can just use sequential numbers
-# making sure to do the same with the labels 
-numvars <- read_csv(here("tables/summstats_diffs.csv")) %>% nrow()
-numtreatment <- 3
-
-summstats <- 
-  read_csv(here("tables/summstats.csv")) %>%
-  left_join(read_csv(here("tables/cleandata_collabels.csv"))) %>%
-  mutate(Treatment = ifelse(Treatment != "Overall",paste0(" ",Treatment),Treatment)) %>%
-  mutate(Variable = str_pad(rep(1:numvars,numtreatment),2,pad="0")) 
-
-difcol <- 
-  read_csv(here("tables/summstats_diffs.csv")) %>%
-  mutate(Variable = str_pad(1:numvars,2,pad="0"))
-
-labels <- summstats %>% pull(label) %>% unique()
-names(labels) <- str_pad(1:numvars,2,pad="0")
-
-summstats %>%
-  tabulator(rows = "Variable",
-            columns = "Treatment",
-            datasup_last = difcol,
-            `N` = as_paragraph(as_chunk(n,digits=0)),
-            #`Mean (SD)` =  as_paragraph(as_chunk(fmt_avg_dev(mean, sd, digit1=2,digit2 = 2)))) %>%
-            `Mean \n (SD)` =  as_paragraph(as_chunk(mean,digits=2,),as_chunk("\n("),as_chunk(sd,digits=2),")")) %>%
-  as_flextable() %>%
-  labelizor(j = "Variable", labels = labels, part = "all") %>% 
-  fix_border_issues() %>%
-  valign(j = 3:12,valign = "top", part = "header") %>%
-  autofit() %>%
-  FitFlextableToPage() 
-
-
-
-```
-
 ## Table 5: Conflict Exposure by Territory
 
-
+This is a relatively simple table:
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
@@ -279,27 +228,6 @@ cleandata %>%
 
 ```
 
-In the paper, I will use this:
-
-```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
-
-
-read_csv(here("tables/violence_by_territory.csv")) %>%
-  mutate(Territory = ifelse(Territory == "Overall", Territory,paste0(" ",Territory))) %>%
-  tabulator(rows = "Variable",
-            columns = "Territory",
-            #`Mean (SD)` =  as_paragraph(as_chunk(fmt_avg_dev(mean, sd, digit1=2,digit2 = 2)))) %>%
-            `Mean \n (SD)` =  as_paragraph(as_chunk(mean,digits=2,),as_chunk("\n("),as_chunk(sd,digits=2),")")) %>%
-  as_flextable() %>%
-  labelizor(j = "Variable", labels = col_labels, part = "all") %>% 
-  fix_border_issues() %>%
-  autofit() %>%
-  FitFlextableToPage() 
-
-
-
-```
-
 
 ## Table 6 and Table 7
 
@@ -312,9 +240,6 @@ The function (`mean_diff_table()`) to create this table is a bit ugly, but i con
 Each function outputs a data frame in long format: these are bound together to one large one, that can be used by `flextable::tabulator()`.
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
-
-library(estimatr)
-
 
 mean_diff_table <- function(.df,var){
 
@@ -403,80 +328,15 @@ mean_diff_table <- function(.df,var){
 
 }
 
-
-
 quos(victimproplost, victimfamlost, acledviolence10d,husbmoreland, wifemoreland, barghusbandcloser, bargwifecloser) %>%
   map(~mean_diff_table(sample,!!.x)) %>%
   reduce(bind_rows) %>%
   write_csv(here("tables/meandifftab.csv"))
 
-
-
-```
-
-```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
-
-library(flextable)
-
-
-p2stars <- function(p){
-  case_when(p < 0.01 ~ "***",
-                    p < 0.05 ~ "**",
-                    p < 0.1 ~ "*",
-                    .default = "" )
-}
-
-format_stderror <- function(s){
-  ifelse(is.na(s),"",sprintf("\n(%.2f)",s))
-}
-
-
-meandifftab <-
-  read_csv(here("tables/meandifftab.csv")) %>%
-  mutate(stat_subgroup = ifelse(stat_subgroup == "Control", " Control",stat_subgroup ),
-        stat = ifelse(stat == "Mean", " Mean",stat),
-        stat_subgroup = ifelse(is.na(stat_subgroup)," ",stat_subgroup))
-
-
-
-meandifftab %>%
-  filter(var %in% c("victimproplost", "victimfamlost", "acledviolence10d")) %>%
-  tabulator(rows = c("var","group"),
-            columns = c("stat","stat_subgroup"),
-            `Mean` =  as_paragraph(as_chunk(estimate,digits=2),
-                                   as_chunk(p2stars(p.value)),
-                                   as_chunk(format_stderror(std.error)))) %>%
-  as_flextable(spread_first_col = TRUE) %>%
-  padding(i = c(2:4,6:8,10:12), j=1, padding.left=20) %>%
-  mk_par(i = 1, j = c(1,2), as_paragraph(''),part = "header") %>%
-  labelizor(labels = col_labels, part = "all") %>%
-  bold(i = ~ !is.na(var), bold = TRUE) %>%
-  align(i = ~ !is.na(var), align = "left") %>%
-  autofit() %>%
-  FitFlextableToPage()
-
-
-meandifftab %>%
-filter(var %in% c("husbmoreland", "wifemoreland", "barghusbandcloser", "bargwifecloser")) %>%
-  tabulator(rows = c("var","group"),
-            columns = c("stat","stat_subgroup"),
-            `Mean` =  as_paragraph(as_chunk(estimate,digits=2),
-                                   as_chunk(p2stars(p.value)),
-                                   as_chunk(format_stderror(std.error)))) %>%
-  as_flextable(spread_first_col = TRUE) %>%
-  padding(i = c(2:4,6:8,10:12), j=1, padding.left=20) %>%
-  mk_par(i = 1, j = c(1,2), as_paragraph(''),part = "header") %>%
-  labelizor(labels = col_labels, part = "all") %>%
-  bold(i = ~ !is.na(var), bold = TRUE) %>%
-  align(i = ~ !is.na(var), align = "left") %>%
-  autofit() %>%
-  FitFlextableToPage()
-
-
 ```
 
 
-## Table 6
+## Table 8
 
 
 I first define a number of helper varaibles:
@@ -487,11 +347,6 @@ I first define a number of helper varaibles:
 I also save my `sample` as a data frame (was a tibble), because `ict_reg()` didn't work on a tibble.
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
-
-install.packages("list")
-
-library(list)
-
 
 #outputs a tidy df for ict_reg
 tidy_ict <- function(reg1){
@@ -529,111 +384,34 @@ Then I need to do some convenience things:
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
-
-
 controls <- c("agewife", "agehusband", "genderhead", "eduwife_sec", "eduhusband_prim", "tinroof", "livestockany", "terrfe_2", "terrfe_3", "treatment")
-
-
 
 #list of model specification, in particular depvars to include with controls
 specs <- list(reg1 = "husbmoreland", 
               reg2 = "victimfamlost",
               reg3 = "acledviolence10",
-              reg4 = "attwifetotal",
-              reg5 = c("husbmoreland", "victimfamlost", "acledviolence10", "attwifetotal"))
+              reg4 = c("husbmoreland", "victimfamlost", "acledviolence10", "attwifetotal"))
 
 ```
 
 Then comes the good stuff! I loop over the list using `imap()`, where each step returns a nice data frame created by `tidy_ict()`. `imap()`
 can return the name of the list element in the current iteration, which I save in the `model` variable.
 
-Because `tabulator()` makes a mess of orders, I create a column with the order I want, and call it `order`: I prepend the varaibles that
-I want at the top of the table with `01`; the intercept I prepend with `99` so it goes at the bottom. The rest get values in between. 
-I also merge in the variable labels, to that I know which label to put with each item of `order`. 
-
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 library(list)
 
 #run all regressions in the specifications
-imap(specs, ~ictreg(reformulate(c(.x,    controls), response="numballs"), treat = "ball5", J = 4, method = "lm", data = sample_df) %>%
+imap(specs, ~ictreg(reformulate(c(.x, controls), response="numballs"), treat = "ball5", J = 4, method = "lm", data = sample_df) %>%
                   tidy_ict() %>% 
                   mutate(model = .y)) %>%
   reduce(bind_rows) %>%
   select(model,term,estimate,std.error,p.value) %>%
-  left_join(read_csv(here("tables/cleandata_collabels.csv")),by = join_by(term == Variable)) %>%
-  mutate(label = ifelse(term == "(Intercept)","Constant",label)) %>%
-  mutate(order =case_when(term == "husbmoreland" ~ "01",
-                          term == "victimfamlost" ~ "02",
-                          term == "acledviolence10" ~ "03",
-                          term == "attwifetotal" ~ "04",
-                          term == "(Intercept)" ~ "99",
-                          .default = "90"),
-        term = paste0(order,term)) %>%
-  
   write_csv(here("tables/regression_results.csv"))
 
 # I can't find the N in ict_reg output; this finds the number of complete cases for each specification
 map(specs,~sum(complete.cases(sample[,c(.x,controls,"numballs")])))
 
 ```
-
-Finally, the below can go into the paper. I have a little helper function which adds a footer row with the Ns to a flextable.
-The Ns itself I input manually here, because I can't be bothered to do it properly.
-
-The `tabulator()` call is quite complex, but it works, and can be expanded reasonably well.
-
-```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
-
-
-add_scalars <- function(x,label,values){
-
-  row_vector <- vector(mode="character", length = 1 + length(values) * 2)
-
-  row_vector[1] <- label
-  for (i in 1:length(values)) {
-      footercolumn <- 1 + i * 2
-      row_vector[footercolumn] <- values[i]
-  }
-
-  x %>%
-    add_footer_row(top = FALSE, values = row_vector, colwidths = rep(1,ncol_keys(.)))
-
-}
-
-
-regs <-
-  read_csv(here("tables/regression_results.csv"))
-
-
-n <- c(449,402,379,449,350)
-
-labels <-
-  regs %>%
-  distinct(term,label) %>%
-  pull(label, name = term) 
-
-model_labels <- paste0("(",1:5,")")
-names(model_labels) <- paste0("reg",1:5)
-
-
-regs %>%
-  tabulator(rows = c("term"),
-          columns = c("model"),
-          `Beta` =  as_paragraph(as_chunk(estimate,digits=2),
-                                   as_chunk(p2stars(p.value)),
-                                   as_chunk(format_stderror(std.error)))) %>%
-  as_flextable() %>%
-  add_scalars("N",n) %>%
-
-  labelizor(labels = labels, part = "all") %>%
-  labelizor(labels = model_labels, part = "header") %>%  
-  theme_booktabs() %>%
-  autofit()  %>%
-  FitFlextableToPage()
-
-```
-
-
 
 
 # Table A1
@@ -692,46 +470,6 @@ write_csv(here("tables/sampleselection_scalars.csv"))
 
 ```
 
-Here's the table:
-
-```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
-
-
-
-coeffs <-
-read_csv(here("tables/sampleselection_coeffs.csv"))
-
-
-scalars <-
-read_csv(here("tables/sampleselection_scalars.csv"))
-
-
-n <- scalars[["nobs"]]
-
-
-
-model_labels <- c("(1)\nWife","(2)\nHusband","(3)\nCouple")
-names(model_labels) <- paste0("reg",1:3)
-
-coeffs %>%
-  tabulator(rows = c("term"),
-          columns = c("model"),
-          `Beta` =  as_paragraph(as_chunk(estimate,digits=2),
-                                   as_chunk(p2stars(p.value)),
-                                   as_chunk(format_stderror(std.error)))) %>%
-  as_flextable() %>%
-  add_scalars("N",n) %>%
-  labelizor(j = 1, labels = col_labels, part = "all") %>%
-  labelizor(labels = model_labels, part = "header") %>%  
-  theme_booktabs() %>%
-  autofit()  %>%
-  FitFlextableToPage()
-
-
-
-
-```
-
 # Table A2
 
 Basically a copy-paste from above:
@@ -765,7 +503,7 @@ regs <-
 
 
 regs$coeffs %>%
-write_csv(here("tables/determinants_coeffs.csv"))
+  write_csv(here("tables/determinants_coeffs.csv"))
 
 
 regs$scalars %>%
@@ -773,54 +511,65 @@ write_csv(here("tables/determinants_scalars.csv"))
 
 ```
 
-Here's the table:
+# Figures
+
+## Figure 1
+
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
 
-coeffs <-
-  read_csv(here("tables/determinants_coeffs.csv")) %>%
-  left_join(read_csv(here("tables/cleandata_collabels.csv")),by = join_by(term == Variable)) %>%
-  mutate(label = ifelse(term == "(Intercept)","Constant",label)) %>%
-  mutate(order =case_when(term == "husbmoreland" ~ "01",
-                          term == "victimfamlost" ~ "02",
-                          term == "acledviolence10" ~ "03",
-                          term == "(Intercept)" ~ "99",
-                          .default = "90"),
-        term = paste0(order,term))
+sample %>%
+  select(numballs, Treatment) %>%
+  group_by(Treatment) %>%
+  summarize(n = n(),
+            sd = sd(numballs),
+            numballs = mean(numballs)) %>%
+  mutate(margin = qt(0.975,df=n-1)*sd/sqrt(n),
+         ci.lower = numballs - margin,
+         ci.higher = numballs + margin) %>%
+  write_csv(here("tables/dataforgraphs1.csv"))
 
 
-labels <-
-  coeffs %>%
-  distinct(term,label) %>%
-  pull(label, name = term) 
+read_csv(here("tables/dataforgraphs1.csv")) %>%
+ggplot(aes(numballs, Treatment)) +
+geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher)) +
+xlim(0,5) + 
+xlab("Number of reported issues")
 
 
-scalars <-
-read_csv(here("tables/determinants_scalars.csv"))
 
 
-n <- scalars[["nobs"]]
+```
+
+## Figure 2
 
 
-model_labels <- c("(1)\nFamily MR had more land","(2)\nBargaining: closer to FR","(3)\nConflict pre-2012:HH member killed
-")
-names(model_labels) <- paste0("reg",1:3)
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
-coeffs %>%
-  tabulator(rows = c("term"),
-          columns = c("model"),
-          `Beta` =  as_paragraph(as_chunk(estimate,digits=2),
-                                   as_chunk(p2stars(p.value)),
-                                   as_chunk(format_stderror(std.error)))) %>%
-  as_flextable() %>%
-  add_scalars("N",scalars[["nobs"]]) %>%
-  labelizor(j = 1, labels = labels, part = "all") %>%
-  labelizor(labels = model_labels, part = "header") %>%  
-  theme_booktabs() %>%
-  autofit()  %>%
-  FitFlextableToPage()
+var = rlang::quo_text(enquo(var))
 
+
+dataforgraphs <- function(df, var){
+  df %>%
+  mutate(group = {{ var }}) %>%
+  select(numballs, Treatment,group) %>%
+  filter(!is.na(group)) %>%
+  group_by(Treatment,group) %>%
+  mutate(group = as.character(as_factor(group))) %>%
+  summarize(n = n(),
+            sd = sd(numballs, na.rm = TRUE),
+            numballs = mean(numballs, na.rm = TRUE)) %>%
+  mutate(margin = qt(0.975,df=n-1)*sd/sqrt(n),
+         ci.lower = numballs - margin,
+         ci.higher = numballs + margin,
+         var = rlang::quo_text(enquo(var))) 
+}
+
+quos(victimproplost,victimfamlost,acledviolence10d, statpar, bargresult) %>%
+  map(~dataforgraphs(sample,!!.x)) %>%
+  reduce(bind_rows) %>%
+  write_csv(here("tables/dataforgraphs.csv"))
 
 
 
