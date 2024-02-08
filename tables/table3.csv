@@ -1,0 +1,7 @@
+﻿,Low,High,Expected,Risk aversion
+1,"4,000 CDF","4,000 CDF","4,000 CDF",Extremely risk-averse
+2,"3,600 CDF","4,800 CDF","4,200 CDF",Extremely risk-averse
+3,"3,200 CDF","5,600 CDF","4,400 CDF",Moderately risk-averse
+4,"2,800 CDF","6,400 CDF","4,600 CDF",Moderately risk-averse
+5,"2,400 CDF","7,200 CDF","4,800 CDF",Risk-neutral
+6,"1,400 CDF","8,200 CDF","4,800 CDF",Risk-loving

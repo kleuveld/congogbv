@@ -10,6 +10,7 @@ bibliography: congogbv.bib
 ---
 
 
+
 ```{r setup, eval=TRUE, include = FALSE, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE}
 
 library(tidyverse)
@@ -30,6 +31,15 @@ knitr::opts_chunk$set(ft.latex.float = "float",eval=TRUE, include = TRUE, echo=F
 
 ```
 
+```{=latex}
+
+\makeatletter
+  \providecommand*\setfloatlocations[2]{\@namedef{fps@#1}{#2}}
+\makeatother
+\setfloatlocations{figure}{h}
+\setfloatlocations{table}{h}
+
+```
 
 # Introduction {#introduction .unnumbered}
 
@@ -276,7 +286,7 @@ for an average of 12 households per community, for a total of 889
 households.
 
 
-```{r}
+```{r table1}
 
 
 library(officer)
@@ -300,8 +310,7 @@ read_csv(here("tables/table1.csv")) %>%
   footnote(i = c(1,2),j = 1, value = as_paragraph("DHS = Demographic Health Survey (MPSMRM, 2014)"), ref_symbols = "b", part = "body", inline = TRUE, sep = ".") %>%
   set_caption(caption = "Comparison of DHS and sample data", 
               style = "Table Caption", 
-              autonum = run_autonum(seq_id = "tab", bkm = "dhscompare")) %>%
-  knit_print()
+              autonum = run_autonum(seq_id = "tab", bkm = "dhscompare"))
 
 
 ```
@@ -315,28 +324,43 @@ Program (columns 1-2). Women in the study sample are older, and less
 likely to have finished school, than the provincial average in South
 Kivu.
 
-::: {#tab:bargsample}
-  ------------------- ----------------- --------- -------- ------------ -------
-                       Male Respondent                                  
-  Female Respondent       Consented      Refused   Absent   No Husband   Total
-                             No.           No.      No.        No.        No.
-  Consented                  184            3       253        153        593
-  Refused                     0             0        0          1          1
-  Absent                      4             0        0          1          5
-  No Wife                    282            3        2          3         290
-  Total                      470            6       255        158        889
-  ------------------- ----------------- --------- -------- ------------ -------
 
-  : Gender module sample make up
-:::
+```{r table2}
+
+ read_csv(here("tables/table2.csv")) %>%
+ flextable() %>%
+
+ #header
+ add_header_row(top = TRUE, values = c("","Male Repondent"),colwidths = c(1,5)) %>%
+ mk_par(i = 2, j = 1, as_paragraph("Female Respondent"),part="header") %>%
+ mk_par(i = 2, j = 2, as_paragraph("Consented"),part="header") %>%
+ mk_par(i = 2, j = 3, as_paragraph("Refused"),part="header") %>%
+ mk_par(i = 2, j = 4, as_paragraph("Absent"),part="header") %>%
+ mk_par(i = 2, j = 5, as_paragraph("No husband"),part="header") %>%
+
+ #body
+ mk_par(i = 1, j = 1, as_paragraph("Consented"),part="body") %>%
+ mk_par(i = 2, j = 1, as_paragraph("Refused"),part="body") %>%
+ mk_par(i = 3, j = 1, as_paragraph("Absent"),part="body") %>%
+ mk_par(i = 4, j = 1, as_paragraph("No wife"),part="body") %>%
+
+ #caption
+ set_caption(caption = "Gender module sample make up", 
+              style = "Table Caption", 
+              autonum = run_autonum(seq_id = "tab", bkm = "bargsample")) %>%
+
+  theme_booktabs() %>%
+  align(i = 1,j = 2,align = "center", part = "header") %>%
+  autofit()
+
+```
 
 Not all households participated fully in the gender module. Where
 possible, it was administered to both the head of the household and
 their spouse, so that there were a Female and a Male Respondent to the
-interview [^2]. In the vast majority of the cases, the husband is
+interview. In the vast majority of the cases, the husband is
 considered the head, but it was left open to the respondents to indicate
-the head. Table [2](#tab:bargsample){reference-type="ref"
-reference="tab:bargsample"} displays how the sample is built up. In
+the head. Table \@ref(tab:bargsample) displays how the sample is built up. In
 total, there were 889 respondents to the survey. In 593 households, the
 Female Respondent (the wife of the household head or the female head)
 consented to responding to the gender module. In 1 household, the female
@@ -386,26 +410,26 @@ detailed information on gender attitudes. I present the List Experiment,
 and the analysis thereof, in more detail in the Empirical Framework
 below.
 
-::: {#tab:bargaining}
-  \#       Low        High      Expected        Risk aversion
-  ---- ----------- ----------- ----------- ------------------------
-  1     4,000 CDF   4,000 CDF   4,000 CDF   Extremely risk-averse
-  2     3,600 CDF   4,800 CDF   4,200 CDF   Extremely risk-averse
-  3     3,200 CDF   5,600 CDF   4,400 CDF   Moderately risk-averse
-  4     2,800 CDF   6,400 CDF   4,600 CDF   Moderately risk-averse
-  5     2,400 CDF   7,200 CDF   4,800 CDF        Risk-neutral
-  6     1,400 CDF   8,200 CDF   4,800 CDF        Risk-loving
 
-  : Bargaining game lotteries
-:::
+```{r table3}
+
+ read_csv(here("tables/table3.csv")) %>%
+ flextable() %>%
+ mk_par(i = 1, j = 1, as_paragraph(""),part="header") %>%
+ set_caption(caption = "Bargaining game lotteries", 
+              style = "Table Caption", 
+              autonum = run_autonum(seq_id = "tab", bkm = "risklotteries")) %>%
+  theme_booktabs() %>%
+  autofit()
+
+```
 
 The risk bargaining game in the gender module was modified from
 [@Martinsson2009]. In the game, the respondents chose between a set of
 six risky lotteries, based on [@Eckel2002]. The lotteries presented
 ranged from fairly low-risk ones -- where low and high pay-out were
 nearly equal -- to high-risk one -- where there was a large difference
-between high and low pay-outs (see Table
-[3](#tab:bargaining){reference-type="ref" reference="tab:bargaining"}
+between high and low pay-outs (see Table \@ref{tab:risklotteries}
 for details of the lotteries). The Male and Female Respondents first
 chose privately (without knowing their partner's choice), and then
 jointly. By comparing the couple decision with the individual decision,
@@ -491,13 +515,9 @@ to know the total number of balls at the end. In the past 12 months, did
 you experience\...
 
 -   Lack of food;
-
 -   Lack of money;
-
 -   Theft;
-
 -   Sterility; and,
-
 -   Sexual Violence (Treatment group only)"
 
 The interviewer only presented women randomly selected to be in the
