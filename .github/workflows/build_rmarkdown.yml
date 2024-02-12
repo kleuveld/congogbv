@@ -32,7 +32,7 @@ jobs:
             any::bookdown
             
       - name: Render Book
-        run: Rscript -e 'rmarkdown::render("congogbv")'
+        run: Rscript -e 'rmarkdown::render("congogbv.Rmd")'
 
       - name: Rename file 
         run: mv congogbv.pdf "Sexual violence conflict and female empowerment ${{ steps.date.outputs.date }}.pdf"
