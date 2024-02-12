@@ -1,7 +1,9 @@
 ---
 title: "Sexual violence, conflict, and female empowerment: Exploratory evidence from a list experiment in Eastern DR Congo"
 author: Koen Leuveld
-output: bookdown::pdf_document2
+output:
+  bookdown::pdf_document2:
+    toc: false
 bibliography: congogbv.bib
 
 
@@ -15,39 +17,35 @@ bibliography: congogbv.bib
 
 library(tidyverse)
 library(flextable)
-set_flextable_defaults(fonts_ignore=TRUE)
+set_flextable_defaults(font.size = 9, fonts_ignore=TRUE)
 library(officer)
 library(here)
 
-# to extract:
+# get varlables
 varlabels <-
   read_csv(here("tables/cleandata_collabels.csv")) %>%
   pull(label) %>%
   set_names(read_csv(here("tables/cleandata_collabels.csv")) %>% pull(Variable))
 
 
+#standard chunk options
 knitr::opts_chunk$set(ft.latex.float = "float",eval=TRUE, include = TRUE, echo=FALSE, warning=TRUE, error=TRUE, message=FALSE)
-#knitr::opts_chunk$set(ft.keepnext = TRUE)
 
-#helper function
-FitFlextableToPage <- function(ft, pgwidth = 6){
 
-  ft_out <- ft %>% autofit()
-
-  ft_out <- width(ft_out, width = dim(ft_out)$widths*pgwidth /(flextable_dim(ft_out)$widths))
-  return(ft_out)
-}
-
+#run analysis
+#rmarkdown::render(here("congogbv_analysis.Rmd"))
 
 ```
+
+<!-- this is the default float positioning in latex -->
 
 ```{=latex}
 
 \makeatletter
   \providecommand*\setfloatlocations[2]{\@namedef{fps@#1}{#2}}
 \makeatother
-\setfloatlocations{figure}{h}
-\setfloatlocations{table}{h}
+\setfloatlocations{figure}{!htbp}
+\setfloatlocations{table}{!htbp}
 
 ```
 
@@ -282,7 +280,9 @@ The main source of data for this study is the gender module from a
 household survey that was undertaken in 2014 as the endline survey for
 the evaluation of Dutch development aid. This evaluation concerned
 projects ran by four NGOs in the territories of Kabare, Fizi and Uvira,
-and the commune of Bagira.[^1] The baseline for this evaluation was done
+and the commune of Bagira.[^In the remainder of the paper, I will consider Kabare and Bagira
+    to be one "territory", since the selected communities in Kabare and
+    Bagira are located close together, in the peri-urban zone of Bukavu.] The baseline for this evaluation was done
 in 2012. Half of the respondents were selected from communities that
 benefited from the projects, the other half were selected from
 comparable households in non-intervention communities. These projects
@@ -296,7 +296,7 @@ for an average of 12 households per community, for a total of 889
 households.
 
 
-```{r table1}
+```{r table1dhs, tab.cap='Comparison of DHS and sample data', tab.id='dhscompare'}
 
 read_csv(here("tables/table1.csv")) %>% 
   flextable() %>%
@@ -314,10 +314,7 @@ read_csv(here("tables/table1.csv")) %>%
   colformat_double(digits = 2) %>%
 
   footnote(i = 1,j = 4, value = as_paragraph("FR = Female respondent. For the DHS data, means are provided for household members satisfying the same criteria as FRs from the sample: female heads of household, or female spouses of household heads"), ref_symbols = "a", part = "header", inline = TRUE, sep = ";")   %>%
-  footnote(i = c(1,2),j = 1, value = as_paragraph("DHS = Demographic Health Survey (MPSMRM, 2014)"), ref_symbols = "b", part = "body", inline = TRUE, sep = ".") %>%
-  set_caption(caption = "Comparison of DHS and sample data", 
-              style = "Table Caption", 
-              autonum = run_autonum(seq_id = "tab", bkm = "dhscompare"))
+  footnote(i = c(1,2),j = 1, value = as_paragraph("DHS = Demographic Health Survey (MPSMRM, 2014)"), ref_symbols = "b", part = "body", inline = TRUE, sep = ".")
 
 
 ```
@@ -332,29 +329,24 @@ likely to have finished school, than the provincial average in South
 Kivu.
 
 
-```{r table2}
+```{r table2sample, tab.cap='Gender module sample make up', tab.id='bargsample'}
 
  read_csv(here("tables/table2.csv")) %>%
- flextable() %>%
+  flextable() %>%
 
- #header
- add_header_row(top = TRUE, values = c("","Male Repondent"),colwidths = c(1,5)) %>%
- mk_par(i = 2, j = 1, as_paragraph("Female Respondent"),part="header") %>%
- mk_par(i = 2, j = 2, as_paragraph("Consented"),part="header") %>%
- mk_par(i = 2, j = 3, as_paragraph("Refused"),part="header") %>%
- mk_par(i = 2, j = 4, as_paragraph("Absent"),part="header") %>%
- mk_par(i = 2, j = 5, as_paragraph("No husband"),part="header") %>%
+  #header
+  add_header_row(top = TRUE, values = c("","Male Repondent"),colwidths = c(1,5)) %>%
+  mk_par(i = 2, j = 1, as_paragraph("Female Respondent"),part="header") %>%
+  mk_par(i = 2, j = 2, as_paragraph("Consented"),part="header") %>%
+  mk_par(i = 2, j = 3, as_paragraph("Refused"),part="header") %>%
+  mk_par(i = 2, j = 4, as_paragraph("Absent"),part="header") %>%
+  mk_par(i = 2, j = 5, as_paragraph("No husband"),part="header") %>%
 
- #body
- mk_par(i = 1, j = 1, as_paragraph("Consented"),part="body") %>%
- mk_par(i = 2, j = 1, as_paragraph("Refused"),part="body") %>%
- mk_par(i = 3, j = 1, as_paragraph("Absent"),part="body") %>%
- mk_par(i = 4, j = 1, as_paragraph("No wife"),part="body") %>%
-
- #caption
- set_caption(caption = "Gender module sample make up", 
-              style = "Table Caption", 
-              autonum = run_autonum(seq_id = "tab", bkm = "bargsample")) %>%
+  #body
+  mk_par(i = 1, j = 1, as_paragraph("Consented"),part="body") %>%
+  mk_par(i = 2, j = 1, as_paragraph("Refused"),part="body") %>%
+  mk_par(i = 3, j = 1, as_paragraph("Absent"),part="body") %>%
+  mk_par(i = 4, j = 1, as_paragraph("No wife"),part="body") %>%
 
   theme_booktabs() %>%
   align(i = 1,j = 2,align = "center", part = "header") %>%
@@ -391,9 +383,7 @@ selected demographics for the Female Respondents to the gender module
 are presented. The respondents are slightly older than the full sample,
 and considerably older than the provincial average. They are slightly
 more likely to have completed secondary school than the full sample, but
-less likely than the provincial average. In Table
-[6](#tab:sample_selection){reference-type="ref"
-reference="tab:sample_selection"}, I present results from logit models
+less likely than the provincial average. In Table \@ref(tab:sampleselection) I present results from logit models
 to find correlations between household characteristics and participation
 in the gender module. The dependent columns of the columns are whether
 the wife, the husband and the couple participated in the gender module,
@@ -418,14 +408,11 @@ and the analysis thereof, in more detail in the Empirical Framework
 below.
 
 
-```{r table3}
+```{r table3barganing, tab.cap='Bargaining game lotteries', tab.id='risklotteries'}
 
  read_csv(here("tables/table3.csv")) %>%
  flextable() %>%
  mk_par(i = 1, j = 1, as_paragraph(""),part="header") %>%
- set_caption(caption = "Bargaining game lotteries", 
-              style = "Table Caption", 
-              autonum = run_autonum(seq_id = "tab", bkm = "risklotteries")) %>%
   theme_booktabs() %>%
   autofit()
 
@@ -435,8 +422,8 @@ The risk bargaining game in the gender module was modified from
 [@Martinsson2009]. In the game, the respondents chose between a set of
 six risky lotteries, based on [@Eckel2002]. The lotteries presented
 ranged from fairly low-risk ones -- where low and high pay-out were
-nearly equal -- to high-risk one -- where there was a large difference
-between high and low pay-outs (see Table \@ref{tab:risklotteries}
+nearly equal -- to high-risk one -- where there was a large difference 
+between high and low pay-outs (see Table \@ref(tab:risklotteries)
 for details of the lotteries). The Male and Female Respondents first
 chose privately (without knowing their partner's choice), and then
 jointly. By comparing the couple decision with the individual decision,
@@ -510,6 +497,7 @@ range of topics, such as sensitive political opinions
 voting [@Holbrook2010], risky behaviours [@LaBrie2000] and SGBV
 [@Bulte2019; @Peterman2018].
 
+
 For the list experiment in this study, the female respondents were
 randomly divided into two groups. This was done by the electronic survey
 software (ODK), based on the randomly assigned ID codes. I follow
@@ -521,11 +509,11 @@ the ground. I will not look at when you drop these balls, and only want
 to know the total number of balls at the end. In the past 12 months, did
 you experience\...
 
--   Lack of food;
--   Lack of money;
--   Theft;
--   Sterility; and,
--   Sexual Violence (Treatment group only)"
+- Lack of food;
+- Lack of money;
+- Theft;
+- Sterility; and,
+- Sexual Violence (Treatment group only)"
 
 The interviewer only presented women randomly selected to be in the
 treatment group with the fifth item (Sexual Violence). I selected the
@@ -546,8 +534,7 @@ compliance to the protocol.
 
 A crucial assumption for the list experiment is that the randomization
 ensures that Treatment and Control groups are identical. Table
-[\[tab:balance\]](#tab:balance){reference-type="ref"
-reference="tab:balance"} (Column 7) provides a comparison of the two
+\@ref(tab:summstats) (Column 7) provides a comparison of the two
 groups within the sample. The treatment and control group are not
 perfectly balanced across some of the variables. However, an F-test on
 the differences between treatment and control being jointly equal to
@@ -574,15 +561,12 @@ NumIssues_i = \beta_0 + \beta_1 Treatment_i + \epsilon_i
 Where $NumIssues_i$ is the number of issues experienced by respondent
 $i$, and $Treatment_i$ is her treatment assignment. Coefficient
 $\beta_1$ yields the estimate for the incidence. To find correlates of
-SGBV, equation \@ref{eq:basic} can be augmented using interaction terms as
+SGBV, equation \@ref(eq:basic) can be augmented using interaction terms as
 follows:
 
-<!--
 \begin{equation} 
-
 NumIssues_i = \beta_0 + \beta_1 Treatment_i + \beta_2 X_i + \beta_3 Treatment_i X_i + \epsilon_i
 (\#eq:interaction)
-
 \end{equation}
 
 Where $X_i$ is an explanatory variable and coefficient $\beta_3$ gives
@@ -592,8 +576,9 @@ variables. Again, this is much less efficient than when using direct
 questioning. By using more sophisticated methods proposed by @Imai2011
 (and implemented by [@Tsai2019] in Stata), more efficient estimates can
 be obtained.
- -->
-```{r table4summstats}
+
+
+```{r table4summstats, tab.cap='Descriptive statistics by treatment assignment', tab.id='summstats'}
 
 # flextable orders the variables alphabetically, but I want to preserve the order
 # because the variabe order is the same in summstats and difcol, I can just use sequential numbers
@@ -606,7 +591,8 @@ summstats <-
   read_csv(here("tables/summstats.csv")) %>%
   left_join(read_csv(here("tables/cleandata_collabels.csv"))) %>%
   mutate(Treatment = ifelse(Treatment != "Overall",paste0(" ",Treatment),Treatment)) %>%
-  mutate(Variable = str_pad(rep(1:numvars,numtreatment),2,pad="0")) 
+  mutate(var = Variable,
+         Variable = str_pad(rep(1:numvars,numtreatment),2,pad="0")) 
 
 difcol <- 
   read_csv(here("tables/summstats_diffs.csv")) %>%
@@ -626,26 +612,16 @@ summstats %>%
   as_flextable() %>%
   labelizor(j = "Variable", labels = labels, part = "all") %>% 
 
-
-
-  valign(j = 3:12, valign = "top", part = "header") %>%
-
-  set_caption(caption = "Descriptive statistics by treatment assignment", 
-              style = "Table Caption", 
-              autonum = run_autonum(seq_id = "tab", bkm = "summstats")) %>%
+  #fit to page
+  padding(padding = 1,part = "all") %>%
+  padding(padding.top = 0, padding.bottom = 0) %>%
   fontsize(size = 8, part = "all") %>%
-  fix_border_issues() %>%
-
-  padding(padding = 0,part = "all") %>%
   autofit() %>%
-  FitFlextableToPage() 
 
-  #for whatever reason, the table footer won't render nicely; i hope i can get to it later
+  #add footer
+  add_footer_lines(values = "*p < 0.1,**p < 0.05,***p < 0.01", top = FALSE) %>%
+  fontsize(size = 8, part = "footer") 
 
-  # add_footer_lines(values = "*p < 0.1,**p < 0.05,***p < 0.01", top = FALSE) %>%
-  # fontsize(size = 3, part = "footer") %>%
-  # autofit() %>%
-  # FitFlextableToPage() 
 
 ```
 
@@ -669,11 +645,10 @@ In the full sample, the difference between the group who were presented
 with only four issues (the Control group) and the group who were
 presented four issues plus SGBV (the Treatment group) is the estimate of
 the incidence of SGBV. The average number of issues reported by the
-control group is , while the number if issues reported by the treatment
-group is (see Figure [1](#fig:meancompare_overall){reference-type="ref"
-reference="fig:meancompare_overall"}). The difference of implies that
-the incidence of SGBV is % in this sample. The p-value for a t-test on
-this difference is . This estimate appears substantially higher than
+control group is 2.34, while the number of issues reported by the treatment
+group is 2.65 (see Figure [1](#fig:meancompare_overall){reference-type="ref"
+reference="fig:meancompare_overall"}). The difference of 0.31 issues implies that
+the incidence of SGBV is 31% in this sample. This estimate appears substantially higher than
 previous estimates. These previous estimates [e.g.
 @Peterson2018; @Stark2017; @Johnson2010] arrive at a similar rate of
 victimization, but over the life of the respondent, whereas here we only
@@ -710,18 +685,19 @@ any household members or family as a consequence of the conflict (or
 not); and (iii) whether number of instances of violence against
 civilians in ACLED data within a 10km radius during the past twelve
 months was higher than the number of instances for the median household
-(nor not) [^3].
+(nor not) [^The results presented here are robust to using number of battles
+    or number of fatalities rather than the instances of violence
+    against civilians; using 5,15,20, 25 or 30km as a radius; and using
+    a continuous variable, rather than a binary variable.].
 
-Conflict exposure was high in the sample (see Table
-[\[tab:balance\]](#tab:balance){reference-type="ref"
-reference="tab:balance"}): % of the respondents reported having lost
-property due to conflict between 1996 and 2012. % of the respondents
+Conflict exposure was high in the sample (see Table \@ref(tab:summstats)):
+77% of the respondents reported having lost
+property due to conflict between 1996 and 2012. 49% of the respondents
 reported the loss of a family or household member. Again, conflict
 exposure was high, even when limiting the time-span to one year prior to
 the data collection. The mean number of violent conflicts within a 10km
-radius was . This exposure differs across the territories (Table
-[4](#tab:conflict_by_terr){reference-type="ref"
-reference="tab:conflict_by_terr"}). While respondents in all territories
+radius was 6.73. This exposure differs across the territories (Table
+\@ref(tab:confxterr)). While respondents in all territories
 were greatly affected by conflict prior to 2012, those in Fizi were hit
 harder. In the 12 months before the survey however, Uvira was in the
 midst in an outbreak of violence, related to conflicts surrounding the
@@ -730,26 +706,27 @@ Plaine de la Ruzizi. In fact, weeks before data collection in 2014 took
 place, 30 civilians were killed in Mutarule, a village in the Plaine,
 but not in my sample. This difference in recent and historic conflict
 patterns means that households with conflict exposure pre-2012 are not
-more likely to be victimized in 2013-2014 (see also Table
-[\[tab:determinants_regression\]](#tab:determinants_regression){reference-type="ref"
-reference="tab:determinants_regression"}). Associations between pre-2012
+more likely to be victimized in 2013-2014 (see also Table \@ref(tab:determinants). Associations between pre-2012
 violence and SGBV will thus not be the result of re-targeting of the
 same households.
 
-::: {#tab:conflict_by_terr}
-  --------------------------------------------- --------------- --------- --------- ---------
-                                                                                    
-                                                 Kabare/Bagira    Uvira     Fizi      Total
-  Conflict pre-2012: property lost                   0.440        0.700     0.847     0.770
-                                                    (0.501)      (0.460)   (0.360)   (0.421)
-  Conflict pre-2012: HH member killed                0.120        0.393     0.588     0.492
-                                                    (0.328)      (0.490)   (0.493)   (0.500)
-  Conflict 2013-2014: Viol. against civilians        7.289        10.05     4.892     6.726
-                                                    (1.797)      (2.752)   (5.052)   (4.689)
-  --------------------------------------------- --------------- --------- --------- ---------
 
-  : Conflict exposure by territory
-:::
+```{r table5confxterr, tab.cap='Conflict exposure by territory', tab.id='confxterr'}
+
+read_csv(here("tables/violence_by_territory.csv")) %>%
+  mutate(Territory = ifelse(Territory == "Overall", Territory,paste0(" ",Territory))) %>%
+  tabulator(rows = "Variable",
+            columns = "Territory",
+            `Mean \n (SD)` =  as_paragraph(as_chunk(mean,digits=2,),as_chunk("\n("),as_chunk(sd,digits=2),")")) %>%
+  as_flextable() %>%
+  labelizor(j = "Variable", labels = varlabels, part = "all") %>% 
+
+  #fit to page
+  padding(padding = 1,part = "all") %>%
+  padding(padding.top = 0, padding.bottom = 0) %>%
+  autofit() 
+
+```
 
 The results of the sub-group analysis is displayed graphically in Figure
 [2](#fig:meancompare_conf){reference-type="ref"
@@ -757,15 +734,13 @@ reference="fig:meancompare_conf"}. From the top two panels, it can be
 seen that the difference between treatment and control is greater among
 conflict-victimized respondents than among non-conflict victimized
 respondents. The size of these differences is listed in Table
-[\[tab:meandiff_conf\]](#tab:meandiff_conf){reference-type="ref"
-reference="tab:meandiff_conf"}. Among those that indicated not having
+\@ref(tab:meandiffconf). Among those that indicated not having
 lost property, the difference in number of issues faced between
 treatment and control is 0.19, implying a SGBV victimization rate of
 19%. The difference between Treatment and Control among respondents who
 did lose property was 0.38. The difference in the differences between
 these groups of 0.19 issues (this corresponds to coefficient $\beta_3$
-in equation [\[eq:interaction\]](#eq:interaction){reference-type="ref"
-reference="eq:interaction"} above) is not statistically significant.
+in equation \@ref(eq:interaction) above) is not statistically significant.
 When splitting the sample by households indicating having lost a family
 or household member to conflict before 2012, the
 difference-in-difference estimate is 0.37, indicating that incidence of
@@ -781,9 +756,8 @@ emerge (see bottom panel of Figure
 [2](#fig:meancompare_conf){reference-type="ref"
 reference="fig:meancompare_conf"}). SGBV incidence among women who have
 more instances of violence near them than the median is 7 percentage
-points lower than women who do not (bottom row of Table
-[\[tab:meandiff_conf\]](#tab:meandiff_conf){reference-type="ref"
-reference="tab:meandiff_conf"}). However, this is not statistically
+points lower than women who do not (top row of Table
+\@ref(tab:meandiffconf)). However, this is not statistically
 significant. I thus find no evidence of large-scale direct perpetration
 of SGBV by armed groups in the one year before data collection, but also
 no evidence of indirect effects of recent conflict.
@@ -797,20 +771,53 @@ an indirect effect either, may mean that this change of norms takes
 time, or that the nature of recent conflict is different from historic
 conflict.
 
-::: threeparttable
-n0 = , n1= , label0 = , label1 = , varlabel=,meancontrol0 = , meantreat0
-= ,stardiff0=, sediff0=, meancontrol1 = , meantreat1 = , stardiff1=,
-sediff1=, stardd = , sedd= & & & & &\
-& & & & &\
-& & & & &\
-Diff in Diff & & & & &
+```{r table6meandiffconf, tab.cap='Differences in numbers of issued faced in the list experiment, across conflict indicators', tab.id='meandiffconf'}
 
-::: tablenotes
-Robust Standard errors reported.
+p2stars <- function(p){
+  case_when(p < 0.01 ~ "***",
+                    p < 0.05 ~ "**",
+                    p < 0.1 ~ "*",
+                    .default = "" )
+}
 
-p $<$ 0.1, \*\*, p $<$ 0.05, \*\*\* p $<$ 0.01
-:::
-:::
+format_stderror <- function(s){
+  ifelse(is.na(s),"",sprintf("\n(%.2f)",s))
+}
+
+
+meandifftab <-
+  read_csv(here("tables/meandifftab.csv")) %>%
+  mutate(stat_subgroup = ifelse(stat_subgroup == "Control", " Control",stat_subgroup ),
+        stat = ifelse(stat == "Mean", " Mean",stat),
+        stat_subgroup = ifelse(is.na(stat_subgroup)," ",stat_subgroup))
+
+
+
+meandifftab %>%
+
+  #content
+  filter(var %in% c("victimproplost", "victimfamlost", "acledviolence10d")) %>%
+  tabulator(rows = c("var","group"),
+            columns = c("stat","stat_subgroup"),
+            `Mean` =  as_paragraph(as_chunk(estimate,digits=2),
+                                   as_chunk(p2stars(p.value)),
+                                   as_chunk(format_stderror(std.error)))) %>%
+  as_flextable(spread_first_col = TRUE) %>%
+
+  #labelling, alginment and formatting
+  labelizor(labels = varlabels, part = "all") %>%
+  mk_par(i = 1, j = c(1,2), as_paragraph(''),part = "header") %>%
+  bold(i = ~ !is.na(var), bold = TRUE) %>%
+  align(i = ~ !is.na(var), align = "left") %>%  
+
+  #fit to page
+  padding(i = c(2:4,6:8,10:12), j=1, padding.left=20) %>%
+  padding(padding.top = 0, padding.bottom = 0) %>%
+
+  autofit()
+
+
+```
 
 ## Intra-household bargaining position {#intra-household-bargaining-position .unnumbered}
 
@@ -827,22 +834,20 @@ the) household head. In this section, respondents were asked whose
 family owned more land, prior to the marriage: the wife's, the
 husband's, or whether they had equal land. This choice of proxy was made
 in consultation with local partners (including NGOs and universities),
-and based on the importance of agriculture in the area. In % of the
-cases, the husband's family had more land, in % of the cases the wife's
-family did. Note that only households responded to this question, as
-some refused to give a definite answer (Table
-[\[tab:balance\]](#tab:balance){reference-type="ref"
-reference="tab:balance"}).
+and based on the importance of agriculture in the area. In 33% of the
+cases, the husband's family had more land, in 21% of the cases the wife's
+family did. Note that only 226 households responded to this question, as
+some refused to give a definite answer (Table \@ref(tab:summstats)).
 
 The second intra-household aspect I explore is derived from the results
 of the bargaining game played with couples during the 2014 survey. I
 create three groups, based on whether the joint decision is closer to
 the husband's decision, to the wife's, or if the distance is equal. The
-mean choice of the Female Respondents in the sample was ; the Male
-Respondents were slightly more risk-averse: their mean choice was . In %
+mean choice of the Female Respondents in the sample was 3.58; the Male
+Respondents were slightly more risk-averse: their mean choice was 3.45 In 40%
 of the cases, the couple decision was closest to the Male Respondent's
-choice. In % it was closer to the Female Respondent's. Note that the
-size of the sample here is smaller than for the other variables
+choice. In 27% it was closer to the Female Respondent's. Note that the
+size of the sample here is smaller (only 87) than for the other variables
 presented, as it was not always possible to have both the Male and
 Female Respondent present at the same time for the interview.
 
@@ -853,8 +858,7 @@ larger for the sub-groups of respondents with a worse intra-household
 bargaining position, indicating that the incidence of SGBV is higher
 among these respondents. As suggested by the large size of the 95%
 confidence intervals, some of these sub-groups are small. In Table
-[\[tab:meadifftab_mar\]](#tab:meadifftab_mar){reference-type="ref"
-reference="tab:meadifftab_mar"}, these differences are tabulated,
+\@ref(tab:meandiffmar), these differences are tabulated,
 including the sizes of the sub-groups. However, the variable definitions
 are slightly different, due to the difficulties in interpreting
 difference-in-differences between three sub-groups. For each variable,
@@ -876,20 +880,34 @@ While these results may suggest that IPV is an important driver of SGBV,
 the fact that I have no information on perpetrators means that this is
 not certain.
 
-::: threeparttable
-n0 = , n1= , label0 = , label1 = , varlabel=,meancontrol0 = , meantreat0
-= ,stardiff0=, sediff0=, meancontrol1 = , meantreat1 = , stardiff1=,
-sediff1=, stardd = , sedd= & & & & &\
-& & & & &\
-& & & & &\
-Diff in Diff & & & & &
+```{r table7meandiffmar, tab.cap='Differences in numbers of issued faced in the list experiment, across intra-household status', tab.id='meandiffmar'}
 
-::: tablenotes
-Robust Standard errors reported.
 
-p $<$ 0.1, \*\*, p $<$ 0.05, \*\*\* p $<$ 0.01
-:::
-:::
+meandifftab %>%
+
+  #content
+filter(var %in% c("husbmoreland", "wifemoreland", "barghusbandcloser", "bargwifecloser")) %>%
+  tabulator(rows = c("var","group"),
+            columns = c("stat","stat_subgroup"),
+            `Mean` =  as_paragraph(as_chunk(estimate,digits=2),
+                                   as_chunk(p2stars(p.value)),
+                                   as_chunk(format_stderror(std.error)))) %>%
+  as_flextable(spread_first_col = TRUE) %>%
+
+  #labelling, alginment and formatting
+  labelizor(labels = varlabels, part = "all") %>%
+  mk_par(i = 1, j = c(1,2), as_paragraph(''),part = "header") %>%
+  bold(i = ~ !is.na(var), bold = TRUE) %>%
+  align(i = ~ !is.na(var), align = "left") %>%  
+
+  #fit to page
+  padding(i = c(2:4,6:8,10:12), j=1, padding.left=20) %>%
+  padding(padding.top = 0, padding.bottom = 0) %>%
+
+  autofit()
+
+
+```
 
 ## Multivariate Regression analysis {#multivariate-regression-analysis .unnumbered}
 
@@ -897,9 +915,8 @@ In the preceding sections, I examined univariate relations between
 variables of interest and the incidence of SGBV. However, such analysis
 may suffer from omitted variables and spurious correlations. Here I move
 to a richer specification, in order to prevent such biases, and assess
-the relative importance of each driver. I expand equation
-[\[eq:interaction\]](#eq:interaction){reference-type="ref"
-reference="eq:interaction"} to simultaneously include indicators for
+the relative importance of each driver. I expand equation \@ref(eq:interaction)
+to simultaneously include indicators for
 conflict and intra-household bargaining position. To reduce the risk of
 multi-collinearity, I do not include the full set of variables discussed
 above, but select one indicator for each, guided by the results obtained
@@ -914,40 +931,34 @@ recent conflict); and for intra-household bargaining position a dummy
 for the husband's family having the most land. I use the KICT Stata
 package developed by @Tsai2019 to estimate these models. Interpretation
 of the coefficients is the same as equation
-[\[eq:interaction\]](#eq:interaction){reference-type="ref"
-reference="eq:interaction"}, but estimation is more efficient.
+\@ref(eq:interaction), but estimation is more efficient.
 
 In order to reduce missing variable bias, I include a set of controls
 that likely (co-) determine SGBV and the right-hand side variables
 listed above. A full analysis of these determinants is provided in the
 Appendix, Table
-[\[tab:determinants_regression\]](#tab:determinants_regression){reference-type="ref"
-reference="tab:determinants_regression"}. In addition, I include
+\@ref(tab:determinants). In addition, I include
 variables that determine sample selection, as displayed in Table
-[6](#tab:sample_selection){reference-type="ref"
-reference="tab:sample_selection"}. In particular, I include the age of
+\@ref(tab:sampleselection). In particular, I include the age of
 the Female Respondent; indicators for the education of the Male and
 Female respondents; asset holdings of the household, including livestock
 and a tin roof; territory dummies; and an indicator for being in the
 treatment group of any of the projects under evaluation for the survey.
 
-In Table [5](#tab:results_regression){reference-type="ref"
-reference="tab:results_regression"} I display the results of these
+In Table \@ref(tab:regress), I display the results of these
 regressions. In columns 1-3 I rerun the univariate models from above.
 Results are the same as before: both conflict history and
 intra-household bargaining are associated with increased incidence of
 SGBV. I In column 4 I present the full model. I find that women in a
 marriage where their husband's family had more land before the marriage,
-are percentage points more likely than other women to be victim of SGBV.
+are 45 percentage points more likely than other women to be victim of SGBV.
 Note that the pre-marriage status of women within the household is
-uncorrelated to conflict (see Table
-[\[tab:determinants_regression\]](#tab:determinants_regression){reference-type="ref"
-reference="tab:determinants_regression"}). Women who live in households
+uncorrelated to conflict (see Table \@ref(tab:determinants). Women who live in households
 that lost a family or household member due to conflict prior to 2012 are
-percentage points more likely to be victimized by SGBV than other women.
+37 percentage points more likely to be victimized by SGBV than other women.
 Of note is also the negative associated of the Female Respondent having
 a secondary education: in this linear model, women with secondary
-education are percentage points less likely to be victimized. The fact
+education are percentage points 125 less likely to be victimized. The fact
 that the absolute value of this coefficient is higher than 1 is due to
 the fact that linear models do not constrain predictions of
 probabilities between 0 and 1.
@@ -969,52 +980,69 @@ the perpetrators of the violence. The method of a list experiment does
 not allow for follow-up questions to victimized women, as the
 interviewer cannot know who to ask these follow up questions to.
 
-::: threeparttable
-::: {#tab:results_regression}
-                                                    \(1\)          \(2\)          \(3\)          \(4\)
-  --------------------------------------------- -------------- -------------- -------------- --------------
-  Family MR had more land                         0.419\*\*                                     0.451\*
-                                                   (0.204)                                      (0.240)
-  Conflict pre-2012: HH member killed                            0.409\*\*                     0.374\*\*
-                                                                  (0.182)                       (0.179)
-  Conflict 2013-2014: Viol. against civilians                                     0.0120         0.0147
-                                                                                 (0.0224)       (0.0230)
-  FR empowerment attitudes                                                                      0.000101
-                                                                                                (0.0199)
-  Age of FR                                        0.00843        0.00684        0.00563         0.0110
-                                                   (0.0161)       (0.0182)       (0.0186)       (0.0207)
-  Age of MR                                        -0.0122        -0.00929       -0.00778       -0.0111
-                                                   (0.0149)       (0.0162)       (0.0174)       (0.0189)
-  HH Head Female                                   0.00951        -0.0766         0.257          0.421
-                                                   (0.445)        (0.525)        (0.318)        (0.410)
-  FR completed secondary education               -1.111\*\*\*   -1.347\*\*\*   -1.034\*\*\*   -1.249\*\*\*
-                                                   (0.320)        (0.351)        (0.336)        (0.332)
-  MR completed primary education                   -0.0390        -0.0655         -0.193         -0.263
-                                                   (0.166)        (0.178)        (0.181)        (0.177)
-  Household has a tin roof                          0.292          0.279          0.184          0.214
-                                                   (0.203)        (0.221)        (0.234)        (0.233)
-  Household owns livestock                         -0.0455        -0.00342        -0.142         -0.193
-                                                   (0.160)        (0.181)        (0.177)        (0.186)
-  territory==Uvira                                  0.418          0.202          0.438          0.205
-                                                   (0.264)        (0.342)        (0.288)        (0.360)
-  territory==Fizi                                  0.511\*         0.232         0.504\*         0.191
-                                                   (0.292)        (0.365)        (0.302)        (0.379)
-  Project Beneficary                                0.0542         0.0121         0.0382         0.0732
-                                                   (0.163)        (0.177)        (0.157)        (0.167)
-  Constant                                          -0.162        -0.00267       -0.00290        -0.111
-                                                   (0.483)        (0.506)        (0.491)        (0.614)
-  Observations                                       449            402            379            350
+```{r table8regress, tab.cap='Multivariate regression Results', tab.id='regress'}
 
-  : Multivariate regression Results
-:::
 
-::: tablenotes
-FR = Male Respondent; MR = Female Respondent
+add_scalars <- function(x,label,values){
 
-Standard errors clustered at the village level; \* p $<$ 0.1, \*\*, p
-$<$ 0.05, \*\*\* p $<$ 0.01
-:::
-:::
+  row_vector <- vector(mode="character", length = 1 + length(values) * 2)
+
+  row_vector[1] <- label
+  for (i in 1:length(values)) {
+      footercolumn <- 1 + i * 2
+      row_vector[footercolumn] <- values[i]
+  }
+
+  x %>%
+    add_footer_row(top = FALSE, values = row_vector, colwidths = rep(1,ncol_keys(.)))
+
+}
+
+
+regs <-
+  read_csv(here("tables/regression_results.csv")) %>%
+
+  #add in varlables, and then change terms to manipulate ordering by tabulator
+  left_join(read_csv(here("tables/cleandata_collabels.csv")),by = join_by(term == Variable)) %>%
+  mutate(label = ifelse(term == "(Intercept)","Constant",label)) %>%
+  mutate(order =case_when(term == "husbmoreland" ~ "01",
+                          term == "victimfamlost" ~ "02",
+                          term == "acledviolence10" ~ "03",
+                          term == "attwifetotal" ~ "04",
+                          term == "(Intercept)" ~ "99",
+                          .default = "90"),
+        term = paste0(order,term))
+
+
+n <- c(449,402,379,350)
+
+labels <-
+  regs %>%
+  distinct(term,label) %>%
+  pull(label, name = term) 
+
+model_labels <- paste0("(",1:4,")")
+names(model_labels) <- paste0("reg",1:4)
+
+
+regs %>%
+  tabulator(rows = c("term"),
+          columns = c("model"),
+          `Beta` =  as_paragraph(as_chunk(estimate,digits=2),
+                                   as_chunk(p2stars(p.value)),
+                                   as_chunk(format_stderror(std.error)))) %>%
+  as_flextable() %>%
+  add_scalars("N",n) %>%
+
+  labelizor(labels = labels, part = "all") %>%
+  labelizor(labels = model_labels, part = "header") %>%
+  mk_par(i = 1, j = 1, as_paragraph(''),part = "header") %>%
+  
+  theme_booktabs() %>%
+  autofit()  
+
+
+```
 
 # Conclusion {#conclusion .unnumbered}
 
@@ -1078,105 +1106,110 @@ address these.
 
 # Appendix {#appendix .unnumbered}
 
-::: threeparttable
-::: center
-::: {#tab:sample_selection}
-  ---------------------------------- -------------- ------------- --------------
-                                         \(1\)          \(2\)         \(3\)
-                                          Wife         Husband        Couple
-                                                                  
-  Age of FR                           -0.0305\*\*    0.0244\*\*      -0.0124
-                                        (0.0126)      (0.0112)       (0.0127)
-  Age of MR                             0.0199\*      -0.00864        0.0176
-                                        (0.0118)      (0.0110)       (0.0130)
-  HH Head Female                         0.171        -1.142\*    
-                                        (0.689)        (0.602)    
-  FR completed primary education         0.120         -0.197         -0.109
-                                        (0.224)        (0.245)       (0.210)
-  FR completed secondary education       0.484         -0.285         0.169
-                                        (0.587)        (0.399)       (0.488)
-  MR completed primary education        -0.0233         0.226         0.279
-                                        (0.189)        (0.218)       (0.230)
-  MR completed secondary education       0.228         -0.208        -0.00740
-                                        (0.213)        (0.215)       (0.212)
-  Household has a tin roof              0.307\*        0.0468       0.446\*\*
-                                        (0.181)        (0.171)       (0.207)
-  Household owns livestock            -0.564\*\*\*   0.695\*\*\*      0.146
-                                        (0.204)        (0.189)       (0.172)
-  territory==Uvira                       -0.215      1.165\*\*\*   0.949\*\*\*
-                                        (0.297)        (0.261)       (0.336)
-  territory==Fizi                       -0.0496         0.312         0.258
-                                        (0.263)        (0.217)       (0.296)
-  Project Beneficary                   0.490\*\*     -0.450\*\*       0.0594
-                                        (0.195)        (0.182)       (0.249)
-  Constant                              0.726\*        -0.700      -2.347\*\*\*
-                                        (0.430)        (0.434)       (0.429)
-  Observations                            717            717           704
-  ---------------------------------- -------------- ------------- --------------
+```{r tablea1sampleselection, tab.cap='Sample Selection for the gender module', tab.id='sampleselection'}
 
-  : Sample selection for the Gender Module
-:::
 
-::: tablenotes
-Standard errors clustered at the village level
 
-p $<$ 0.1, \*\*, p $<$ 0.05, \*\*\* p $<$ 0.01
-:::
-:::
-:::
+coeffs <-
+  read_csv(here("tables/sampleselection_coeffs.csv")) %>%
+  left_join(read_csv(here("tables/cleandata_collabels.csv")),by = join_by(term == Variable)) %>%
+  mutate(label = ifelse(term == "(Intercept)","Constant",label)) %>%
+  mutate(order =case_when(term == "husbmoreland" ~ "01",
+                          term == "victimfamlost" ~ "02",
+                          term == "acledviolence10" ~ "03",
+                          term == "attwifetotal" ~ "04",
+                          term == "(Intercept)" ~ "99",
+                          .default = "90"),
+        term = paste0(order,term)) 
 
-::: threeparttable
-::: tabular
-l\*3c &&&\
-&&&\
-Family MR had more land& & 0.0756 & 0.679\
-& & (0.0554) & (0.476)\
-Conflict pre-2012: HH member killed& 0.0799 & & -1.494\*\*\*\
-& (0.0588) & & (0.476)\
-Conflict 2013-2014: Viol. against civilians& 0.00885 & -0.0184\*\*\*&\
-& (0.00627) & (0.00477) &\
-Age of FR & -0.00431 & 0.00219 & -0.0264\
-& (0.00602) & (0.00448) & (0.0349)\
-Age of MR & 0.00355 & -0.00146 & 0.0281\
-& (0.00435) & (0.00390) & (0.0320)\
-FR completed primary education& 0.0542 & -0.109 & -0.0536\
-& (0.0695) & (0.0656) & (0.672)\
-FR completed secondary education& -0.0147 & 0.474\*\*\*& 0.602\
-& (0.129) & (0.147) & (1.417)\
-MR completed primary education& 0.0834 & 0.0314 & -0.347\
-& (0.0612) & (0.0622) & (0.512)\
-MR completed secondary education& -0.0523 & 0.0408 & 0.239\
-& (0.0703) & (0.0764) & (0.603)\
-Household has a tin roof& -0.0267 & -0.114\*\* & 0.563\
-& (0.0537) & (0.0509) & (0.539)\
-Household owns livestock& 0.114\*\* & 0.0536 & -0.235\
-& (0.0554) & (0.0526) & (0.490)\
-territory==Uvira & -0.0556 & 0.295\*\*\*& 3.566\*\*\*\
-& (0.0589) & (0.0904) & (1.104)\
-territory==Fizi & -0.0166 & 0.404\*\*\*& -1.069\
-& (0.0560) & (0.0763) & (1.487)\
-Project Beneficary & -0.0854\* & 0.0492 & 0.198\
-& (0.0461) & (0.0450) & (1.136)\
-Constant & 0.212 & 0.247\*\* & 6.599\*\*\*\
-& (0.133) & (0.106) & (1.420)\
-Observations & 350 & 350 & 350\
-:::
+labels <-
+  coeffs %>%
+  distinct(term,label) %>%
+  pull(label, name = term) 
 
-::: tablenotes
-Standard errors clustered at the village level
 
-p $<$ 0.1, \*\*, p $<$ 0.05, \*\*\* p $<$ 0.01
-:::
-:::
+scalars <-
+read_csv(here("tables/sampleselection_scalars.csv"))
 
-[^1]: In the remainder of the paper, I will consider Kabare and Bagira
-    to be one "territory", since the selected communities in Kabare and
-    Bagira are located close together, in the peri-urban zone of Bukavu.
 
-[^2]: In tables, I refer to Male and Female Respondents as MR and FR
-    respectively.
+n <- scalars[["nobs"]]
 
-[^3]: The results presented here are robust to using number of battles
-    or number of fatalities rather than the instances of violence
-    against civilians; using 5,15,20, 25 or 30km as a radius; and using
-    a continuous variable, rather than a binary variable.
+
+
+model_labels <- c("(1)\nWife","(2)\nHusband","(3)\nCouple")
+names(model_labels) <- paste0("reg",1:3)
+
+coeffs %>%
+  tabulator(rows = c("term"),
+          columns = c("model"),
+          `Beta` =  as_paragraph(as_chunk(estimate,digits=2),
+                                   as_chunk(p2stars(p.value)),
+                                   as_chunk(format_stderror(std.error)))) %>%
+  as_flextable() %>%
+  add_scalars("N",n) %>%
+  labelizor(j = 1, labels = labels, part = "all") %>%
+  labelizor(labels = model_labels, part = "header") %>%  
+  mk_par(i = 1, j = 1, as_paragraph(''),part = "header") %>%
+
+  theme_booktabs() %>%
+  autofit()
+
+
+```
+
+
+
+```{r tablea2determinants, tab.cap='Determinants of Violence and Bargaining Power', tab.id='determinants'}
+
+
+
+
+coeffs <-
+  read_csv(here("tables/determinants_coeffs.csv")) %>%
+  left_join(read_csv(here("tables/cleandata_collabels.csv")),by = join_by(term == Variable)) %>%
+  mutate(label = ifelse(term == "(Intercept)","Constant",label)) %>%
+  mutate(order =case_when(term == "husbmoreland" ~ "01",
+                          term == "victimfamlost" ~ "02",
+                          term == "acledviolence10" ~ "03",
+                          term == "(Intercept)" ~ "99",
+                          .default = "90"),
+        term = paste0(order,term))
+
+
+labels <-
+  coeffs %>%
+  distinct(term,label) %>%
+  pull(label, name = term) 
+
+
+scalars <-
+read_csv(here("tables/determinants_scalars.csv"))
+
+
+n <- scalars[["nobs"]]
+
+
+model_labels <- c("(1)\nFamily MR \nhad more land","(2)\nBargaining:\ncloser to FR","(3)\nConflict\npre-2012:HH\nmember killed
+")
+names(model_labels) <- paste0("reg",1:3)
+
+coeffs %>%
+  tabulator(rows = c("term"),
+          columns = c("model"),
+          `Beta` =  as_paragraph(as_chunk(estimate,digits=2),
+                                   as_chunk(p2stars(p.value)),
+                                   as_chunk(format_stderror(std.error)))) %>%
+  as_flextable() %>%
+  add_scalars("N",scalars[["nobs"]]) %>%
+  labelizor(j = 1, labels = labels, part = "all") %>%
+  labelizor(labels = model_labels, part = "header") %>%
+  mk_par(i = 1, j = 1, as_paragraph(''),part = "header") %>%
+  theme_booktabs() %>%
+
+  padding(padding.left = 0.5, padding.right = 0.5, part = "header") %>%
+
+  autofit() 
+
+```
+
+
