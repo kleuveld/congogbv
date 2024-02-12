@@ -510,3 +510,67 @@ regs$scalars %>%
 write_csv(here("tables/determinants_scalars.csv"))
 
 ```
+
+# Figures
+
+## Figure 1
+
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+sample %>%
+  select(numballs, Treatment) %>%
+  group_by(Treatment) %>%
+  summarize(n = n(),
+            sd = sd(numballs),
+            numballs = mean(numballs)) %>%
+  mutate(margin = qt(0.975,df=n-1)*sd/sqrt(n),
+         ci.lower = numballs - margin,
+         ci.higher = numballs + margin) %>%
+  write_csv(here("tables/dataforgraphs1.csv"))
+
+
+read_csv(here("tables/dataforgraphs1.csv")) %>%
+ggplot(aes(numballs, Treatment)) +
+geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher)) +
+xlim(0,5) + 
+xlab("Number of reported issues")
+
+
+
+
+```
+
+## Figure 2
+
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+var = rlang::quo_text(enquo(var))
+
+
+dataforgraphs <- function(df, var){
+  df %>%
+  mutate(group = {{ var }}) %>%
+  select(numballs, Treatment,group) %>%
+  filter(!is.na(group)) %>%
+  group_by(Treatment,group) %>%
+  mutate(group = as.character(as_factor(group))) %>%
+  summarize(n = n(),
+            sd = sd(numballs, na.rm = TRUE),
+            numballs = mean(numballs, na.rm = TRUE)) %>%
+  mutate(margin = qt(0.975,df=n-1)*sd/sqrt(n),
+         ci.lower = numballs - margin,
+         ci.higher = numballs + margin,
+         var = rlang::quo_text(enquo(var))) 
+}
+
+quos(victimproplost,victimfamlost,acledviolence10d, statpar, bargresult) %>%
+  map(~dataforgraphs(sample,!!.x)) %>%
+  reduce(bind_rows) %>%
+  write_csv(here("tables/dataforgraphs.csv"))
+
+
+
+```

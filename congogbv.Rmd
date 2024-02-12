@@ -5,7 +5,15 @@ output:
   bookdown::pdf_document2:
     toc: false
 bibliography: congogbv.bib
+date: "`r Sys.Date()`"
 
+header-includes:
+- |
+  ```{=latex}
+  \usepackage{authblk}
+  \author{Koen Leuveld\\ koen.leuveld@wur.nl}
+  \affil{Wageningen Economic Research}
+  ```
 
 #more info:
 #https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf
@@ -15,6 +23,7 @@ bibliography: congogbv.bib
 
 ```{r setup, eval=TRUE, include = FALSE, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE}
 
+library(ggpubr)
 library(tidyverse)
 library(flextable)
 set_flextable_defaults(font.size = 9, fonts_ignore=TRUE)
@@ -44,8 +53,8 @@ knitr::opts_chunk$set(ft.latex.float = "float",eval=TRUE, include = TRUE, echo=F
 \makeatletter
   \providecommand*\setfloatlocations[2]{\@namedef{fps@#1}{#2}}
 \makeatother
-\setfloatlocations{figure}{!htbp}
-\setfloatlocations{table}{!htbp}
+\setfloatlocations{figure}{tbp}
+\setfloatlocations{table}{tbp}
 
 ```
 
@@ -274,27 +283,9 @@ such as through the Law on the Suppression of Sexual Violence,
 implementation of these measures has been marred by the general lack of
 resources state authority in the country [@Steiner2009].
 
+\pagebreak
+
 # Sample {#sample .unnumbered}
-
-The main source of data for this study is the gender module from a
-household survey that was undertaken in 2014 as the endline survey for
-the evaluation of Dutch development aid. This evaluation concerned
-projects ran by four NGOs in the territories of Kabare, Fizi and Uvira,
-and the commune of Bagira.[^In the remainder of the paper, I will consider Kabare and Bagira
-    to be one "territory", since the selected communities in Kabare and
-    Bagira are located close together, in the peri-urban zone of Bukavu.] The baseline for this evaluation was done
-in 2012. Half of the respondents were selected from communities that
-benefited from the projects, the other half were selected from
-comparable households in non-intervention communities. These projects
-were about agriculture, women's rights and education. Overall, the
-beneficiaries of the projects were vulnerable, mostly rural, households.
-An indicator for being beneficiary to any of these projects is included
-in the full analysis below. In total data was collected in 73
-communities. In each community, baseline data was collected on 15
-households in 2012; however, due to attrition, 2014 data is available
-for an average of 12 households per community, for a total of 889
-households.
-
 
 ```{r table1dhs, tab.cap='Comparison of DHS and sample data', tab.id='dhscompare'}
 
@@ -316,8 +307,25 @@ read_csv(here("tables/table1.csv")) %>%
   footnote(i = 1,j = 4, value = as_paragraph("FR = Female respondent. For the DHS data, means are provided for household members satisfying the same criteria as FRs from the sample: female heads of household, or female spouses of household heads"), ref_symbols = "a", part = "header", inline = TRUE, sep = ";")   %>%
   footnote(i = c(1,2),j = 1, value = as_paragraph("DHS = Demographic Health Survey (MPSMRM, 2014)"), ref_symbols = "b", part = "body", inline = TRUE, sep = ".")
 
-
 ```
+The main source of data for this study is the gender module from a
+household survey that was undertaken in 2014 as the endline survey for
+the evaluation of Dutch development aid. This evaluation concerned
+projects ran by four NGOs in the territories of Kabare, Fizi and Uvira,
+and the commune of Bagira.^[In the remainder of the paper, I will consider Kabare and Bagira
+    to be one "territory", since the selected communities in Kabare and
+    Bagira are located close together, in the peri-urban zone of Bukavu.] The baseline for this evaluation was done
+in 2012. Half of the respondents were selected from communities that
+benefited from the projects, the other half were selected from
+comparable households in non-intervention communities. These projects
+were about agriculture, women's rights and education. Overall, the
+beneficiaries of the projects were vulnerable, mostly rural, households.
+An indicator for being beneficiary to any of these projects is included
+in the full analysis below. In total data was collected in 73
+communities. In each community, baseline data was collected on 15
+households in 2012; however, due to attrition, 2014 data is available
+for an average of 12 households per community, for a total of 889
+households.
 
 The sampling procedure outlined here is thus unlikely to have produced a
 nationally (or even provincially) representative sample. In Table
@@ -328,6 +336,7 @@ Program (columns 1-2). Women in the study sample are older, and less
 likely to have finished school, than the provincial average in South
 Kivu.
 
+\pagebreak
 
 ```{r table2sample, tab.cap='Gender module sample make up', tab.id='bargsample'}
 
@@ -393,7 +402,19 @@ own livestock, it was less likely that there was a female respondent to
 the gender module, and more likely to have male respondent. The final
 analysis below will include these as controls.
 
+\pagebreak 
+
 # Methods {#methods .unnumbered}
+
+```{r table3barganing, tab.cap='Bargaining game lotteries', tab.id='risklotteries'}
+# 
+read_csv(here("tables/table3.csv")) %>%
+  flextable() %>%
+  mk_par(i = 1, j = 1, as_paragraph(""),part="header") %>%
+  theme_booktabs() %>%
+  autofit()
+
+```
 
 This paper combines data from the 2014 and 2012 rounds of the survey,
 with ACLED data. The gender module from the 2014 survey is the main
@@ -406,17 +427,6 @@ and Female Respondent; and (iii) a set of propositions to collect
 detailed information on gender attitudes. I present the List Experiment,
 and the analysis thereof, in more detail in the Empirical Framework
 below.
-
-
-```{r table3barganing, tab.cap='Bargaining game lotteries', tab.id='risklotteries'}
-
- read_csv(here("tables/table3.csv")) %>%
- flextable() %>%
- mk_par(i = 1, j = 1, as_paragraph(""),part="header") %>%
-  theme_booktabs() %>%
-  autofit()
-
-```
 
 The risk bargaining game in the gender module was modified from
 [@Martinsson2009]. In the game, the respondents chose between a set of
@@ -628,13 +638,16 @@ summstats %>%
 
 # Results {#results .unnumbered}
 
-<figure id="fig:meancompare_overall">
-<div class="center">
-<embed src="figures/meancompare_overall.eps" />
-</div>
-<figcaption>Comparison of means of issues faced: treatment vs.
-control.</figcaption>
-</figure>
+
+```{r overallmeans, fig.cap =  "Comparison of means of issues faced: treatment vs. control", out.width = "50%", fig.align = 'center'}
+
+read_csv(here("tables/dataforgraphs1.csv")) %>%
+ggplot(aes(numballs, Treatment)) +
+geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher)) +
+xlim(0,5) + 
+xlab("Number of reported issues")
+
+```
 
 In this section, I will first compare the results of the list experiment
 in the whole sample, then in different sub-groups. I then present
@@ -646,8 +659,7 @@ with only four issues (the Control group) and the group who were
 presented four issues plus SGBV (the Treatment group) is the estimate of
 the incidence of SGBV. The average number of issues reported by the
 control group is 2.34, while the number of issues reported by the treatment
-group is 2.65 (see Figure [1](#fig:meancompare_overall){reference-type="ref"
-reference="fig:meancompare_overall"}). The difference of 0.31 issues implies that
+group is 2.65 (see Figure \@ref(fig:overallmeans)). The difference of 0.31 issues implies that
 the incidence of SGBV is 31% in this sample. This estimate appears substantially higher than
 previous estimates. These previous estimates [e.g.
 @Peterson2018; @Stark2017; @Johnson2010] arrive at a similar rate of
@@ -658,14 +670,51 @@ rural households.
 
 ## Conflict {#conflict .unnumbered}
 
-<figure id="fig:meancompare_conf">
-<div class="center">
-<embed src="figures/meancompare_conf.eps" />
-</div>
-<figcaption>Comparison of means of issues faced across conflict
-exposure.</figcaption>
-</figure>
+```{r confmeans, fig.cap =  "Comparison of means of issues faced across conflict exposure", out.width = "100%", fig.align = 'center'}
 
+
+plot1 <- 
+  read_csv(here("tables/dataforgraphs.csv")) %>%
+  filter(var == "victimproplost") %>%
+  ggplot(aes(numballs, group, colour = Treatment)) +
+    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
+    xlim(0,5) + 
+    xlab("Number of reported issues") +
+    ylab("Conflict pre-2012: property lost") +
+    theme(text = element_text(size=8))
+
+plot2 <- 
+  read_csv(here("tables/dataforgraphs.csv")) %>%
+  filter(var == "victimfamlost") %>%
+  ggplot(aes(numballs, group, colour = Treatment)) +
+    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
+    xlim(0,5) + 
+    xlab("Number of reported issues") +
+    ylab("Conflict pre-2012:\nHH member killed") +
+    theme(text = element_text(size=8))
+
+
+plot3 <- 
+  read_csv(here("tables/dataforgraphs.csv")) %>%
+  filter(var == "acledviolence10d") %>%
+  ggplot(aes(numballs, group, colour = Treatment)) +
+    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
+    xlim(0,5) + 
+    xlab("Number of reported issues") +
+    ylab("Conflict 2013−2014: Instances \n of violence against civilians") +
+    theme(text = element_text(size=8))
+
+
+ggarrange(plot1, 
+          plot2, 
+          plot3,
+          ncol = 2, nrow =2,
+          common.legend = TRUE, legend = "bottom",
+          font.label = list(size = 7, color = "black", face = "bold", family = NULL),
+          align = "hv")
+
+
+```
 With respect to conflict, I distinguish between recent conflict (as
 indicated by ACLED events that happened within the 12 months before the
 list experiment) and historic conflict (1996-2012). Historic conflict
@@ -685,7 +734,7 @@ any household members or family as a consequence of the conflict (or
 not); and (iii) whether number of instances of violence against
 civilians in ACLED data within a 10km radius during the past twelve
 months was higher than the number of instances for the median household
-(nor not) [^The results presented here are robust to using number of battles
+(nor not)^[The results presented here are robust to using number of battles
     or number of fatalities rather than the instances of violence
     against civilians; using 5,15,20, 25 or 30km as a radius; and using
     a continuous variable, rather than a binary variable.].
@@ -728,9 +777,8 @@ read_csv(here("tables/violence_by_territory.csv")) %>%
 
 ```
 
-The results of the sub-group analysis is displayed graphically in Figure
-[2](#fig:meancompare_conf){reference-type="ref"
-reference="fig:meancompare_conf"}. From the top two panels, it can be
+The results of the sub-group analysis is displayed graphically in Figure 
+\@ref(fig:confmeans). From the top two panels, it can be
 seen that the difference between treatment and control is greater among
 conflict-victimized respondents than among non-conflict victimized
 respondents. The size of these differences is listed in Table
@@ -753,8 +801,7 @@ before the interview in 2014, while the conflict events happened before
 
 When looking at more recent exposure to conflict, no clear patterns
 emerge (see bottom panel of Figure
-[2](#fig:meancompare_conf){reference-type="ref"
-reference="fig:meancompare_conf"}). SGBV incidence among women who have
+\@ref(fig:confmeans). SGBV incidence among women who have
 more instances of violence near them than the median is 7 percentage
 points lower than women who do not (top row of Table
 \@ref(tab:meandiffconf)). However, this is not statistically
@@ -821,9 +868,38 @@ meandifftab %>%
 
 ## Intra-household bargaining position {#intra-household-bargaining-position .unnumbered}
 
-![Comparison of means of issues faced by pre-marriage
-status.](figures/meancompare_mar.eps){#fig:meancompare_mar
-width="\\linewidth"}
+```{r marmeans, fig.cap =  "Comparison of means of issues faced across intra-household status", out.width = "100%", fig.align = 'center'}
+
+
+plot1 <- 
+  read_csv(here("tables/dataforgraphs.csv")) %>%
+  filter(var == "statpar") %>%
+  ggplot(aes(numballs, group, colour = Treatment)) +
+    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
+    xlim(0,5) + 
+    xlab("Number of reported issues") +
+    ylab("Land holdings of families before marriage") +
+    theme(text = element_text(size=8))
+
+plot2 <- 
+  read_csv(here("tables/dataforgraphs.csv")) %>%
+  filter(var == "bargresult") %>%
+  ggplot(aes(numballs, group, colour = Treatment)) +
+    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
+    xlim(0,5) + 
+    xlab("Number of reported issues") +
+    ylab("Bargaining result") +
+    theme(text = element_text(size=8))
+
+ggarrange(plot1, 
+          plot2, 
+          ncol = 2, nrow =1,
+          common.legend = TRUE, legend = "bottom",
+          font.label = list(size = 7, color = "black", face = "bold", family = NULL),
+          align = "hv")
+
+
+```
 
 I then create sub-groups based on the intra-household bargaining
 position of the respondents. I compare women across two variables.
@@ -851,8 +927,7 @@ size of the sample here is smaller (only 87) than for the other variables
 presented, as it was not always possible to have both the Male and
 Female Respondent present at the same time for the interview.
 
-Figure [3](#fig:meancompare_mar){reference-type="ref"
-reference="fig:meancompare_mar"} displays the results from the sub-group
+Figure \@ref(fig:marmeans) displays the results from the sub-group
 analysis. Overall, the difference between treatment and control is
 larger for the sub-groups of respondents with a worse intra-household
 bargaining position, indicating that the incidence of SGBV is higher
