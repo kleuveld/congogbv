@@ -39,10 +39,10 @@ jobs:
         run: Rscript -e 'rmarkdown::render("congogbv.Rmd",encoding="UTF-8")'
 
       - name: Rename file 
-        run: mv congogbv.pdf "Sexual violence conflict and female empowerment ${{ steps.date.outputs.date }}.pdf"
+        run: mv congogbv.pdf "Sexual violence conflict and female empowerment ${{github.ref_name}}.pdf"
 
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "Sexual violence conflict and female empowerment ${{ steps.date.outputs.date }}.pdf"
+          artifacts: "Sexual violence conflict and female empowerment ${{github.ref_name}}.pdf"
           bodyFile: .github/workflows/release_info.md
