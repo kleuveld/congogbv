@@ -24,6 +24,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages: |
+            any:ggplot2
             any::ggpubr
             any::dplyr
             any::rlang
@@ -33,9 +34,9 @@ jobs:
             any::here
             any::rmarkdown
             any::bookdown
-            
+            any::stringr            
       - name: Render Book
-        run: Rscript -e 'rmarkdown::render("congogbv.Rmd")'
+        run: Rscript -e 'rmarkdown::render("congogbv.Rmd",encoding="UTF-8")'
 
       - name: Rename file 
         run: mv congogbv.pdf "Sexual violence conflict and female empowerment ${{ steps.date.outputs.date }}.pdf"

@@ -4,9 +4,11 @@ author: Koen Leuveld
 output:
   bookdown::pdf_document2:
     toc: false
+    latex_engine: xelatex
 bibliography: congogbv.bib
 date: "`r Sys.Date()`"
-
+papersize: a4
+geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
 header-includes:
 - |
   ```{=latex}
@@ -27,6 +29,7 @@ library(ggpubr)
 library(dplyr)
 library(rlang)
 library(readr)
+library(stringr)
 library(flextable)
 library(officer)
 library(here)
@@ -58,8 +61,8 @@ set_flextable_defaults(font.size = 9, fonts_ignore=TRUE)
 \makeatletter
   \providecommand*\setfloatlocations[2]{\@namedef{fps@#1}{#2}}
 \makeatother
-\setfloatlocations{figure}{tbp}
-\setfloatlocations{table}{tbp}
+\setfloatlocations{figure}{ph}
+\setfloatlocations{table}{ph}
 
 ```
 
@@ -288,8 +291,6 @@ such as through the Law on the Suppression of Sexual Violence,
 implementation of these measures has been marred by the general lack of
 resources state authority in the country [@Steiner2009].
 
-\pagebreak
-
 # Sample {#sample .unnumbered}
 
 ```{r table1dhs, tab.cap='Comparison of DHS and sample data', tab.id='dhscompare'}
@@ -340,8 +341,6 @@ study sample (column 3), and the representative sample from the DHS
 Program (columns 1-2). Women in the study sample are older, and less
 likely to have finished school, than the provincial average in South
 Kivu.
-
-\pagebreak
 
 ```{r table2sample, tab.cap='Gender module sample make up', tab.id='bargsample'}
 
@@ -406,8 +405,6 @@ roofs, are more likely to have a Female Respondent. In households that
 own livestock, it was less likely that there was a female respondent to
 the gender module, and more likely to have male respondent. The final
 analysis below will include these as controls.
-
-\pagebreak 
 
 # Methods {#methods .unnumbered}
 
