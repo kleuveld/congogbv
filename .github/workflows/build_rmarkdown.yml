@@ -24,7 +24,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages: |
-            any:ggplot2
+            any::ggplot2
             any::ggpubr
             any::dplyr
             any::rlang
