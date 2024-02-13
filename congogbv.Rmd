@@ -24,11 +24,15 @@ header-includes:
 ```{r setup, eval=TRUE, include = FALSE, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE}
 
 library(ggpubr)
-library(tidyverse)
+library(dplyr)
+library(rlang)
+library(readr)
 library(flextable)
-set_flextable_defaults(font.size = 9, fonts_ignore=TRUE)
 library(officer)
 library(here)
+
+
+
 
 # get varlables
 varlabels <-
@@ -39,6 +43,7 @@ varlabels <-
 
 #standard chunk options
 knitr::opts_chunk$set(ft.latex.float = "float",eval=TRUE, include = TRUE, echo=FALSE, warning=TRUE, error=TRUE, message=FALSE)
+set_flextable_defaults(font.size = 9, fonts_ignore=TRUE)
 
 
 #run analysis
