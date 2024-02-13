@@ -8,7 +8,7 @@ output:
 bibliography: congogbv.bib
 date: "`r Sys.Date()`"
 papersize: a4
-geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
+geometry: "left=2cm,right=2cm,top=2cm,bottom=2cm"
 header-includes:
 - |
   ```{=latex}
@@ -625,14 +625,14 @@ summstats %>%
   labelizor(j = "Variable", labels = labels, part = "all") %>% 
 
   #fit to page
-  padding(padding = 1,part = "all") %>%
+  padding(padding = 0.5,part = "all") %>%
   padding(padding.top = 0, padding.bottom = 0) %>%
-  fontsize(size = 8, part = "all") %>%
+  fontsize(size = 7, part = "all") %>%
   autofit() %>%
 
   #add footer
   add_footer_lines(values = "*p < 0.1,**p < 0.05,***p < 0.01", top = FALSE) %>%
-  fontsize(size = 8, part = "footer") 
+  fontsize(size = 7, part = "footer") 
 
 
 ```
@@ -1181,6 +1181,8 @@ research is needed to to address these important issues; and (iii) I did
 not collect data on the victimization of men. More research is needed to
 address these.
 
+\clearpage
+
 # Appendix {#appendix .unnumbered}
 
 ```{r tablea1sampleselection, tab.cap='Sample Selection for the gender module', tab.id='sampleselection'}
@@ -1283,10 +1285,13 @@ coeffs %>%
   mk_par(i = 1, j = 1, as_paragraph(''),part = "header") %>%
   theme_booktabs() %>%
 
-  padding(padding.left = 0.5, padding.right = 0.5, part = "header") %>%
+  padding(padding.left = 0.1, padding.right = 0.1, part = "header") %>%
+  fontsize(size = 7, part = "all") %>%
 
   autofit() 
 
 ```
 
+\clearpage
 
+# References
