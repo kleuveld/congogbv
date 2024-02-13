@@ -644,10 +644,10 @@ summstats %>%
 ```{r overallmeans, fig.cap =  "Comparison of means of issues faced: treatment vs. control", out.width = "50%", fig.align = 'center'}
 
 read_csv(here("tables/dataforgraphs1.csv")) %>%
-ggplot(aes(numballs, Treatment)) +
-geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher)) +
-xlim(0,5) + 
-xlab("Number of reported issues")
+ggplot(aes(Treatment, numballs, color = Treatment)) +
+geom_pointrange(aes(ymin = ci.lower, ymax = ci.higher)) +
+ylab("Number of reported issues") +
+xlab("")
 
 ```
 
@@ -674,47 +674,15 @@ rural households.
 
 ```{r confmeans, fig.cap =  "Comparison of means of issues faced across conflict exposure", out.width = "100%", fig.align = 'center'}
 
-
-plot1 <- 
-  read_csv(here("tables/dataforgraphs.csv")) %>%
-  filter(var == "victimproplost") %>%
-  ggplot(aes(numballs, group, colour = Treatment)) +
-    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
-    xlim(0,5) + 
-    xlab("Number of reported issues") +
-    ylab("Property lost") +
-    theme(text = element_text(size=8))
-
-plot2 <- 
-  read_csv(here("tables/dataforgraphs.csv")) %>%
-  filter(var == "victimfamlost") %>%
-  ggplot(aes(numballs, group, colour = Treatment)) +
-    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
-    xlim(0,5) + 
-    xlab("Number of reported issues") +
-    ylab("HH member killed") +
-    theme(text = element_text(size=8))
-
-
-plot3 <- 
-  read_csv(here("tables/dataforgraphs.csv")) %>%
-  filter(var == "acledviolence10d") %>%
-  ggplot(aes(numballs, group, colour = Treatment)) +
-    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
-    xlim(0,5) + 
-    xlab("Number of reported issues") +
-    ylab("ACLED: Violence against civilians") +
-    theme(text = element_text(size=8))
-
-
-ggarrange(plot1, 
-          plot2, 
-          plot3,
-          ncol = 2, nrow =2,
-          common.legend = TRUE, legend = "bottom",
-          font.label = list(size = 7, color = "black", face = "bold", family = NULL),
-          align = "hv")
-
+read_csv(here("tables/dataforgraphs.csv")) %>%
+left_join(read_csv(here("tables/cleandata_collabels.csv")),by = join_by(var == Variable)) %>%
+filter(var %in% c("victimproplost", "victimfamlost", "acledviolence10d"))%>%
+ggplot(aes(group, numballs, colour = Treatment)) +
+  geom_pointrange(aes(ymin = ci.lower, ymax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
+  facet_wrap(~label, scales = "free_x", labeller = label_wrap_gen(width=25)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab("") +
+  ylab("Number of reported issues")
 
 ```
 With respect to conflict, I distinguish between recent conflict (as
@@ -872,33 +840,15 @@ meandifftab %>%
 
 ```{r marmeans, fig.cap =  "Comparison of means of issues faced across intra-household status", out.width = "100%", fig.align = 'center'}
 
-
-plot1 <- 
-  read_csv(here("tables/dataforgraphs.csv")) %>%
-  filter(var == "statpar") %>%
-  ggplot(aes(numballs, group, colour = Treatment)) +
-    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
-    xlim(0,5) + 
-    xlab("Number of reported issues") +
-    ylab("Land holdings of families before marriage") +
-    theme(text = element_text(size=8))
-
-plot2 <- 
-  read_csv(here("tables/dataforgraphs.csv")) %>%
-  filter(var == "bargresult") %>%
-  ggplot(aes(numballs, group, colour = Treatment)) +
-    geom_pointrange(aes(xmin = ci.lower, xmax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
-    xlim(0,5) + 
-    xlab("Number of reported issues") +
-    ylab("Bargaining result") +
-    theme(text = element_text(size=8))
-
-ggarrange(plot1, 
-          plot2, 
-          ncol = 2, nrow =1,
-          common.legend = TRUE, legend = "bottom",
-          font.label = list(size = 7, color = "black", face = "bold", family = NULL),
-          align = "hv")
+read_csv(here("tables/dataforgraphs.csv")) %>%
+left_join(read_csv(here("tables/cleandata_collabels.csv")),by = join_by(var == Variable)) %>%
+filter(var %in% c("statpar", "bargresult"))%>%
+ggplot(aes(group, numballs, colour = Treatment)) +
+  geom_pointrange(aes(ymin = ci.lower, ymax = ci.higher), size = 0.1, position = position_dodge(width=0.5) ) +
+  facet_wrap(~label, scales = "free_x", labeller = label_wrap_gen(width=25)) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  xlab("") +
+  ylab("Number of reported issues")
 
 
 ```
