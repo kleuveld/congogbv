@@ -14,29 +14,12 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v3
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-      - uses: actions/checkout@v4 
-      - uses: r-lib/actions/setup-r@v2
-      - uses: r-lib/actions/setup-pandoc@v2
-      - uses: r-lib/actions/setup-tinytex@v2
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          packages: |
-            any::ggplot2
-            any::ggpubr
-            any::dplyr
-            any::rlang
-            any::readr
-            any::flextable
-            any::officer
-            any::here
-            any::rmarkdown
-            any::bookdown
-            any::stringr            
-      - name: Render Book
-        run: Rscript -e 'rmarkdown::render("congogbv.Rmd",encoding="UTF-8")'
+        uses: addnab/docker-run-action@v3
+          with:
+              image: koenleuveld/rmarkdown2pdf:0.2
+              options: -v ${{ github.workspace }}:/report 
+              run: |
+                Rscript -e "rmarkdown::render('congogbv.Rmd', output_file = 'congogbv.pdf')"
 
       - name: Rename file 
         run: mv congogbv.pdf "Sexual violence conflict and female empowerment ${{github.ref_name}}.pdf"
