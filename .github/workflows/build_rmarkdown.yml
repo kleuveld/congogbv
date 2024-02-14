@@ -14,14 +14,14 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v3
-        
+
       - name: Run the build process with Docker
         uses: addnab/docker-run-action@v3
-          with:
-              image: koenleuveld/rmarkdown2pdf:0.2
-              options: -v ${{ github.workspace }}:/report 
-              run: |
-                Rscript -e "rmarkdown::render('congogbv.Rmd', output_file = 'congogbv.pdf')"
+        with:
+          image: koenleuveld/rmarkdown2pdf:0.2
+          options: -v ${{ github.workspace }}:/report 
+          run: |
+            Rscript -e "rmarkdown::render('congogbv.Rmd', output_file = 'congogbv.pdf')"
 
       - name: Rename file 
         run: mv congogbv.pdf "Sexual violence conflict and female empowerment ${{github.ref_name}}.pdf"
