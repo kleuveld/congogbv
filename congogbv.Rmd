@@ -25,7 +25,7 @@ header-includes:
 
 ```{r setup, eval=TRUE, include = FALSE, echo=FALSE, warning=FALSE, error=FALSE, message=FALSE}
 
-library(ggpubr)
+library(ggplot2)
 library(dplyr)
 library(rlang)
 library(readr)
@@ -644,10 +644,10 @@ summstats %>%
 ```{r overallmeans, fig.cap =  "Comparison of means of issues faced: treatment vs. control", out.width = "50%", fig.align = 'center'}
 
 read_csv(here("tables/dataforgraphs1.csv")) %>%
-ggplot(aes(Treatment, numballs, color = Treatment)) +
-geom_pointrange(aes(ymin = ci.lower, ymax = ci.higher)) +
-ylab("Number of reported issues") +
-xlab("")
+  ggplot(aes(Treatment, numballs, color = Treatment)) +
+  geom_pointrange(aes(ymin = ci.lower, ymax = ci.higher)) +
+  ylab("Number of reported issues") +
+  xlab("")
 
 ```
 
