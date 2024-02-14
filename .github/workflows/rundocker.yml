@@ -1,0 +1,27 @@
+name: Compile RMarkdown using docker
+ 
+on:
+  push: 
+    branches: 
+    - docker
+
+
+jobs:
+    compile:
+        name: Compile rmarkdown
+        runs-on: ubuntu-latest
+        steps:
+          - name: Check out the repo
+            uses: actions/checkout@v2
+          - name: Run the build process with Docker
+            uses: addnab/docker-run-action@v3
+            with:
+                image: koenleuveld/rmarkdown2pdf:0.2
+                options: -v ${{ github.workspace }}:/report 
+                run: |
+                  Rscript -e "rmarkdown::render('congogbv.Rmd', output_file = 'congogbv.pdf')"
+          - name: Upload artifact
+            uses: actions/upload-artifact@v4
+            with:
+              path: congogbv.pdf
+                
