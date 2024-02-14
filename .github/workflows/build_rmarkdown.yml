@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v3
+        
+      - name: Run the build process with Docker
         uses: addnab/docker-run-action@v3
           with:
               image: koenleuveld/rmarkdown2pdf:0.2
