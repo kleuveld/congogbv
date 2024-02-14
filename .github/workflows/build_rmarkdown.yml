@@ -19,7 +19,7 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: koenleuveld/rmarkdown2pdf:0.2
-          options: -v ${{ github.workspace }}:/report 
+          options: -v ${{ github.workspace }}:/doc
           run: |
             Rscript -e "rmarkdown::render('congogbv.Rmd', output_file = 'congogbv.pdf')"
 
