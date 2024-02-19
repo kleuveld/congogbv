@@ -103,8 +103,6 @@ plot(cv_model)
 best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
 coef(best_model)
 
-
-selected_vars <- c("eduhusband_prim", "livestockany", "eduhusband_sec",  "eduwife_prim", "eduwife_sec",  "terrfe_3", "husbmoreland", "victimfamlost", "acledviolence10")                                                                                                                          
 selected_vars <- c("livestockany", "terrfe_3", "eduwife_prim", "eduhusband_sec", "husbmoreland", "victimfamlost", "acledviolence20")
 
 ict_df <- 
@@ -117,6 +115,80 @@ ict_output <- ictreg(reformulate(selected_vars, response="numballs"), treat = "b
 
 bind_cols(sample_df,predict(ict_output)$fit) %>%
 as_tibble()
+
+
+
+```
+
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+
+library(tidyverse)
+library(haven)
+library(here)
+library(randomForest)
+
+
+set.seed(4543)
+data(mtcars)
+rf.fit <- randomForest(mpg ~ ., data=mtcars, ntree=1000,
+                       keep.forest=FALSE, importance=TRUE)
+
+
+
+
+### Visualize variable importance ----------------------------------------------
+
+# Get variable importance from the model fit
+ImpData <- as.data.frame(importance(rf.fit))
+ImpData$Var.Names <- row.names(ImpData)
+
+ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+
+```
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+data
+set.seed(4543)
+rf.fit <- randomForest(numballs ~ ., data=data, ntree=1000,
+                       keep.forest=FALSE, importance=TRUE)
+
+
+
+
+
+### Visualize variable importance ----------------------------------------------
+
+# Get variable importance from the model fit
+ImpData <- as.data.frame(importance(rf.fit))
+ImpData$Var.Names <- row.names(ImpData)
+
+ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
 
 
 
