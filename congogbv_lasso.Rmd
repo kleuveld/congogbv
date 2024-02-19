@@ -1,0 +1,123 @@
+---
+title: LASSO
+author:  Koen
+output: 
+  pdf_document: default
+
+
+#more info:
+#https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf
+---
+
+
+[Here](https://www.statology.org/lasso-regression-in-r/) is a little tutoiral I found:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+library(glmnet)
+
+
+#define response variable
+y <- mtcars$hp
+
+#define matrix of predictor variables
+x <- data.matrix(mtcars[, c('mpg', 'wt', 'drat', 'qsec')])
+
+
+
+#perform k-fold cross-validation to find optimal lambda value
+cv_model <- cv.glmnet(x, y, alpha = 1)
+
+#find optimal lambda value that minimizes test MSE
+best_lambda <- cv_model$lambda.min
+best_lambda
+
+
+
+#produce plot of test MSE by lambda value
+plot(cv_model) 
+
+
+
+best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
+coef(best_model)
+
+
+
+```
+Applying this to my data:
+
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+library(tidyverse)
+library(haven)
+library(here)
+library(list)
+library(glmnet)
+
+
+cleandata <- read_dta(here("data/clean/analysis.dta"))
+
+sample <- 
+  cleandata %>%
+  filter(!is.na(ball5)) %>%
+  mutate(Treatment = ifelse(ball5," Treatment","  Control"))
+
+controls <- c("agewife", "agehusband", "genderhead", "eduwife_prim", "eduwife_sec", "eduhusband_prim", "eduhusband_sec", "tinroof", "livestockany", 
+                 "terrfe_2", "terrfe_3", "treatment")
+intrahhstatus <- c("husbmoreland", "wifemoreland")
+confvars <- c("victimproplost", "victimhurt", "victimkidnap", "victimfamlost")
+acledvars <- c("acledbattles30", "acledbattles20", "acledbattles10", "acledviolence30", "acledviolence20", "acledviolence10")
+
+vars <- c(controls, intrahhstatus, confvars, acledvars)
+
+data <- 
+  sample %>%
+  select(numballs, ball5, matches(vars)) %>%
+  select(-Treatment) %>%
+  mutate(across(.cols = matches(c(vars)),
+                .fns = list(~ .x * ball5),
+                .names = "{.col}_ball5")) %>% 
+  filter(complete.cases(.))
+
+interactions <- paste0(vars,"_ball5")
+
+y <- data$numballs
+x <- data.matrix(data[, c(vars,interactions,"ball5")])
+
+#perform k-fold cross-validation to find optimal lambda value
+cv_model <- cv.glmnet(x, y, alpha = 1)
+
+#find optimal lambda value that minimizes test MSE
+best_lambda <- cv_model$lambda.min
+best_lambda
+
+#produce plot of test MSE by lambda value
+plot(cv_model) 
+
+
+
+best_model <- glmnet(x, y, alpha = 1, lambda = best_lambda)
+coef(best_model)
+
+
+selected_vars <- c("eduhusband_prim", "livestockany", "eduhusband_sec",  "eduwife_prim", "eduwife_sec",  "terrfe_3", "husbmoreland", "victimfamlost", "acledviolence10")                                                                                                                          
+selected_vars <- c("livestockany", "terrfe_3", "eduwife_prim", "eduhusband_sec", "husbmoreland", "victimfamlost", "acledviolence20")
+
+ict_df <- 
+  sample %>%
+  select(matches(selected_vars)) %>%
+  filter(complete.cases(.)) %>%
+  as.data.frame() 
+
+ict_output <- ictreg(reformulate(selected_vars, response="numballs"), treat = "ball5", J = 4, method = "lm", data = ict_df) 
+
+bind_cols(sample_df,predict(ict_output)$fit) %>%
+as_tibble()
+
+
+
+```
