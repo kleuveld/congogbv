@@ -12,6 +12,15 @@ geometry: "left=2cm,right=2cm,top=2cm,bottom=2cm"
 header-includes:
 - |
   ```{=latex}
+
+  % this sets the default float position
+  \makeatletter
+    \providecommand*\setfloatlocations[2]{\@namedef{fps@#1}{#2}}
+  \makeatother
+  \setfloatlocations{figure}{ph}
+  \setfloatlocations{table}{ph}
+
+  % this allows me to use affil
   \usepackage{authblk}
   \author{Koen Leuveld\\ koen.leuveld@wur.nl}
   \affil{Wageningen Economic Research}
@@ -41,30 +50,56 @@ library(here)
 varlabels <-
   read_csv(here("tables/cleandata_collabels.csv")) %>%
   pull(label) %>%
-  set_names(read_csv(here("tables/cleandata_collabels.csv")) %>% pull(Variable))
+  set_names(read_csv(here("tables/cleandata_collabels.csv")) %>% 
+  pull(Variable))
 
 
 #standard chunk options
-knitr::opts_chunk$set(ft.latex.float = "float",eval=TRUE, include = TRUE, echo=FALSE, warning=TRUE, error=TRUE, message=FALSE)
+knitr::opts_chunk$set(ft.latex.float = "float",eval=TRUE, 
+                      include = TRUE, echo=FALSE, warning=TRUE, 
+                      error=TRUE, message=FALSE)
 set_flextable_defaults(font.size = 9, fonts_ignore=TRUE)
 
 
 #run analysis
-#rmarkdown::render(here("congogbv_analysis.Rmd"))
+if (file.exists("data")){
+  rmarkdown::render(here("congogbv_analysis.Rmd"))
+}
 
 ```
 
-<!-- this is the default float positioning in latex -->
+\begin{abstract}
+The high incidence rate of Sexual and Gender-based Violence in the 
+Democratic Republic of the Congo presents a large human rights problem. 
+Despite the attention this topic has been given, much is unclear about 
+the risk factors that lead to SGBV, and consequently about which women 
+need help the most. This problem is partially caused by the lack of
+accurate data on the subject, due to the difficulties in collecting it.
+In this paper, I explore the characteristics of the victims 
+SGBV to uncover the dynamics of SGBV. I focus on 
+conflict and female empowerment as potential risk factors. In order to avoid 
+social desirability bias and obtain reliable data on this incidence, I 
+conducted a list experiment. I combine the data from this list 
+experiment with rich data on respondents' households, which allows me 
+to separate conflict into recent conflict and historic conflict; and 
+have detailed information on the position of women within their 
+households.
 
-```{=latex}
-
-\makeatletter
-  \providecommand*\setfloatlocations[2]{\@namedef{fps@#1}{#2}}
-\makeatother
-\setfloatlocations{figure}{ph}
-\setfloatlocations{table}{ph}
-
-```
+I find that 30\% of the women in my sample have been victimized in the 
+12 months prior to the interview. The victims are likely to be married 
+to higher-status men, have low intra-household bargaining power, and have
+been exposed to violent conflict to the extent where they have lost 
+family or household members before 2012 (two years before the list 
+experiment). These findings coincide with the view of a long-lasting 
+impact of conflict on SGBV rates, mainly through Intimate Partner 
+Violence (IPV). This means that human rights abuses  persist long after 
+the end of conflict. Strong measures to structurally improve the 
+position of women in the household and society as a whole are required 
+to address this. Furhtermore, these findings suggest that enitities 
+(government agencies and NGOs) aiming to assist victims of NGOs should 
+not follow conflict: their assistance is needed as much in 
+areas that have been peaceful for years as it is in conflict hot-spots.
+\end{abstract}
 
 # Introduction {#introduction .unnumbered}
 
@@ -103,19 +138,31 @@ respondents to withhold information due their unease in discussing
 sensitive topics with survey field staff.
 
 In this paper, I explore the characteristics of victims of SGBV as well
-as non-victims to study the dynamics and potential drivers of SGBV. I
-classify female survey respondents according to potential risk factors
-for SGBV, and analyse whether these factors are in fact associated with
-the incidence of SGBV. In this way, this paper aims to address the
-question what the drivers of SGBV in Eastern Congo are. Specifically, I
-consider conflict and the position of women in Congolese society as
-potential drivers, and compare their relative contribution.
+as non-victims to study the dynamics of SGBV. The aim here is not to 
+find the drivers of SGBV, as this would require data also on the 
+perpetrators. Rather, the objective is to predict which women in the 
+sample are likely to be vicitms of SGBV. Such a descriptive focus, 
+purely on characteristics of victims rather than the deeper drivers of 
+SGBV may seem limited, but it the it is quite like the 
+questions that NGOs in conflict areas face, where they have limited 
+resources and limited information with which to identify and assist 
+victims. Moreover, the main reason to identify drivers is to have a
+better idea about which policy levers to manipulate in order to increase
+well-being. However, many of the potential drivers of SGBV, such as
+violent conflict, should be addressed, whether they contribute to SGBV 
+or not. 
+<!-- Include a link to Salganik here, perhaps? \^{y}) vs \^{\beta} --->
+A focus on predicting victimization  rather than on the 
+drivers  is therefore appropriate.
+To do this, I classify female survey respondents according to potential 
+risk factors for SGBV, and analyse whether these factors are in fact 
+associated withthe incidence of SGBV.
 
 The conflict that has persisted in the country for the past decades is
-the most often-cited driver of the high rate of SGBV. This is
+the most often-cited reason for the high rate of SGBV. This is
 particularly true for policy circles, where the framing of SGBV in Congo
 as "weapon of war" is popular [@Baaz2013; @Kirby2015]. There is
-empirical evidence to support this notion. [@Johnson2010] carried out a
+empirical evidence to support this notion. @Johnson2010 carried out a
 large-scale survey in Eastern Congo to investigate incidence and
 perpetrators of SGBV, and found that the majority of sexual violence
 reported by their respondents was conflict-related; of female victims of
@@ -161,9 +208,10 @@ between IPV and women's intra-household bargaining position may be
 moderated by local customs, and depend on exactly the type of IPV and
 the type of empowerment under consideration.
 
-These two main drivers of SGBV -- conflict and empowerment -- are not
-necessarily separate, as conflict may affect empowerment on the long
-run. In the short run, conflict may have a direct effect on SGBV through
+These two main risk factors for SGBV victimization -- conflict and 
+empowerment -- are not necessarily separate, as conflict may affect 
+empowerment in the long run. 
+In the short run, conflict may have a direct effect on SGBV through
 perpetration by armed groups, potentially in a strategic manner
 [@Baaz2013; @Kirby2015]. This caused the topic to be on the
 international agenda, as a "weapon of war". However, in the long run
@@ -180,9 +228,9 @@ effect of conflict on violence is deeper than just the direct effect.
 People traumatized during the conflict (either because they were victims
 or perpetrators) are more likely to be victimized later on.
 
-In answering the question what the main drivers of SGBV are, I thus
-consider two main drivers: the position of women in Congolese society
-and conflict. Within conflict, I distinguish between historic conflict
+In characterizing victims of SGBV, I thus consider two risk factors: 
+the position of women in Congolese society and conflict. 
+Within conflict, I distinguish between historic conflict
 (here I use pre-2012 data) with long-term, indirect, effects and recent
 conflict (up to one year prior to the interview) with short-term, direct
 effects. I argue that the indirect long-term effects of conflict are
@@ -199,8 +247,8 @@ representative sample for the province, it does not suffer from the same
 problems that clinic-based surveys have, allowing me to compare victims
 of SGBV with non-victims. Data on SGBV comes from a list experiment, a
 technique which has been gaining popularity as a way to obtain
-information on sensitive topics [see e.g.
-@Sniderman1991; @Holbrook2010; @Bulte2019; @Peterman2018; @LaBrie2000; @Corstange2009].
+information on sensitive topics [see e.g.@Sniderman1991; @Holbrook2010; 
+@Bulte2019; @Peterman2018; @LaBrie2000; @Corstange2009].
 Put briefly, list experiments allow group-level analysis of SGBV
 victimization, without individuals revealing their own victimization
 status. This eliminates the need for respondents to withhold information
@@ -220,6 +268,7 @@ I combine list experiments with detailed survey data on the household
 and outcomes from behavioural experiments, which allows for a rich
 characterization of victims of SGBV. Because such a characterization is
 lacking thus far, this data is useful in addressing and preventing SGBV.
+<!--- moet drivers hier weg? Eigenlijk kan het wel... ---> 
 Moreover, while the potential drivers of SGBV mentioned above --
 conflict and empowerment -- have been studied in isolation, this paper
 contributes by analysing these in one framework.
@@ -299,7 +348,9 @@ read_csv(here("tables/table1.csv")) %>%
   flextable() %>%
 
   #header row
-  add_header_row(top = TRUE, values = c("","Age of FR","Tin Roof","Education FR"),colwidths = c(1,1,1,2)) %>%
+  add_header_row(top = TRUE, values = c("","Age of FR","Tin Roof",
+                                        "Education FR"),
+                 colwidths = c(1,1,1,2)) %>%
   mk_par(i = 2, j = 1:3, as_paragraph(""),part="header") %>%
   mk_par(i = 2, j = 4, as_paragraph("Primary"),part="header") %>%
   mk_par(i = 2, j = 5, as_paragraph("Secondary"),part="header") %>%
