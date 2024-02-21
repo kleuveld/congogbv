@@ -9,6 +9,49 @@ output:
 #https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf
 ---
 
+# Data Prep
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+library(tidyverse)
+library(haven)
+library(here)
+
+
+
+cleandata <- read_dta(here("data/clean/analysis.dta"))
+
+sample <- 
+  cleandata %>%
+  filter(!is.na(ball5)) %>%
+  mutate(Treatment = ifelse(ball5," Treatment","  Control"))
+
+controls <- c("agewife", "agehusband", "genderhead", "eduwife_prim", "eduwife_sec", "eduhusband_prim", "eduhusband_sec", "tinroof", "livestockany", 
+                 "terrfe_2", "terrfe_3", "treatment")
+intrahhstatus <- c("husbmoreland", "wifemoreland")
+confvars <- c("victimproplost", "victimhurt", "victimkidnap", "victimfamlost")
+acledvars <- c("acledbattles30", "acledbattles20", "acledbattles10", "acledviolence30", "acledviolence20", "acledviolence10")
+
+vars <- c(controls, intrahhstatus, confvars, acledvars)
+
+matches_exactly <- function(vars) {
+  matches(paste0("^",vars,"$"),ignore.case = FALSE)
+}
+
+
+data <- 
+  sample %>%
+  select(numballs, ball5, matches_exactly(vars)) %>%
+  mutate(across(.cols = matches_exactly(vars),
+                .fns = list(~ .x * ball5),
+                .names = "{.col}_ball5")) %>% 
+  filter(complete.cases(.))
+
+interactions <- paste0(vars,"_ball5")
+
+
+```
+
+# LASSO
 
 [Here](https://www.statology.org/lasso-regression-in-r/) is a little tutoiral I found:
 
@@ -52,38 +95,11 @@ Applying this to my data:
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
 
-library(tidyverse)
-library(haven)
-library(here)
+
 library(list)
 library(glmnet)
 
 
-cleandata <- read_dta(here("data/clean/analysis.dta"))
-
-sample <- 
-  cleandata %>%
-  filter(!is.na(ball5)) %>%
-  mutate(Treatment = ifelse(ball5," Treatment","  Control"))
-
-controls <- c("agewife", "agehusband", "genderhead", "eduwife_prim", "eduwife_sec", "eduhusband_prim", "eduhusband_sec", "tinroof", "livestockany", 
-                 "terrfe_2", "terrfe_3", "treatment")
-intrahhstatus <- c("husbmoreland", "wifemoreland")
-confvars <- c("victimproplost", "victimhurt", "victimkidnap", "victimfamlost")
-acledvars <- c("acledbattles30", "acledbattles20", "acledbattles10", "acledviolence30", "acledviolence20", "acledviolence10")
-
-vars <- c(controls, intrahhstatus, confvars, acledvars)
-
-data <- 
-  sample %>%
-  select(numballs, ball5, matches(vars)) %>%
-  select(-Treatment) %>%
-  mutate(across(.cols = matches(c(vars)),
-                .fns = list(~ .x * ball5),
-                .names = "{.col}_ball5")) %>% 
-  filter(complete.cases(.))
-
-interactions <- paste0(vars,"_ball5")
 
 y <- data$numballs
 x <- data.matrix(data[, c(vars,interactions,"ball5")])
@@ -120,14 +136,12 @@ as_tibble()
 
 ```
 
+# Random Forest
+
+I found one tutortial [here](https://hackernoon.com/random-forest-regression-in-r-code-and-interpretation)
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
-
-
-library(tidyverse)
-library(haven)
-library(here)
 library(randomForest)
 
 
@@ -160,27 +174,27 @@ ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
 
 ```
 
+Applying this to my data:
+
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
 
-data
-set.seed(4543)
+library(randomForest)
+
+set.seed(20240220)
 rf.fit <- randomForest(numballs ~ ., data=data, ntree=1000,
-                       keep.forest=FALSE, importance=TRUE)
+                       keep.forest=TRUE, importance=TRUE)
 
-
-
-
-
-### Visualize variable importance ----------------------------------------------
 
 # Get variable importance from the model fit
-ImpData <- as.data.frame(importance(rf.fit))
-ImpData$Var.Names <- row.names(ImpData)
+ImpData <- rf.fit %>% importance() %>% as_tibble(rownames = "var") %>% arrange(desc(`%IncMSE`))
 
-ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
-  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`%IncMSE`), color="skyblue") +
+#ImpData$Var.Names <- row.names(ImpData)
+
+ggplot(ImpData, aes(x=var, y=`%IncMSE`)) +
+  geom_segment( aes(x=var, xend=var, y=0, yend=`%IncMSE`), color="skyblue") +
   geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+   scale_x_discrete(limits = ImpData %>% pull(var)) +
   theme_light() +
   coord_flip() +
   theme(
@@ -190,6 +204,99 @@ ggplot(ImpData, aes(x=Var.Names, y=`%IncMSE`)) +
     axis.ticks.y = element_blank()
   )
 
+ggsave(here("figures/randomforest_allvars.png"),dpi="print",width = 20, units = "cm")
 
 
 ```
+
+
+I then rerun the model with a subset of ACLED and conflict indicators:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+
+
+confvars <- c("victimfamlost")
+acledvars <- c("acledbattles30", "acledviolence10")
+controls <- c("agewife", "agehusband", "eduhusband_sec", "tinroof", "livestockany", "terrfe_2", "terrfe_3")
+intrahhstatus <- c()
+
+vars <- c(controls, intrahhstatus, confvars, acledvars)
+
+data_selected <- 
+  sample %>%
+  select(numballs, ball5, matches_exactly(vars)) %>%
+  mutate(across(.cols = matches_exactly(vars),
+                .fns = list(~ .x * ball5),
+                .names = "{.col}_ball5")) %>% 
+  filter(complete.cases(.))
+
+interactions <- paste0(vars,"_ball5")
+
+
+set.seed(20240220)
+rf.fit <- randomForest(numballs ~ ., data=data_selected, ntree=1000,
+                       keep.forest=TRUE, importance=TRUE)
+
+
+
+
+
+### Visualize variable importance ----------------------------------------------
+
+# Get variable importance from the model fit
+ImpData <- rf.fit %>% importance() %>% as_tibble(rownames = "var") %>% arrange(desc(`%IncMSE`))
+
+#ImpData$Var.Names <- row.names(ImpData)
+
+ggplot(ImpData, aes(x=var, y=`%IncMSE`)) +
+  geom_segment( aes(x=var, xend=var, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+   scale_x_discrete(limits = ImpData %>% pull(var)) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+ggsave(here("figures/randomforest_final.png"),dpi="print",width = 20, units = "cm")
+
+```
+
+Finally, it may be handy to explore the results:
+
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+library(randomForestExplainer)
+
+
+explain_forest(rf.fit, data = data_selected)
+
+
+```
+
+
+# Prediction
+
+Finally, I predict the number of issues.
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+
+
+data %>%
+  (numballs,ball5) %>%
+  bind_cols(predict(rf.fit, type="response")) %>%
+  rename(predict = ...3) %>%
+  mutate(sqerror = (numballs - predict)^2) %>%
+  group_by(ball5) %>%
+  summarize(mean(numballs),mean(predict),mean(sqrt(sqerror)))
+
+````

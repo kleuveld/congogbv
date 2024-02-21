@@ -638,8 +638,7 @@ summstats %>%
 ```
 
 
-# Results {#results .unnumbered}
-
+# Theory-based regression {#theorybasedregressions .unnumbered}
 
 ```{r overallmeans, fig.cap =  "Comparison of means of issues faced: treatment vs. control", out.width = "50%", fig.align = 'center'}
 
@@ -936,7 +935,7 @@ filter(var %in% c("husbmoreland", "wifemoreland", "barghusbandcloser", "bargwife
 
 ```
 
-## Multivariate Regression analysis {#multivariate-regression-analysis .unnumbered}
+## Multiple Regression analysis {#multiple-regression-analysis .unnumbered}
 
 In the preceding sections, I examined univariate relations between
 variables of interest and the incidence of SGBV. However, such analysis
@@ -1070,6 +1069,48 @@ regs %>%
 
 
 ```
+
+
+
+# Random Forest
+
+I run a Random Forest in two stages. The first stage includes all variables I have,
+in the second I drop variables with little predictive power, and those that are
+too similar to others. For example, for variables on nearby ACLED events, I use 
+different cut-offs, and it is not clear from theory which variables to select.
+
+```{r rforestallvars, fig.cap =  "Variable importance in Random Forest, all variables", out.width = "100%", fig.align = 'center'}
+
+
+knitr::include_graphics(here("figures/randomforest_allvars.png"))
+
+```
+
+The output of the first step is displayed in Figure \@ref(fig:rforestallvars). 
+I remove the variables that have the least predictive power, and select the two ACLED
+and conflict variables with the highest predictive power. The results are shown in
+Figure \@ref(fig:rforestselected). Curiously, a number of intra-household bargaining 
+indicators, which are strongly correlated to 
+
+```{r rforestselected, fig.cap =  "Variable importance in Random Forest, selected variables", out.width = "100%", fig.align = 'center'}
+
+
+knitr::include_graphics(here("figures/randomforest_final.png"))
+
+```
+
+# Comparing targeting approaches {#comparing .unnumbered}
+
+In this section, I compare what the different findings mean. For this,
+I use a thought experiment, in which an imaginary NGO has capacity to 
+run a project to assist women in ten villages. I compare three ways in 
+which to select these villages:
+
+- Highest recent conflict intensity;
+- Villages with the highest predicted rates of SGBV based on regression;
+- Villages with the highest predicted rates of SGBV based on Random Forest.
+
+I then compute how many women are helped in each case.
 
 # Conclusion {#conclusion .unnumbered}
 

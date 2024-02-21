@@ -339,12 +339,7 @@ quos(victimproplost, victimfamlost, acledviolence10d,husbmoreland, wifemoreland,
 ## Table 8
 
 
-I first define a number of helper varaibles:
-
-- `tidy_ict()` outputs a nice and tidy data frame with coefficients, standard errors etc. from the `ict_reg()` function.
-- `format_stars()` takes a coefficient and p-value and formats it to a coefficient with stars.
-
-I also save my `sample` as a data frame (was a tibble), because `ict_reg()` didn't work on a tibble.
+I first define `tidy_ict()`, a helper function that outputs a nice and tidy data frame with coefficients, standard errors etc. from the `ict_reg()` function. I also save my `sample` as a data frame (was a tibble), because `ict_reg()` didn't work on a tibble.
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
@@ -355,19 +350,6 @@ tidy_ict <- function(reg1){
            df =   reg1$resid.df,
            p.value = pt(statistic, df, lower.tail = FALSE) * 2)
   }
-
-#formats stars.
-format_stars <- function(b,p,digits=3){
-  stars = case_when(p < 0.01 ~ "***",
-                    p < 0.05 ~ "**",
-                    p < 0.1 ~ "*",
-                    .default = "" )
-
-  coeff = round(b,digits)
-
-  paste0(coeff,stars)
-}
-
 
 sample_df <- 
   sample %>%
@@ -384,13 +366,13 @@ Then I need to do some convenience things:
 
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
-controls <- c("agewife", "agehusband", "genderhead", "eduwife_sec", "eduhusband_prim", "tinroof", "livestockany", "terrfe_2", "terrfe_3", "treatment")
+list_controls <- c("agewife", "agehusband", "genderhead", "eduwife_sec", "eduhusband_prim", "tinroof", "livestockany", "terrfe_2", "terrfe_3", "treatment")
 
 #list of model specification, in particular depvars to include with controls
-specs <- list(reg1 = "husbmoreland", 
+list_specs <- list(reg1 = "husbmoreland", 
               reg2 = "victimfamlost",
               reg3 = "acledviolence10",
-              reg4 = c("husbmoreland", "victimfamlost", "acledviolence10", "attwifetotal"))
+              reg4 = c("husbmoreland", "victimfamlost", "acledviolence10"))
 
 ```
 
@@ -401,9 +383,9 @@ can return the name of the list element in the current iteration, which I save i
 library(list)
 
 #run all regressions in the specifications
-imap(specs, ~ictreg(reformulate(c(.x, controls), response="numballs"), treat = "ball5", J = 4, method = "lm", data = sample_df) %>%
-                  tidy_ict() %>% 
-                  mutate(model = .y)) %>%
+imap(list_specs, ~ictreg(reformulate(c(.x, list_controls), response="numballs"), treat = "ball5", J = 4, method = "lm", data = sample_df) %>%
+        tidy_ict() %>% 
+        mutate(model = .y)) %>%
   reduce(bind_rows) %>%
   select(model,term,estimate,std.error,p.value) %>%
   write_csv(here("tables/regression_results.csv"))
@@ -571,6 +553,314 @@ quos(victimproplost,victimfamlost,acledviolence10d, statpar, bargresult) %>%
   reduce(bind_rows) %>%
   write_csv(here("tables/dataforgraphs.csv"))
 
+
+
+```
+
+
+# Machine Learning
+
+From here I export figures and final tables, as I can't quite export these.
+
+## Data Prep
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+controls <- c("agewife", "agehusband", "genderhead", "eduwife_prim", "eduwife_sec", "eduhusband_prim", "eduhusband_sec", "tinroof", "livestockany", 
+                 "terrfe_2", "terrfe_3", "treatment")
+intrahhstatus <- c("husbmoreland", "wifemoreland")
+confvars <- c("victimproplost", "victimhurt", "victimkidnap", "victimfamlost")
+acledvars <- c("acledbattles30", "acledbattles20", "acledbattles10", "acledviolence30", "acledviolence20", "acledviolence10")
+
+vars <- c(controls, intrahhstatus, confvars, acledvars)
+
+matches_exactly <- function(vars) {
+  matches(paste0("^",vars,"$"),ignore.case = FALSE)
+}
+
+
+data_forest_allvars <- 
+  sample %>%
+  select(KEY, numballs, ball5, matches_exactly(vars)) %>%
+  mutate(across(.cols = matches_exactly(vars),
+                .fns = list(~ .x * ball5),
+                .names = "{.col}_ball5")) %>% 
+  filter(complete.cases(.))
+
+
+```
+
+I then run the first stage of the Random Forest model:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+library(randomForest)
+
+set.seed(20240220)
+forest_allvars <- randomForest(numballs ~ ., data=select(data_forest_allvars, -KEY), ntree=1000,
+                       keep.forest=TRUE, importance=TRUE)
+
+
+importance_allvars <- 
+  forest_allvars %>% 
+  importance() %>% 
+  as_tibble(rownames = "var") %>% 
+  arrange(desc(`%IncMSE`))
+
+ggplot(importance_allvars, aes(x=var, y=`%IncMSE`)) +
+  geom_segment( aes(x=var, xend=var, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+   scale_x_discrete(limits = ImpData %>% pull(var)) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+ggsave(here("figures/randomforest_allvars.png"),dpi="print",width = 20, units = "cm")
+
+
+```
+
+I then select varaibles based on the model output:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+#the most important one of the 2012 survey conflict variables:
+confvars_selected <- c("victimfamlost")
+
+#the most important acled
+acledvars_selected <- c("acledbattles30", "acledviolence10")
+
+#the most important controls
+controls_selected <- c("agewife", "agehusband", "eduhusband_sec", "tinroof", "livestockany", "terrfe_2", "terrfe_3")
+
+#all intrahhstatus vars were unimportant
+intrahhstatus_selected <- c()
+
+vars_selected <- c(controls_selected, intrahhstatus_selected, confvars_selected, acledvars_selected)
+
+data_forest_selected <- 
+  sample %>%
+  select(KEY, vill_id, numballs, ball5, matches_exactly(vars_selected)) %>%
+  mutate(across(.cols = matches_exactly(vars_selected),
+                .fns = list(~ .x * ball5),
+                .names = "{.col}_ball5")) %>% 
+  filter(complete.cases(.))
+
+```
+
+And re-run the random forest model to get final predictions:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+set.seed(20240220)
+forest_selected <- randomForest(numballs ~ ., data=select(data_forest_selected, -c(vill_id,KEY)), ntree=1000,
+                       keep.forest=TRUE, importance=TRUE)
+
+importance_selected <- 
+  forest_selected %>% 
+  importance() %>% 
+  as_tibble(rownames = "var") %>% 
+  arrange(desc(`%IncMSE`))
+
+ggplot(importance_selected, aes(x=var, y=`%IncMSE`)) +
+  geom_segment( aes(x=var, xend=var, y=0, yend=`%IncMSE`), color="skyblue") +
+  geom_point(aes(size = IncNodePurity), color="blue", alpha=0.6) +
+   scale_x_discrete(limits = ImpData %>% pull(var)) +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  )
+
+
+
+ggsave(here("figures/randomforest_selected.png"),dpi="print",width = 20, units = "cm")
+
+```
+# Predictions
+
+## Regression
+
+The `list` package is giving me problems predicting on a new sample, so I just use regular 
+`lm()`. Predictions depend purely on the coefficients, so I am not worried about this
+being inefficient.
+
+First I define the formula for `lm()` as a string:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+controls <- c(list_specs$reg4, list_controls)
+interactions <- paste0("ball5 * ",controls)
+formula <- as.formula(paste0("numballs ~ ",
+                      paste(c("ball5", controls, interactions), collapse=" + ")))
+
+```
+
+Then I want to split my data into groups. Each group will predicted by a regression
+on the other groups in the next step. Because there may be correlations within 
+villages, I make sure I group observations by village using `cluster_ra()`.
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+library(randomizr)
+set.seed(2024022111)
+
+groups = 1:10
+
+sample_grouped <-
+  sample %>%
+  mutate(group = cluster_ra(clusters = vill_id, conditions = groups))
+
+```
+I then run the regressions using `purrr`'s `map()` function to iterate
+over the groups. This works for any number of groups:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+predictions_reg <-
+  groups %>%
+  map(~lm(formula, data = sample_grouped %>% filter(group != .x))) %>%
+  map2(groups,~tibble(predict_reg = predict(.x, newdata = sample_grouped %>% filter(group == .y)))) %>%
+  map2(groups,~bind_cols(sample_grouped %>% filter(group == .y) %>% select(KEY, vill_id, ball5),.x)) %>%
+  list_rbind() 
+
+```
+
+## Random Forest
+
+I then get obtain predicted values for the random forest, using a similar 
+procedure. I don't use the out-of-bag predictions, as there may be some correlation within
+villages.
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+set.seed(2024022116)
+
+
+data_forest_grouped <-
+  data_forest_selected %>%
+  left_join(sample_grouped %>% select(KEY,group))
+
+
+
+predictions_forest <-
+  groups %>%
+  map(~randomForest(numballs ~ ., data=data_forest_grouped %>%  
+                                                    filter(group != .x) %>%
+                                                    select(-c(group, vill_id,KEY)),                                       ,
+                    ntree=1000,
+                    keep.forest=TRUE, importance=TRUE)) %>%
+  map2(groups,~tibble(predict_rf = predict(.x, newdata = data_forest_grouped %>% filter(group == .y)))) %>%
+  map2(groups,~bind_cols(data_forest_grouped %>% filter(group == .y) %>% select(KEY, vill_id, ball5),.x)) %>%
+  list_rbind() 
+
+```
+
+And combine them.
+
+First I create a function to compute the incidence in a data frame. It takes a data frame and
+returns one line per group in the data frame with the issues in treatment and control group,
+and the difference (= incidence):
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+compute_incidence <- function(df, issuesvar, treatvar) {
+  df %>%
+    mutate(issues_trt = ifelse({{ treatvar }}, {{ issuesvar }}, NA),
+           issues_ctrl = ifelse({{ treatvar }}, NA, {{ issuesvar }})) %>%
+    summarize(across(c(issues_trt,issues_ctrl),~mean(.x,na.rm=TRUE))) %>%
+    mutate(incidence = issues_trt - issues_ctrl)
+}
+
+sample %>% compute_incidence(numballs,ball5)
+
+```
+
+And a function that ranks villages by the incidence, as computed by the function above:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+compute_ranks <- function(df, issuesvar, suffix) {
+  df %>%
+    group_by(vill_id) %>%
+    compute_incidence({{ issuesvar }},ball5) %>%
+    mutate(rank = row_number(desc(incidence)))  %>% 
+    select(vill_id, "rank_{suffix}" := rank)
+}
+
+predictions_forest %>% compute_ranks(predict_rf, "rf")
+
+```
+
+I can then rank all villages based on predictions from the random forest and regression models,
+as well as recent conflict activity:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+conf_ranks <- 
+  sample %>%
+  group_by(vill_id) %>%
+  summarize(confintensity = mean(acledviolence10)) %>%
+  mutate(rank_conf = row_number(desc(confintensity)))
+
+ranked_data <-
+  sample %>%
+  left_join(predictions_forest %>% compute_ranks(predict_rf, "rf")) %>%
+  left_join(predictions_reg %>% compute_ranks(predict_reg, "reg")) %>%
+  left_join(conf_ranks) %>%
+  select(vill_id, numballs,ball5, starts_with("rank"))
+
+ranked_data
+
+```
+
+Finally, I can compare the models of targeting communities, by
+computing the average incidence in the villages ranked 1-30 by the
+three targetting models:
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+compare_targeting <- function(models, rank_cutoff) {
+  models %>%
+    map(~ranked_data %>% 
+          filter(.data[[paste0("rank_",.x)]] < rank_cutoff)) %>%
+    map(~.x %>% compute_incidence(numballs,ball5)) %>%
+    map2(models,~.x %>% mutate(cutoff = rank_cutoff,
+                               model = .y)) %>%
+    list_rbind() 
+}
+
+compare_targeting(c("reg","rf","conf"), 30)
+
+```
+
+Finally, I can graph this for all cutoffs. Random Forest clearly outperforms regression
+over most cutoffs. With low cutoffs, variance is too high to say anything. With high 
+cut-offs, both models target all villages and therefore perform roughly the same. Note
+that not all villages are ranked by the models, because for some villages there's no 
+data for certain variables. 
+
+```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
+
+
+1:65 %>%
+  map(~compare_targeting(c("reg","rf","conf"),.x)) %>%
+  list_rbind() %>%
+  ggplot(aes(x = cutoff, y = incidence, colour = model)) +
+    geom_line()
 
 
 ```
