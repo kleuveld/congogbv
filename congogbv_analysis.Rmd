@@ -716,11 +716,12 @@ villages, I make sure I group observations by village using `cluster_ra()`.
 library(randomizr)
 set.seed(2024022111)
 
-groups = 1:10
+groups = 1:3
 
 sample_grouped <-
   sample %>%
-  mutate(group = cluster_ra(clusters = vill_id, conditions = groups))
+  mutate(group = complete_ra(N = nrow(.),conditions = groups))
+  #mutate(group = cluster_ra(clusters = vill_id, conditions = groups))
 
 ```
 I then run the regressions using `purrr`'s `map()` function to iterate
@@ -749,22 +750,27 @@ villages.
 set.seed(2024022116)
 
 
-data_forest_grouped <-
-  data_forest_selected %>%
-  left_join(sample_grouped %>% select(KEY,group))
+# data_forest_grouped <-
+#   data_forest_selected %>%
+#   left_join(sample_grouped %>% select(KEY,group))
 
+# predictions_forest <-
+#   groups %>%
+#   map(~randomForest(numballs ~ ., data=data_forest_grouped %>%  
+#                                                     filter(group != .x) %>%
+#                                                     select(-c(group, vill_id,KEY)),                                       ,
+#                     ntree=1000,
+#                     keep.forest=TRUE, importance=TRUE)) %>%
+#   map2(groups,~tibble(predict_rf = predict(.x, newdata = data_forest_grouped %>% filter(group == .y)))) %>%
+#   map2(groups,~bind_cols(data_forest_grouped %>% filter(group == .y) %>% select(KEY, vill_id, ball5),.x)) %>%
+#   list_rbind() 
 
 
 predictions_forest <-
-  groups %>%
-  map(~randomForest(numballs ~ ., data=data_forest_grouped %>%  
-                                                    filter(group != .x) %>%
-                                                    select(-c(group, vill_id,KEY)),                                       ,
-                    ntree=1000,
-                    keep.forest=TRUE, importance=TRUE)) %>%
-  map2(groups,~tibble(predict_rf = predict(.x, newdata = data_forest_grouped %>% filter(group == .y)))) %>%
-  map2(groups,~bind_cols(data_forest_grouped %>% filter(group == .y) %>% select(KEY, vill_id, ball5),.x)) %>%
-  list_rbind() 
+  bind_cols(data_forest_selected %>% select(KEY,vill_id, ball5),
+           tibble(predict_rf = forest_selected %>% predict()))
+
+
 
 ```
 
@@ -836,14 +842,14 @@ three targetting models:
 compare_targeting <- function(models, rank_cutoff) {
   models %>%
     map(~ranked_data %>% 
-          filter(.data[[paste0("rank_",.x)]] < rank_cutoff)) %>%
+          filter(.data[[paste0("rank_",.x)]] <= rank_cutoff)) %>%
     map(~.x %>% compute_incidence(numballs,ball5)) %>%
     map2(models,~.x %>% mutate(cutoff = rank_cutoff,
                                model = .y)) %>%
     list_rbind() 
 }
 
-compare_targeting(c("reg","rf","conf"), 30)
+compare_targeting(c("reg","rf","conf"), 15)
 
 ```
 
@@ -856,7 +862,7 @@ data for certain variables.
 ```{r eval=TRUE, include = TRUE, echo=TRUE, warning=TRUE, error=TRUE, message=FALSE}
 
 
-1:65 %>%
+1:62 %>%
   map(~compare_targeting(c("reg","rf","conf"),.x)) %>%
   list_rbind() %>%
   ggplot(aes(x = cutoff, y = incidence, colour = model)) +

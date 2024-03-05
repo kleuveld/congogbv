@@ -1072,7 +1072,21 @@ regs %>%
 
 
 
-# Random Forest
+# Comparing targeting approaches {#comparing .unnumbered}
+
+While regression is good for inference about the drivers of SGBV, it is 
+not great for prediction. For prediction, Machine Learning methods, such 
+as Random Forest, generally perform better. Both have uses. To prevent 
+future SGBV, the drivers should be adressed. To assist current victims, we
+should first be able to predict who is a victim and who isn't.
+
+To demonstrate this, 
+
+And prediction is is of greater use. 
+So far, I have used different ways of anaylzing the incidence of SGBV
+with little regard for the practical application of the findings.
+
+## Random Forest
 
 I run a Random Forest in two stages. The first stage includes all variables I have,
 in the second I drop variables with little predictive power, and those that are
@@ -1099,18 +1113,45 @@ knitr::include_graphics(here("figures/randomforest_final.png"))
 
 ```
 
-# Comparing targeting approaches {#comparing .unnumbered}
 
-In this section, I compare what the different findings mean. For this,
+
+
+
+For this,
 I use a thought experiment, in which an imaginary NGO has capacity to 
-run a project to assist women in ten villages. I compare three ways in 
-which to select these villages:
+run a project to assist women in fifteen villages^[results are robust to 
+different numbers of villages]. I compare three ways in which to select 
+these villages:
 
 - Highest recent conflict intensity;
 - Villages with the highest predicted rates of SGBV based on regression;
 - Villages with the highest predicted rates of SGBV based on Random Forest.
 
-I then compute how many women are helped in each case.
+I then use the results of the list experiment to compute the actual incidence 
+rates in each of the targeted communities, to see well each of the targeting
+methods succeeds in targeting communities with high incidence. 
+
+For the conflict-based targeting, I compute the average number of instances of violence
+against civilians in a 10km radius for each village, and target the villages
+with the highest exposure. For the random forest-based targeting
+I use the Out-of-Bag predictions. 
+For regression-based targeting, I split my sample in 
+three groups, and for each group I predict the incidence based on the results 
+of a regression using the other two groups as its population, and column 4 if
+Table \@ref(tab:regress) as the specification. This approach is conceptually
+similar to the out of bag predictions for the random forest.
+
+The results are included in the table below. Average incidence in the fiteen
+communities with the most exposure to recent conflict is 27.1%. The fifteen
+communities selected with the Random Forest method have higher incidence: 40.8%.
+Regression-based targeting works more poorly than either, finding only 
+communities with an incidence of 27.^%, which is lower than the average incidence.
+
+This may be surprising. The regression was based on theory, and identified some
+risk factors that seemed clearly associated with SGBV, but it fared poorly
+when predicting. 
+
+
 
 # Conclusion {#conclusion .unnumbered}
 
